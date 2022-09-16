@@ -24,10 +24,10 @@ function Get-Credentials {
     [CmdletBinding()]
     Param(
     [Parameter(Mandatory=$true)]
-    [string]$section
+    [string]$CBC_AUTH_AT_SECTION
     )
     Process{
-        $ini = Format-IniFile $path1 $section
+        $ini = Format-IniFile $path1 $CBC_AUTH_AT_SECTION
         if($null -eq $ini)
         {
             return $null

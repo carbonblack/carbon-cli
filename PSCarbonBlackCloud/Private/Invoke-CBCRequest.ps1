@@ -11,11 +11,11 @@ function Invoke-CBCRequest {
 
     )
     if ($CBC_USE_JWT -eq $true) {
-        Write-Host "Using JWT"
+        # Process JWT
     }
     elseif ($CBC_USE_AT -eq $true) {
 
-        $credentials = Get-Credentials $Section
+        $credentials = Get-Credentials $CBC_AUTH_AT_SECTION
         $url = $credentials["url"]
         $org = $credentials["org"]
         $token = $credentials["token"]
