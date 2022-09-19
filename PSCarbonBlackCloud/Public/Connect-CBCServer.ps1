@@ -27,25 +27,33 @@ Online Version: http://devnetworketc/
 function Connect-CBCServer {
     [CmdletBinding(HelpURI = "http://devnetworketc/")]
     Param (
-        [Parameter(Mandatory = $true, Position = 0)]
+        [Parameter(Mandatory = $true, ParameterSetName = "default", Position = 0)]
         [string] ${Server},
 
-        [Parameter(Mandatory = $false, Position = 1)]
-        [securestring] ${Token},
-
-        [Parameter(Mandatory = $false, Position = 2)]
+        [Parameter(ParameterSetName = "default", Position = 1)]
         [string] ${Org},
 
-        [Parameter(Mandatory = $false, Position = 3)]
+        [Parameter(ParameterSetName = "default", Position = 2)]
+        [securestring] ${Token},
+
+        [Parameter(ParameterSetName = "default")]
         [switch] ${NotDefault},
 
-        [Parameter(Mandatory = $false, Position = 4)]
+        [Parameter(ParameterSetName = "default")]
         [pscredential] ${Credential},
 
-        [Parameter(Mandatory = $false, Position = 5)]
+        [Parameter(ParameterSetName = "default")]
         [switch] ${SaveCredentials},
 
-        [Parameter(Mandatory = $false, Position = 6)]
+        [Parameter(ParameterSetName = "menu")]
         [switch] ${Menu}
     )
+
+    Begin {
+        
+    }
+
+    Process {
+        
+    }
 }
