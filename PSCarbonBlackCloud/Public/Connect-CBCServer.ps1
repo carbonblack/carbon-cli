@@ -34,7 +34,7 @@ function Connect-CBCServer {
         [string] ${Org},
 
         [Parameter(ParameterSetName = "default", Position = 2)]
-        [securestring] ${Token},
+        [string] ${Token},
 
         [Parameter(ParameterSetName = "default")]
         [switch] ${NotDefault},
@@ -50,10 +50,25 @@ function Connect-CBCServer {
     )
 
     Begin {
-        
+        if($Credential -ne $null)
+        {
+            $Org = $Credential.UserName
+            $Token = Convert-SecureString $Credential
+            Set-Variable -Name ORG_KEY -Value $Org -Scope Global
+            Set-Variable -Name TOKEN_KEY -Value $Token -Scope Global
+        }
     }
 
     Process {
-        
+        if($Menu.IsPresent)
+        {
+            Write-Host "Using menu"
+        }
+
+        if($SaveCredentials.IsPresent)
+        {
+            Add-CredentialToFile $Server $Org $Token
+        }
+
     }
 }
