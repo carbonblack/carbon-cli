@@ -11,7 +11,7 @@ function Add-CredentialToFile {
         [string] ${Token}
     )
     Process {
-        $CredsTable = @{
+        $CredsTable = [PSCustomObject]@{
             server = $Server;
             org    = $Org;
             token  = $Token;
@@ -20,15 +20,14 @@ function Add-CredentialToFile {
 
         if ($IsLinux -Or $IsMacOS) {
             if (Test-Path -Path $CredsPathUnix -PathType Leaf) {
-                $CredsFileTable = (Get-Content $CredsPathUnix | ConvertFrom-Json -AsHashtable)
-                # TODO: Find a better way to add Hashtable to the Array
-                $CredsFileTable += ($CredsTable | ConvertTo-Json)
-                (ConvertTo-Json $CredsFileTable) > $CredsFile
+                $CredsFileTable = (Get-Content $CredsPathUnix | ConvertFrom-Json -NoEnumerate)
+                $CredsFileTable += $CredsTable
+                (ConvertTo-Json $CredsFileTable) > $CredsPathUnix
             }
             else {
-                $CredsFile = New-Item -Path $Home/.carbonblack/PSCredentials.json
+                $CredsFile = New-Item -Path $CredsPathUnix
                 $CredsArray = @()
-                $CredsArray += ($CredsTable | ConvertTo-Json)
+                $CredsArray += ($CredsTable)
                 (ConvertTo-Json $CredsArray) > $CredsFile
             }
         }
