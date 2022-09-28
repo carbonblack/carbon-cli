@@ -23,57 +23,47 @@ Online Version: http://devnetworketc/
 function Connect-CBCServer {
     [CmdletBinding(HelpURI = "http://devnetworketc/")]
     Param (
-        [Parameter(Mandatory = $true, ParameterSetName = "default", Position = 0)]
+        [Parameter(Mandatory = $true, Position = 0)]
         [string] ${Server},
 
-        [Parameter(ParameterSetName = "default", Position = 1)]
+        [Parameter(Position = 1)]
         [string] ${Org},
 
-        [Parameter(ParameterSetName = "default", Position = 2)]
+        [Parameter(Position = 2)]
         [string] ${Token},
 
-        [Parameter(ParameterSetName = "default")]
+        [Parameter()]
         [switch] ${SaveCredentials},
 
-        [Parameter(ParameterSetName = "menu")]
+        [Parameter(ParameterSetName = "Menu")]
         [switch] ${Menu}
     )
    
     Process {
 
-        $CredsPathUnix = "${Home}/.carbonblack/PSCredentials.json"
+        # TODO: Set CBCCredentialsWINDOWSPath
+        Set-Variable CBCCredentialsUNIXPath -Option ReadOnly -Value "${Home}/.carbonblack/PSCredentials.json"
         
-        if ($Menu.IsPresent) {
-            Write-Host "Using menu"
-        }
-
-        if ($SaveCredentials.IsPresent) {
-            if ($null -ne $Org && $null -ne $Token) {
-                Add-CredentialToFile $Server $Org $Token
-            }
-            else {
-                Write-Host "To save the credential there must be Org and Token supplied!"
-            }
-        }
-
-        if (!$Org || !$Token) {
-            if (Test-Path -Path $CredsPathUnix -PathType Leaf) {
-                $Credentials = (Get-Content $CredsPathUnix | ConvertFrom-Json -NoEnumerate)
-                foreach ( $cred in $Credentials ) {
-                    $hashtable = $cred | ConvertTo-Json | ConvertFrom-Json -AsHashTable
-                    if ($hashtable["server"] -eq $Server) {
-                        $Org = $hashtable["org"]
-                        $Token = $hashtable["token"]
+        switch ($PSCmdlet.ParameterSetName) {
+            default {
+                if (!$Org || !$Token) {
+                    $CredsTable = Find-Credentials -Server $Server -Path $CBCCredentialsUNIXPath
+                    if ($CredsTable.Count -eq 0) {
+                        $Org = Read-Host -Prompt 'Please supply Org Key'
+                        $Token = Read-Host -Prompt 'Please supply Token'
+                    } else {
+                        $Org = $CredsTable["org"]
+                        $Token = $CredsTable["token"]
                     }
                 }
-                if (!$Org || !$Token) {
-                    Write-Host "No server with that name"
+                if ($SaveCredentials.IsPresent) {
+                    Add-CredentialToFile $Server $Org $Token
                 }
             }
-            else {
-                "The Credential file is empty. Please provide an Org and a Token!"
+            'Menu' {
+                Write-Host $CBCCredentialsUNIXPath
+                break
             }
-            
         }
         Set-Variable -Name CBC_AUTH_SERVER -Value $Server -Scope Global
         Set-Variable -Name CBC_AUTH_ORG_KEY -Value $Org -Scope Global
