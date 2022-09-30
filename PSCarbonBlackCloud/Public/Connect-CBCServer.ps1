@@ -23,16 +23,16 @@ Online Version: http://devnetworketc/
 function Connect-CBCServer {
     [CmdletBinding(HelpURI = "http://devnetworketc/")]
     Param (
-        [Parameter(Mandatory = $true, Position = 0)]
+        [Parameter(ParameterSetName = "default", Mandatory = $true, Position = 0)]
         [string] ${Server},
 
-        [Parameter(Position = 1)]
+        [Parameter(ParameterSetName = "default", Position = 1)]
         [string] ${Org},
 
-        [Parameter(Position = 2)]
+        [Parameter(ParameterSetName = "default", Position = 2)]
         [string] ${Token},
 
-        [Parameter()]
+        [Parameter(ParameterSetName = "default")]
         [switch] ${SaveCredentials},
 
         [Parameter(ParameterSetName = "Menu")]
@@ -45,13 +45,14 @@ function Connect-CBCServer {
         Set-Variable CBCCredentialsUNIXPath -Option ReadOnly -Value "${Home}/.carbonblack/PSCredentials.json"
         
         switch ($PSCmdlet.ParameterSetName) {
-            default {
+            'default' {
                 if (!$Org || !$Token) {
                     $CredsTable = Find-Credentials -Server $Server -Path $CBCCredentialsUNIXPath
                     if ($CredsTable.Count -eq 0) {
                         $Org = Read-Host -Prompt 'Please supply Org Key'
                         $Token = Read-Host -Prompt 'Please supply Token'
-                    } else {
+                    }
+                    else {
                         $Org = $CredsTable["org"]
                         $Token = $CredsTable["token"]
                     }
@@ -61,8 +62,12 @@ function Connect-CBCServer {
                 }
             }
             'Menu' {
-                Write-Host $CBCCredentialsUNIXPath
-                break
+                $CredentialHash = Get-Menu
+                if ($null -ne $CredentialHash) {
+                    $Server = $CredentialHash["server"]
+                    $Org = $CredentialHash["org"]
+                    $Token = $CredentialHash["token"]
+                }
             }
         }
         Set-Variable -Name CBC_AUTH_SERVER -Value $Server -Scope Global
