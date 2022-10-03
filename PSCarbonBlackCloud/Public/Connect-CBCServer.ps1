@@ -21,7 +21,7 @@ Online Version: http://devnetworketc/
 #>
 
 function Connect-CBCServer {
-    [CmdletBinding(HelpURI = "http://devnetworketc/")]
+    [CmdletBinding(DefaultParameterSetName = "default", HelpUri = "http://devnetworketc/")]
     Param (
         [Parameter(ParameterSetName = "default", Mandatory = $true, Position = 0)]
         [string] ${Server},
@@ -38,40 +38,111 @@ function Connect-CBCServer {
         [Parameter(ParameterSetName = "Menu")]
         [switch] ${Menu}
     )
-   
-    Process {
 
-        # TODO: Set CBCCredentialsWINDOWSPath
-        Set-Variable CBCCredentialsUNIXPath -Option ReadOnly -Value "${Home}/.carbonblack/PSCredentials.json"
-        
-        switch ($PSCmdlet.ParameterSetName) {
-            'default' {
-                if (!$Org || !$Token) {
-                    $CredsTable = Find-Credentials -Server $Server -Path $CBCCredentialsUNIXPath
-                    if ($CredsTable.Count -eq 0) {
-                        $Org = Read-Host -Prompt 'Please supply Org Key'
-                        $Token = Read-Host -Prompt 'Please supply Token'
-                    }
-                    else {
-                        $Org = $CredsTable["org"]
-                        $Token = $CredsTable["token"]
-                    }
-                }
-                if ($SaveCredentials.IsPresent) {
-                    Add-CredentialToFile $Server $Org $Token
-                }
+    Begin {
+
+        $ServerObject = [PSCustomObject]@{
+            Server = $Server
+            Org    = $Org
+            Token  = $Token
+        }
+
+        # Check current connections
+        if (-Not (Test-Path variable:global:CBC_CURRENT_CONNECTIONS)) {
+            $emptyArray = [System.Collections.ArrayList]@()
+            Set-Variable CBC_CURRENT_CONNECTIONS -Value $emptyArray -Scope Global
+        }
+        else {
+            Write-Warning "You are currently connected to: "
+            $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 1 } {
+                Write-Host "$i -" $_.Server
+                $i++
             }
-            'Menu' {
-                $CredentialHash = Get-Menu
-                if ($null -ne $CredentialHash) {
-                    $Server = $CredentialHash["server"]
-                    $Org = $CredentialHash["org"]
-                    $Token = $CredentialHash["token"]
+            Write-Warning "If you wish to disconnect the currently connected servers, please use Disconnect-CBCServer cmdlet."
+            Write-Warning "If you wish to continue connecting to new servers press [Enter] or 'Q' to quit."
+            $option = Read-Host
+            if ($option -eq 'q' -Or $option -eq 'Q') { 
+                exit
+            }
+        }
+
+        Set-Variable CBC_CREDENTIALS_FILENAME -Option ReadOnly -Value "PSCredentials.json"
+
+        # Different processing for `$CBC_CREDENTIALS_PATH` for the different OSs
+        if ($IsLinux -Or $IsMacOS) {
+            Set-Variable CBC_CREDENTIALS_PATH -Option ReadOnly -Value "${Home}/.carbonblack/"
+
+            # Trying to create the files/directories if `-SaveCredentials` is presented
+            if ($SaveCredentials.IsPresent) {
+                if (-Not (Test-Path -Path $CBC_CREDENTIALS_PATH)) {
+                    try {
+                        New-Item -Path $CBC_CREDENTIALS_PATH -Type Directory | Write-Debug
+                    }
+                    catch {
+                        Write-Error -Message "Cannot create directory $CBC_CREDENTIALS_PATH"
+                    }
+                }
+                if (-Not (Test-Path -Path "$CBC_CREDENTIALS_PATH/$CBC_CREDENTIALS_FILENAME")) {
+                    try {
+                        New-Item -Path $CBC_CREDENTIALS_PATH/$CBC_CREDENTIALS_FILENAME | Write-Debug
+                    }
+                    catch {
+                        Write-Error -Message "Cannot create file $CBC_CREDENTIALS_FILENAME in $CBC_CREDENTIALS_PATH"
+                    }
                 }
             }
         }
-        Set-Variable -Name CBC_AUTH_SERVER -Value $Server -Scope Global
-        Set-Variable -Name CBC_AUTH_ORG_KEY -Value $Org -Scope Global
-        Set-Variable -Name CBC_AUTH_TOKEN_KEY -Value $Token -Scope Global
+        else {
+            # Windows logic for `$CBC_CREDENTIALS_PATH`
+            # TODO
+            Set-Variable CBC_CREDENTIALS_PATH -Option ReadOnly -Value "TODO"
+        }
+        Set-Variable CBC_CREDENTIALS_FULL_PATH -Option ReadOnly -Value "$CBC_CREDENTIALS_PATH/$CBC_CREDENTIALS_FILENAME"
+
+        # Test Connection
+        if (-Not ((Invoke-WebRequest -Uri $ServerObject.Server -TimeoutSec 20).StatusCode -eq 200)) {
+            Write-Error -Message "Cannot connect to ${ServerObject.Server}"
+        }
+        
+        # Pre-Fill the CBC_DEFAULT_SERVERS global variable if any
+        if (-Not (Test-Path variable:global:CBC_DEFAULT_SERVERS)) {
+            $emptyArray = [System.Collections.ArrayList]@()
+            Set-Variable CBC_DEFAULT_SERVERS -Value $emptyArray -Scope Global
+        }
+        else {
+            $existingServers = [System.Collections.ArrayList](Get-Content $CBC_CREDENTIALS_FULL_PATH | ConvertFrom-Json -NoEnumerate)
+            Set-Variable CBC_DEFAULT_SERVERS -Value $existingServers -Scope Global
+        }
+    }       
+   
+    Process {      
+        
+        switch ($PSCmdlet.ParameterSetName) {
+            "default" {
+                if (-Not $ServerObject.Org) {
+                    $ServerObject.Org = Read-Host "Enter your Org Key"
+                }
+                if (-Not $ServerObject.Token) {
+                    $ServerObject.Token = Read-Host "Enter your Token"
+                }
+                if ($SaveCredentials.IsPresent) {
+                    $CBC_DEFAULT_SERVERS.Add($ServerObject) | Out-Null
+                    (ConvertTo-Json $CBC_DEFAULT_SERVERS) > $CBC_CREDENTIALS_FULL_PATH
+                }
+            }
+            'Menu' {
+                Write-Host "Select a server from the list (by typing its number and pressing Enter): "
+                $CBC_DEFAULT_SERVERS | ForEach-Object -Begin { $i = 1 } { 
+                    Write-Host "[$i] $($_.Server)"
+                    $i++
+                }
+                $option = Read-Host 
+                $ServerObject = $CBC_DEFAULT_SERVERS[$option + 1]
+            }
+        }
+
+        $CBC_CURRENT_CONNECTIONS.Add($ServerObject) | Out-Null
+
+        return $ServerObject
     }
 }

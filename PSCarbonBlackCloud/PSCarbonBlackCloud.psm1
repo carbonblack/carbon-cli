@@ -10,3 +10,4 @@ foreach ($path in $paths) {
                 . $_.ProviderPath 
             }
 }
+
