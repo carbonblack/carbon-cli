@@ -1,3 +1,14 @@
+<#
+.DESCRIPTION
+This cmdlet removes all or a specific connection from the CBC_CURRENT_CONNECTIONS. 
+.PARAMETER Server
+Specifies the server you want to disconnect. It accepts '*' for all servers, server name,
+array of server names or Server object.
+.OUTPUTS
+
+.LINK
+Online Version: http://devnetworketc/
+#>
 function Disconnect-CBCServer {
     [CmdletBinding()]
     Param(
@@ -18,8 +29,7 @@ function Disconnect-CBCServer {
             $i++
         }   
     }
-    elseif($Server -is [System.Management.Automation.PSCustomObject])
-    {
+    elseif ($Server -is [System.Management.Automation.PSCustomObject]) {
         $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 0 } {
             if ($_.Server -eq $Server.server) {
                 $CBC_CURRENT_CONNECTIONS.RemoveAt($i)
