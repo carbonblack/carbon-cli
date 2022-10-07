@@ -109,7 +109,7 @@ function Connect-CBCServer {
         }
         Set-Variable CBC_CREDENTIALS_FULL_PATH -Option ReadOnly -Value "$CBC_CREDENTIALS_PATH/$CBC_CREDENTIALS_FILENAME"
 
-        Test Connection
+        # Test Connection
         Try {
             $checkRequest = Invoke-WebRequest -Uri $ServerObject.Server -TimeoutSec 20
             if (-Not ($checkRequest.StatusCode -eq 200)) {
