@@ -17,7 +17,9 @@ function Disconnect-CBCServer {
     )
 
     if ($Server -eq '*') {
-        Remove-Variable -Name CBC_CURRENT_CONNECTIONS -Scope Global
+        if (Test-Path variable:global:CBC_CURRENT_CONNECTIONS) {
+            Remove-Variable -Name CBC_CURRENT_CONNECTIONS -Scope Global
+        }
     }
     elseif ($Server -is [array]) {
         $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 0 } {

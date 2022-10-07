@@ -53,16 +53,24 @@ function Connect-CBCServer {
             Set-Variable CBC_CURRENT_CONNECTIONS -Value $emptyArray -Scope Global
         }
         else {
-            Write-Warning "You are currently connected to: "
-            $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 1 } {
-                Write-Host "$i -" $_.Server
-                $i++
-            }
-            Write-Warning "If you wish to disconnect the currently connected servers, please use Disconnect-CBCServer cmdlet."
-            Write-Warning "If you wish to continue connecting to new servers press [Enter] or 'Q' to quit."
-            $option = Read-Host
-            if ($option -eq 'q' -Or $option -eq 'Q') { 
-                exit
+            if ($CBC_CURRENT_CONNECTIONS.Length -ge 1) {
+                $connectedServersOutput = ""
+                $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 1 } {
+                    if ($_.Server -eq $Server) {
+                        Write-Warning "You are already connected to that server!"
+                        Exit
+                    }
+                    $connectedServersOutput += "[$i] " + $_.Server + "`n"
+                    $i++
+                }
+                Write-Warning "You are currently connected to: "
+                Write-Host $connectedServersOutput
+                Write-Warning "If you wish to disconnect the currently connected servers, please use Disconnect-CBCServer cmdlet."
+                Write-Warning "If you wish to continue connecting to new servers press [Enter] or 'Q' to quit."
+                $option = Read-Host
+                if ($option -eq 'q' -Or $option -eq 'Q') { 
+                    Exit
+                }
             }
         }
 
@@ -80,14 +88,16 @@ function Connect-CBCServer {
                     }
                     catch {
                         Write-Error -Message "Cannot create directory $CBC_CREDENTIALS_PATH"
+                        Exit
                     }
                 }
                 if (-Not (Test-Path -Path "$CBC_CREDENTIALS_PATH/$CBC_CREDENTIALS_FILENAME")) {
-                    try {
+                    Try {
                         New-Item -Path $CBC_CREDENTIALS_PATH/$CBC_CREDENTIALS_FILENAME | Write-Debug
                     }
-                    catch {
+                    Catch {
                         Write-Error -Message "Cannot create file $CBC_CREDENTIALS_FILENAME in $CBC_CREDENTIALS_PATH"
+                        Exit
                     }
                 }
             }
@@ -99,9 +109,17 @@ function Connect-CBCServer {
         }
         Set-Variable CBC_CREDENTIALS_FULL_PATH -Option ReadOnly -Value "$CBC_CREDENTIALS_PATH/$CBC_CREDENTIALS_FILENAME"
 
-        # Test Connection
-        if (-Not ((Invoke-WebRequest -Uri $ServerObject.Server -TimeoutSec 20).StatusCode -eq 200)) {
+        Test Connection
+        Try {
+            $checkRequest = Invoke-WebRequest -Uri $ServerObject.Server -TimeoutSec 20
+            if (-Not ($checkRequest.StatusCode -eq 200)) {
+                Write-Error -Message "Cannot connect to ${ServerObject.Server}: $checkRequest.StatusCode"
+                Exit
+            }
+        }
+        Catch {
             Write-Error -Message "Cannot connect to ${ServerObject.Server}"
+            Exit
         }
         
         # Pre-Fill the CBC_DEFAULT_SERVERS global variable if any
@@ -136,8 +154,23 @@ function Connect-CBCServer {
                     Write-Host "[$i] $($_.Server)"
                     $i++
                 }
-                $option = Read-Host 
-                $ServerObject = $CBC_DEFAULT_SERVERS[$option + 1]
+                Try {
+                    [int]$option = Read-Host
+                    $ServerObject = $CBC_DEFAULT_SERVERS[$option - 1]
+
+                    # Check if we are already connected to the server
+                    $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 1 } {
+                        if ($_.Server -eq $ServerObject.Server) {
+                            Write-Warning "You are already connected to that server!"
+                            Exit
+                        }
+                    }
+                }
+                Catch {
+                    Write-Error "Please supply an integer!"
+                    Exit
+                }
+                
             }
         }
 
