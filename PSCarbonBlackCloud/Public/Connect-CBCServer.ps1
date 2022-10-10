@@ -54,21 +54,23 @@ function Connect-CBCServer {
             Set-Variable CBC_CURRENT_CONNECTIONS -Value $emptyArray -Scope Global
         }
         else {
-            $connectedServersOutput = ""
-            $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 1 } {
-                if ($_.Server -eq $Server) {
-                    Write-Error "You are already connected to that server!" -ErrorAction "Stop"
+            if ($CBC_CURRENT_CONNECTIONS.Count -ge 1) {
+                $connectedServersOutput = ""
+                $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 1 } {
+                    if ($_.Server -eq $Server) {
+                        Write-Error "You are already connected to that server!" -ErrorAction "Stop"
+                    }
+                    $connectedServersOutput += "[$i] " + $_.Server + "`n"
+                    $i++
                 }
-                $connectedServersOutput += "[$i] " + $_.Server + "`n"
-                $i++
-            }
-            Write-Warning "You are currently connected to: "
-            Write-Host $connectedServersOutput
-            Write-Warning "If you wish to disconnect the currently connected servers, please use Disconnect-CBCServer cmdlet."
-            Write-Warning "If you wish to continue connecting to new servers press [Enter] or 'Q' to quit."
-            $option = Read-Host
-            if ($option -eq 'q' -Or $option -eq 'Q') {
-                exit
+                Write-Warning "You are currently connected to: "
+                Write-Host $connectedServersOutput
+                Write-Warning -Message "if you wish to disconnect the currently connected servers, please use Disconnect-CBCServer cmdlet. `n
+If you wish to continue connecting to new servers press any key or 'Q' to quit."
+                $option = Read-Host
+                if ($option -eq 'q' -Or $option -eq 'Q') {
+                    throw "Exit"
+                }
             }
         }
 
@@ -106,16 +108,20 @@ function Connect-CBCServer {
         
         # Pre-Fill the CBC_DEFAULT_SERVERS global variable if any
         if (-Not (Test-Path variable:global:CBC_DEFAULT_SERVERS)) {
-            $emptyArray = [System.Collections.ArrayList]@()
-            Set-Variable CBC_DEFAULT_SERVERS -Value $emptyArray -Scope Global
-        }
-        else {
             if (Test-Path -Path $CBC_CREDENTIALS_FULL_PATH) {
                 $existingServers = [System.Collections.ArrayList](Get-Content $CBC_CREDENTIALS_FULL_PATH | ConvertFrom-Json -NoEnumerate)
-                Set-Variable CBC_DEFAULT_SERVERS -Value $existingServers -Scope Global
+                if ($null -eq $existingServers) {
+                    $emptyArray = [System.Collections.ArrayList]@()
+                    Set-Variable CBC_DEFAULT_SERVERS -Value $emptyArray -Scope Global
+                } else {
+                    Set-Variable CBC_DEFAULT_SERVERS -Value $existingServers -Scope Global
+                }
+            } else {
+                $emptyArray = [System.Collections.ArrayList]@()
+                Set-Variable CBC_DEFAULT_SERVERS -Value $emptyArray -Scope Global
             }
         }
-    }       
+    }
    
     Process {      
         
@@ -133,31 +139,29 @@ function Connect-CBCServer {
                 }
             }
             'Menu' {
-                if ($null -ne $CBC_DEFAULT_SERVERS) {
-                    Write-Host "Select a server from the list (by typing its number and pressing Enter): "
+                if ($CBC_DEFAULT_SERVERS.Count -ge 1) {
+                    Write-Host "Select a server from the default servers list (by typing its number and pressing Enter): "
+                    $defaultServersOutput = ""
                     $CBC_DEFAULT_SERVERS | ForEach-Object -Begin { $i = 1 } { 
-                        Write-Host "[$i] $($_.Server)"
+                        $defaultServersOutput += "[$i] " + $_.Server + "`n"
                         $i++
                     }
-                    
+                    Write-Host $defaultServersOutput
                     $option = Read-Host
                     $ServerObject = $CBC_DEFAULT_SERVERS[$option - 1]
-                    # Check if we are already connected to the server
                     $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 1 } {
                         if ($_.Server -eq $ServerObject.Server) {
                             Write-Error "You are already connected to that server!" -ErrorAction "Stop"
                             
                         }
                     }
-                    
-                } 
+                }
                 else {
                     Write-Error "There is not default servers available!" -ErrorAction "Stop"
                 }
             }
         }
 
-        
         if (-Not (Test-CBCConnection $ServerObject)) {
             Write-Error ("Cannot connect to: {0}" -f $ServerObject.Server) -ErrorAction "Stop"
         }
