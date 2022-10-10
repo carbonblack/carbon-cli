@@ -133,25 +133,23 @@ function Connect-CBCServer {
                 }
             }
             'Menu' {
-                if ($CBC_DEFAULT_SERVERS -ge 1) {
+                if ($null -ne $CBC_DEFAULT_SERVERS) {
                     Write-Host "Select a server from the list (by typing its number and pressing Enter): "
                     $CBC_DEFAULT_SERVERS | ForEach-Object -Begin { $i = 1 } { 
                         Write-Host "[$i] $($_.Server)"
                         $i++
                     }
-                    Try {
-                        [int]$option = Read-Host
-                        $ServerObject = $CBC_DEFAULT_SERVERS[$option - 1]
-                        # Check if we are already connected to the server
-                        $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 1 } {
-                            if ($_.Server -eq $ServerObject.Server) {
-                                Write-Error "You are already connected to that server!" -ErrorAction "Stop"
-                            }
+                    
+                    $option = Read-Host
+                    $ServerObject = $CBC_DEFAULT_SERVERS[$option - 1]
+                    # Check if we are already connected to the server
+                    $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 1 } {
+                        if ($_.Server -eq $ServerObject.Server) {
+                            Write-Error "You are already connected to that server!" -ErrorAction "Stop"
+                            
                         }
                     }
-                    Catch {
-                        Write-Error "Please supply an integer!" -ErrorAction "Stop"
-                    }
+                    
                 } 
                 else {
                     Write-Error "There is not default servers available!" -ErrorAction "Stop"
@@ -159,12 +157,15 @@ function Connect-CBCServer {
             }
         }
 
+        
         if (-Not (Test-CBCConnection $ServerObject)) {
             Write-Error ("Cannot connect to: {0}" -f $ServerObject.Server) -ErrorAction "Stop"
         }
-
+    
         $CBC_CURRENT_CONNECTIONS.Add($ServerObject) | Out-Null
-
+    
         return $ServerObject
+        
+        
     }
 }
