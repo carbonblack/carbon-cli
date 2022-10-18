@@ -48,9 +48,29 @@ Describe "Connect-CBCServer" {
                     $CBC_CURRENT_CONNECTIONS.Count | Should -Be 1
                 }
         
-                It "Throws an error" {
+                It "Throws an error - on '2' as input" {
                     Mock -ModuleName "PSCarbonBlackCloud"  -CommandName "Read-Host" -MockWith {
                         return "2"
+                    };
+
+                    { Connect-CBCServer -Menu } | Should -Throw "There is no default server with that index"
+                    $CBC_CURRENT_CONNECTIONS | Should -Be $null
+                    $CBC_CURRENT_CONNECTIONS.Count | Should -Be 0
+                }
+
+                It "Throws an error - on '0' as input" {
+                    Mock -ModuleName "PSCarbonBlackCloud"  -CommandName "Read-Host" -MockWith {
+                        return "0"
+                    };
+
+                    { Connect-CBCServer -Menu } | Should -Throw "There is no default server with that index"
+                    $CBC_CURRENT_CONNECTIONS | Should -Be $null
+                    $CBC_CURRENT_CONNECTIONS.Count | Should -Be 0
+                }
+
+                It "Throws an error - on {letter} as input" {
+                    Mock -ModuleName "PSCarbonBlackCloud"  -CommandName "Read-Host" -MockWith {
+                        return "ABC"
                     };
 
                     { Connect-CBCServer -Menu } | Should -Throw "There is no default server with that index"
@@ -99,11 +119,32 @@ Describe "Connect-CBCServer" {
                     $CBC_CURRENT_CONNECTIONS[0] | Should -Be $MockServerObject2
                     $CBC_CURRENT_CONNECTIONS.Count | Should -Be 1
                 }
-        
-                It "Throws an error" {
+
+                It "Throws an error - on '2' as input" {
+                    Mock -ModuleName "PSCarbonBlackCloud"  -CommandName "Read-Host" -MockWith {
+                        return "3"
+                    };
+
+                    { Connect-CBCServer -Menu } | Should -Throw "There is no default server with that index"
+                    $CBC_CURRENT_CONNECTIONS | Should -Be $null
+                    $CBC_CURRENT_CONNECTIONS.Count | Should -Be 0
+                }
+
+                It "Throws an error - on '0' as input" {
                     Mock -ModuleName "PSCarbonBlackCloud"  -CommandName "Read-Host" -MockWith {
                         return "0"
                     };
+
+                    { Connect-CBCServer -Menu } | Should -Throw "There is no default server with that index"
+                    $CBC_CURRENT_CONNECTIONS | Should -Be $null
+                    $CBC_CURRENT_CONNECTIONS.Count | Should -Be 0
+                }
+
+                It "Throws an error - on {letter} as input" {
+                    Mock -ModuleName "PSCarbonBlackCloud"  -CommandName "Read-Host" -MockWith {
+                        return "ABC"
+                    };
+
                     { Connect-CBCServer -Menu } | Should -Throw "There is no default server with that index"
                     $CBC_CURRENT_CONNECTIONS | Should -Be $null
                     $CBC_CURRENT_CONNECTIONS.Count | Should -Be 0
