@@ -22,19 +22,14 @@ function Disconnect-CBCServer {
         }
     }
     elseif ($Server -is [array]) {
-        $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 0 } {
-            foreach ($s in $Server) {
-                if ($_.Server -eq $s) {
-                    $CBC_CURRENT_CONNECTIONS.RemoveAt($i)
-                }
-            }
-            $i++
-        }   
+        $CBC_CURRENT_CONNECTIONS = $CBC_CURRENT_CONNECTIONS | Where-Object { $Server -notcontains $_.Server }
+        Set-Variable CBC_CURRENT_CONNECTIONS -Value $CBC_CURRENT_CONNECTIONS -Scope Global
     }
     elseif ($Server -is [System.Management.Automation.PSCustomObject]) {
         $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 0 } {
             if ($_.Server -eq $Server.server) {
                 $CBC_CURRENT_CONNECTIONS.RemoveAt($i)
+                break
             }
             $i++
         }
@@ -43,6 +38,7 @@ function Disconnect-CBCServer {
         $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 0 } {
             if ($_.Server -eq $Server) {
                 $CBC_CURRENT_CONNECTIONS.RemoveAt($i)
+                break
             }
             $i++
         }   
