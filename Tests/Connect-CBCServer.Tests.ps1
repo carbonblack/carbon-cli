@@ -1,6 +1,6 @@
 Describe "Connect-CBCServer" {
 
-    Context "When `-Menu` arg is invoked" {
+    Context "When in Menu section" {
 
         BeforeDiscovery {
             Disconnect-CBCServer *
@@ -156,11 +156,12 @@ Describe "Connect-CBCServer" {
 
     }
     Context "When in Default section" {
+
         BeforeDiscovery {
             Disconnect-CBCServer *
         }
 
-        Context "When -Server -Org and -Token are supplied" {
+        Context "When all args are supplied" {
             BeforeAll {
                 $Server = "https://defense-dev01.cbdtest.io/"
                 $Org = "ABC"
@@ -224,7 +225,8 @@ Describe "Connect-CBCServer" {
             }
         }
 
-        Context "When trying to make a connection with already connected server" {
+        Context "When trying to connect to the same server object" {
+
             BeforeAll {
                 $Server = "https://defense-dev01.cbdtest.io/"
                 $Org = "ABC"
@@ -244,6 +246,7 @@ Describe "Connect-CBCServer" {
         }
 
         Context "When -SaveCredentials flag is supplied" {
+
             BeforeAll {
                 Disconnect-CBCServer *
 
@@ -256,19 +259,39 @@ Describe "Connect-CBCServer" {
                         StatusCode = 200
                     }
                 } -ParameterFilter { $Uri -eq $Server }
+
                 Connect-CBCServer -Server $Server -Token $Token -Org $Org -SaveCredentials
             }
-            It "Should save the credential is the Credential file" {
-                $CheckUri = Select-String -Path ~/.carbonblack/PSCredentials.json -Pattern "${Server}"
-                $CheckUri | Should -Not -BeNullOrEmpty  
+
+            AfterAll 
+
+            BeforeEach {
+                $CBC_CREDENTIALS_FULL_PATH = New-Item ./tmp.tests.json
             }
+
+            AfterEach {
+                Remove-Item ./tmp.tests.json
+            }
+
+            It "Should save the credential is the Credential file" {
+                $CheckUri = Select-String -Path $CBC_CREDENTIALS_FULL_PATH -Pattern "${Server}"
+                $CheckUri | Should -Not -BeNullOrEmpty
+            }
+            
+            It "Should throw an error" {
+                Connect-CBCServer -Server $Server -Token $Token -Org $Org -SaveCredentials
+                
+            }
+
         }
 
-        Context "When a connection is already made" {
+        Context "When a connection is active" {
+
             BeforeAll {
                 Disconnect-CBCServer *
-                $emptyArray = [System.Collections.ArrayList]@()
-                Set-Variable CBC_CURRENT_CONNECTIONS -Value $emptyArray -Scope Global
+            }
+
+            BeforeEach {
                 $Server = "https://defense-dev01.cbdtest.io/"
                 $Org = "ABC"
                 $Token = "CDE"
@@ -278,8 +301,15 @@ Describe "Connect-CBCServer" {
                         StatusCode = 200
                     }
                 } -ParameterFilter { $Uri -eq $Server }
-                Connect-CBCServer -Server $Server -Token $Token -Org $Org
 
+                Connect-CBCServer -Server $Server -Token $Token -Org $Org
+            }
+
+            AfterEach {
+                Disconnect-CBCServer *
+            }
+
+            It "Should have multiple current connections" {
                 $Server1 = "https://defense-dev02.cbdtest.io/"
                 $Org1 = "ABCD"
                 $Token1 = "CEF"
@@ -289,34 +319,16 @@ Describe "Connect-CBCServer" {
                         StatusCode = 200
                     }
                 } -ParameterFilter { $Uri -eq $Server1 }
-                
+
+                # Skipping the Warning for multiple connections
                 Mock -ModuleName PSCarbonBlackCloud -CommandName "Read-Host" -MockWith{
                     return "1"
                 }
                 Connect-CBCServer -Server $Server1 -Token $Token1 -Org $Org1
-            }
-
-            It "Should have multiple current connections" {
                 $CBC_CURRENT_CONNECTIONS.Count | Should -be 2
             }
-        }
 
-        Context "When you press Q to Quit"{
-            BeforeAll {
-                Disconnect-CBCServer *
-                $emptyArray = [System.Collections.ArrayList]@()
-                Set-Variable CBC_CURRENT_CONNECTIONS -Value $emptyArray -Scope Global
-                $Server = "https://defense-dev01.cbdtest.io/"
-                $Org = "ABC"
-                $Token = "CDE"
-
-                Mock -ModuleName PSCarbonBlackCloud Invoke-WebRequest -MockWith {
-                    return @{
-                        StatusCode = 200
-                    }
-                } -ParameterFilter { $Uri -eq $Server }
-                Connect-CBCServer -Server $Server -Token $Token -Org $Org
-
+            It "Should exit based on warning" {
                 $Server1 = "https://defense-dev02.cbdtest.io/"
                 $Org1 = "ABCD"
                 $Token1 = "CEF"
@@ -326,16 +338,16 @@ Describe "Connect-CBCServer" {
                         StatusCode = 200
                     }
                 } -ParameterFilter { $Uri -eq $Server1 }
-                
-                Mock -ModuleName PSCarbonBlackCloud -CommandName "Read-Host" -MockWith{
-                    return "Q"
-                }
-            }
 
-            It "Should quit" {
-                {Connect-CBCServer -Server $Server1 -Token $Token1 -Org $Org1} | Should -throw
+                # Skipping the Warning for multiple connections
+                Mock -ModuleName PSCarbonBlackCloud -CommandName "Read-Host" -MockWith{
+                    return "q"
+                }
+                { Connect-CBCServer -Server $Server1 -Token $Token1 -Org $Org1 } | Should -Throw "Exit"
+                $CBC_CURRENT_CONNECTIONS.Count | Should -be 1
             }
         }
+
     }
 
 }

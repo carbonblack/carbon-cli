@@ -26,10 +26,10 @@ function Connect-CBCServer {
         [Parameter(ParameterSetName = "default", Mandatory = $true, Position = 0)]
         [string] ${Server},
 
-        [Parameter(ParameterSetName = "default", Position = 1)]
+        [Parameter(ParameterSetName = "default", Mandatory = $true, Position = 1)]
         [string] ${Org},
 
-        [Parameter(ParameterSetName = "default", Position = 2)]
+        [Parameter(ParameterSetName = "default", Mandatory = $true, Position = 2)]
         [string] ${Token},
 
         [Parameter(ParameterSetName = "default")]
@@ -128,12 +128,6 @@ function Connect-CBCServer {
         
         switch ($PSCmdlet.ParameterSetName) {
             "default" {
-                if (-Not $ServerObject.Org) {
-                    $ServerObject.Org = Read-Host "Enter your Org Key"
-                }
-                if (-Not $ServerObject.Token) {
-                    $ServerObject.Token = Read-Host "Enter your Token"
-                }
                 if ($SaveCredentials.IsPresent) {
                     $CBC_DEFAULT_SERVERS.Add($ServerObject) | Out-Null
                     (ConvertTo-Json $CBC_DEFAULT_SERVERS) > $CBC_CREDENTIALS_FULL_PATH

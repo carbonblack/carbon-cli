@@ -1,6 +1,6 @@
 Describe "Disconnect-CBCServer" {
     Context "When Disconnect-CBCServer is called" {
-        Context "On passed Server Object" {
+        Context "On passed Server" {
             BeforeAll {
                 $ServerObject = [PSCustomObject]@{
                     Server = "https://defense-dev.io/"

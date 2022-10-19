@@ -43,5 +43,4 @@ function Disconnect-CBCServer {
             $i++
         }   
     }
-    
 }
