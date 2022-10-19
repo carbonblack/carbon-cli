@@ -149,7 +149,7 @@ function Connect-CBCServer {
                     }
                     Write-Host $defaultServersOutput
                     $option = Read-Host
-                    if ($option -gt $CBC_DEFAULT_SERVERS.Count) {
+                    if (($option -gt $CBC_DEFAULT_SERVERS.Count) -or ($option -eq 0)) {
                         Write-Error "There is no default server with that index" -ErrorAction "Stop"
                     }
                     else {
