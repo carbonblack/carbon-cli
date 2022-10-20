@@ -38,137 +38,65 @@ function Connect-CBCServer {
         [Parameter(ParameterSetName = "Menu")]
         [switch] ${Menu}
     )
-
-    Begin {
-
-        $ServerObject = [PSCustomObject]@{
-            Server = $Server
-            Org    = $Org
-            Token  = $Token
-        }
-
-        Write-Verbose "$($PSBoundParameters | Out-String)"
-
-        if (-Not (Test-Path variable:global:CBC_CURRENT_CONNECTIONS)) {
-            $emptyArray = [System.Collections.ArrayList]@()
-            Set-Variable CBC_CURRENT_CONNECTIONS -Value $emptyArray -Scope Global
-        }
-        else {
-            if ($CBC_CURRENT_CONNECTIONS.Count -ge 1) {
-                $connectedServersOutput = ""
-                $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 1 } {
-                    if (($_.Server -eq $Server) -and ($_.Org -eq $Org) -and ($_.Token -eq $Token)) {
-                        Write-Error "You are already connected to that server!" -ErrorAction "Stop"   
-                    }
-                    $connectedServersOutput += "[$i] " + $_.Server + "`n"
-                    $i++
-                }
-                Write-Warning "You are currently connected to: "
-                Write-Host $connectedServersOutput
-                Write-Warning -Message "If you wish to disconnect the currently connected servers, please use Disconnect-CBCServer cmdlet.`r`nIf you wish to continue connecting to new servers press any key or 'Q' to quit."
-                $option = Read-Host
-                if ($option -eq 'q' -Or $option -eq 'Q') {
-                    throw "Exit"
-                }
-            }
-        }
-
-        Set-Variable CBC_CREDENTIALS_FILENAME -Option ReadOnly -Value "PSCredentials.json"
-
-        # Different processing for `$CBC_CREDENTIALS_PATH` for the different OSs
-        if ($IsLinux -Or $IsMacOS) {
-            Set-Variable CBC_CREDENTIALS_PATH -Option ReadOnly -Value "${Home}/.carbonblack/"
-
-            # Trying to create the files/directories if `-SaveCredentials` is presented
-            if ($SaveCredentials.IsPresent) {
-                if (-Not (Test-Path -Path $CBC_CREDENTIALS_PATH)) {
-                    try {
-                        New-Item -Path $CBC_CREDENTIALS_PATH -Type Directory | Write-Debug
-                    }
-                    catch {
-                        Write-Error "Cannot create directory $CBC_CREDENTIALS_PATH" -ErrorAction "Stop"
-                    }
-                }
-                if (-Not (Test-Path -Path "$CBC_CREDENTIALS_PATH/$CBC_CREDENTIALS_FILENAME")) {
-                    Try {
-                        New-Item -Path $CBC_CREDENTIALS_PATH/$CBC_CREDENTIALS_FILENAME | Write-Debug
-                    }
-                    Catch {
-                        Write-Error -Message "Cannot create file $CBC_CREDENTIALS_FILENAME in $CBC_CREDENTIALS_PATH" -ErrorAction "Stop"
-                    }
-                }
-            }
-        }
-        else {
-            Set-Variable CBC_CREDENTIALS_PATH -Option ReadOnly -Value "TODO"
-        }
-
-        Set-Variable CBC_CREDENTIALS_FULL_PATH -Option ReadOnly -Value "$CBC_CREDENTIALS_PATH/$CBC_CREDENTIALS_FILENAME"
-        
-        # Pre-Fill the CBC_DEFAULT_SERVERS global variable if any
-        if (-Not (Test-Path variable:global:CBC_DEFAULT_SERVERS)) {
-            if (Test-Path -Path $CBC_CREDENTIALS_FULL_PATH) {
-                $existingServers = [System.Collections.ArrayList](Get-Content $CBC_CREDENTIALS_FULL_PATH | ConvertFrom-Json -NoEnumerate)
-                if ($null -eq $existingServers) {
-                    $emptyArray = [System.Collections.ArrayList]@()
-                    Set-Variable CBC_DEFAULT_SERVERS -Value $emptyArray -Scope Global
-                }
-                else {
-                    Set-Variable CBC_DEFAULT_SERVERS -Value $existingServers -Scope Global
-                }
-            }
-            else {
-                $emptyArray = [System.Collections.ArrayList]@()
-                Set-Variable CBC_DEFAULT_SERVERS -Value $emptyArray -Scope Global
-            }
-        }
-    }
    
-    Process {      
-        
+    Process {
+
+        $ServerObject = @{
+            Uri = $Server
+            Org = $Org
+            Token = $Token
+        }
+
+        # Show the currently connected servers Warning
+        If ($CBC_CONFIG.currentConnections.Count -ge 1) {
+            Write-Warning "You are currently connected to: "
+            $CBC_CONFIG.currentConnections | ForEach-Object -Begin { $i = 1 } {
+                Write-Host "[${i}]" $_.Uri "Organisation: " $_.Org
+                $i++
+            }
+            Write-Warning -Message "If you wish to disconnect the currently connected servers, please use Disconnect-CBCServer cmdlet.`r`nIf you wish to continue connecting to new servers press any key or 'Q' to quit."
+            $option = Read-Host
+            if ($option -eq 'q' -Or $option -eq 'Q') {
+                Write-Error "Exit" -ErrorAction "Stop"
+            }
+        }
+
         switch ($PSCmdlet.ParameterSetName) {
             "default" {
                 if ($SaveCredentials.IsPresent) {
-                    $CBC_DEFAULT_SERVERS.Add($ServerObject) | Out-Null
-                    (ConvertTo-Json $CBC_DEFAULT_SERVERS) > $CBC_CREDENTIALS_FULL_PATH
+                    $CBC_CONFIG.defaultServers.Add($ServerObject)
+                    Save-CBCCredentials $ServerObject
                 }
             }
-            'Menu' {
-                if ($CBC_DEFAULT_SERVERS.Count -ge 1) {
-                    Write-Host "Select a server from the default servers list (by typing its number and pressing Enter): "
-                    $defaultServersOutput = ""
-                    $CBC_DEFAULT_SERVERS | ForEach-Object -Begin { $i = 1 } { 
-                        $defaultServersOutput += "[$i] " + $_.Server + "`n"
-                        $i++
-                    }
-                    Write-Host $defaultServersOutput
-                    $option = Read-Host
-                    if (($option -gt $CBC_DEFAULT_SERVERS.Count) -or ($option -eq 0)) {
-                        Write-Error "There is no default server with that index" -ErrorAction "Stop"
-                    }
-                    else {
-                        $ServerObject = $CBC_DEFAULT_SERVERS[$option - 1]
-                    }
-                    
-                    $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 1 } {
-                        if (($_.Server -eq $ServerObject.Server) -and ($_.Org -eq $ServerObject.Org) -and ($_.Token -eq $ServerObject.Token)) {
-                            Write-Error "You are already connected to that server!" -ErrorAction "Stop"
-                        }
-                    }
+            "Menu" {
+                if ($CBC_CONFIG.defaultServers.Count -eq 0) {
+                    Write-Error "There are no default servers avaliable!" -ErrorAction "Stop"
                 }
-                else {
-                    Write-Error "There are no default servers available!" -ErrorAction "Stop"
+                $CBC_CONFIG.defaultServers | ForEach-Object -Begin { $i = 1 } {
+                    Write-Host "[${i}]" $_.Uri "Organisation: " $_.Org
+                    $i++
                 }
+                $optionInput = { (Read-Host) -as [int] }
+                $option = & $optionInput
+                if (($option -gt $CBC_CONFIG.defaultServers.Count) -or ($option -lt 0)) {
+                    Write-Error "There is no default server with that index" -ErrorAction "Stop"
+                }
+                $ServerObject = $CBC_CONFIG.defaultServers[$option - 1]
+            }
+        }
+
+        # Check if you are currently connected to this server
+        $CBC_CONFIG.currentConnections | ForEach-Object {
+            if (($_.Uri -eq $ServerObject.Uri) -and ($_.Org -eq $ServerObject.Org) -and ($_.Token -eq $ServerObject.Token)) {
+                Write-Error "You are already connected to that server!" -ErrorAction "Stop"   
             }
         }
 
         if (-Not (Test-CBCConnection $ServerObject)) {
-            Write-Error ("Cannot connect to: {0}" -f $ServerObject.Server) -ErrorAction "Stop"
+            Write-Error "Cannot reach the server!" -ErrorAction "Stop"   
         }
-    
-        $CBC_CURRENT_CONNECTIONS.Add($ServerObject) | Out-Null
-    
-        return $ServerObject
 
+        $CBC_CONFIG.currentConnections.Add($ServerObject) | Out-Null
+        return $ServerObject
     }
 }

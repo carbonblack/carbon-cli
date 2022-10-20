@@ -17,30 +17,34 @@ function Disconnect-CBCServer {
     )
 
     if ($Server -eq '*') {
-        if (Test-Path variable:global:CBC_CURRENT_CONNECTIONS) {
-            Remove-Variable -Name CBC_CURRENT_CONNECTIONS -Scope Global
+        $CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
+    } elseif ($Server -is [array]) {
+        if ($Server.Count -eq 0) {
+            Write-Error "Empty array" -ErrorAction "Stop"   
         }
-    }
-    elseif ($Server -is [array]) {
-        $CBC_CURRENT_CONNECTIONS = $CBC_CURRENT_CONNECTIONS | Where-Object { $Server -notcontains $_.Server }
-        Set-Variable CBC_CURRENT_CONNECTIONS -Value $CBC_CURRENT_CONNECTIONS -Scope Global
-    }
-    elseif ($Server -is [System.Management.Automation.PSCustomObject]) {
-        $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 0 } {
-            if ($_.Server -eq $Server.server) {
-                $CBC_CURRENT_CONNECTIONS.RemoveAt($i)
-                break
+
+        # array of Hashtables
+        if ($Server[0] -is [hashtable]) {
+            $Server | ForEach-Object {
+                $CBC_CONFIG.currentConnections.Remove($_)
             }
-            $i++
         }
-    }
-    else {
-        $CBC_CURRENT_CONNECTIONS | ForEach-Object -Begin { $i = 0 } {
-            if ($_.Server -eq $Server) {
-                $CBC_CURRENT_CONNECTIONS.RemoveAt($i)
-                break
+        
+        # array of Strings
+        if ($Server[0] -is [string]) {
+            foreach ($s in $Server) {
+                $tmpCurrentConnections = $CBC_CONFIG.currentConnections | Where-Object { $_.Uri -eq $s }
+                foreach ($c in $tmpCurrentConnections) {
+                    $CBC_CONFIG.currentConnections.Remove($c)
+                }
             }
-            $i++
-        }   
+        }
+    } elseif ($Server -is [hashtable]) {
+        $CBC_CONFIG.currentConnections.Remove($Server)
+    } elseif ($Server -is [string]) {
+        $tmpCurrentConnections = $CBC_CONFIG.currentConnections | Where-Object { $_.Uri -eq $Server }
+        foreach ($c in $tmpCurrentConnections) {
+            $CBC_CONFIG.currentConnections.Remove($c)
+        }
     }
 }
