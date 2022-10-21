@@ -1,5 +1,4 @@
 function Test-CBCConnection {
-    [CmdletBinding()]
     Param(
         [Parameter(Mandatory = $true)]
         $ServerObject
