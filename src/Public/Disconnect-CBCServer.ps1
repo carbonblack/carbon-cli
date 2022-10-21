@@ -1,6 +1,6 @@
 <#
 .DESCRIPTION
-This cmdlet removes all or a specific connection from the CBC_CURRENT_CONNECTIONS. 
+This cmdlet removes all or a specific connection from the CBC_CURRENT_CONNECTIONS.
 .PARAMETER Server
 Specifies the server you want to disconnect. It accepts '*' for all servers, server name,
 array of server names or Server object.
@@ -20,7 +20,7 @@ function Disconnect-CBCServer {
         $CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
     } elseif ($Server -is [array]) {
         if ($Server.Count -eq 0) {
-            Write-Error "Empty array" -ErrorAction "Stop"   
+            Write-Error "Empty array" -ErrorAction "Stop"
         }
 
         # array of Hashtables
@@ -29,7 +29,7 @@ function Disconnect-CBCServer {
                 $CBC_CONFIG.currentConnections.Remove($_)
             }
         }
-        
+
         # array of Strings
         if ($Server[0] -is [string]) {
             foreach ($s in $Server) {

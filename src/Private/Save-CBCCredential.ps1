@@ -1,9 +1,9 @@
-function Save-CBCCredentials {
+function Save-CBCCredential {
     Param(
         [Parameter(Mandatory = $true)]
         $ServerObject
     )
-    
+
     Process {
         $credentialsDoc = New-Object System.Xml.XmlDocument
         $credentialsDoc.Load($CBC_CONFIG.credentialsFullPath)

@@ -26,7 +26,7 @@ function Invoke-CBCRequest {
         $Headers["X-AUTH-TOKEN"] = $token
         $Headers["Content-Type"] = "application/json"
         $Headers["User-Agent"] = "PSCarbonBlackCloud"
-        
+
 
         [regex]$pattern = "{}"
         $Uri = $pattern.replace($Uri, $url, 1)

@@ -3,13 +3,13 @@
 This cmdlet establishes a connection to the CBC server specified by the -Server parameter.
 
 .PARAMETER Server
-Specifies the IP or HTTP addresses of the CBC server you want to connect to. 
+Specifies the IP or HTTP addresses of the CBC server you want to connect to.
 .PARAMETER Token
 Specifies the Token that is going to be used in the authentication process.
 .PARAMETER Org
 Specifies the Organization that is going to be used in the authentication process.
 .PARAMETER SaveCredentials
-Indicates that you want to save the specified credentials in the local credential store. 
+Indicates that you want to save the specified credentials in the local credential store.
 .PARAMETER Menu
 Connects to a server from the list of recently connected servers.
 .OUTPUTS
@@ -36,9 +36,9 @@ function Connect-CBCServer {
         [switch] ${SaveCredentials},
 
         [Parameter(ParameterSetName = "Menu")]
-        [switch] ${Menu}
+        [switch] $Menu
     )
-   
+
     Process {
 
         $ServerObject = @{
@@ -50,9 +50,10 @@ function Connect-CBCServer {
         # Show the currently connected servers Warning
         If ($CBC_CONFIG.currentConnections.Count -ge 1) {
             Write-Warning "You are currently connected to: "
-            $CBC_CONFIG.currentConnections | ForEach-Object -Begin { $i = 1 } {
-                Write-Host "[${i}]" $_.Uri "Organisation: " $_.Org
-                $i++
+            $CBC_CONFIG.currentConnections | ForEach-Object {
+                $index = $CBC_CONFIG.defaultServers.IndexOf($_) + 1
+                    $OutputMessage = "[${index}]" + $_.Uri + "Organisation: " + $_.Org
+                    Write-Output $OutputMessage
             }
             Write-Warning -Message "If you wish to disconnect the currently connected servers, please use Disconnect-CBCServer cmdlet.`r`nIf you wish to continue connecting to new servers press any key or 'Q' to quit."
             $option = Read-Host
@@ -65,16 +66,17 @@ function Connect-CBCServer {
             "default" {
                 if ($SaveCredentials.IsPresent) {
                     $CBC_CONFIG.defaultServers.Add($ServerObject)
-                    Save-CBCCredentials $ServerObject
+                    Save-CBCCredential $ServerObject
                 }
             }
-            "Menu" {
+            $Menu {
                 if ($CBC_CONFIG.defaultServers.Count -eq 0) {
                     Write-Error "There are no default servers avaliable!" -ErrorAction "Stop"
                 }
-                $CBC_CONFIG.defaultServers | ForEach-Object -Begin { $i = 1 } {
-                    Write-Host "[${i}]" $_.Uri "Organisation: " $_.Org
-                    $i++
+                $CBC_CONFIG.defaultServers | ForEach-Object {
+                    $index = $CBC_CONFIG.defaultServers.IndexOf($_) + 1
+                    $OutputMessage = "[${index}]" + $_.Uri + "Organisation: " + $_.Org
+                    Write-Output $OutputMessage
                 }
                 $optionInput = { (Read-Host) -as [int] }
                 $option = & $optionInput
@@ -88,12 +90,12 @@ function Connect-CBCServer {
         # Check if you are currently connected to this server
         $CBC_CONFIG.currentConnections | ForEach-Object {
             if (($_.Uri -eq $ServerObject.Uri) -and ($_.Org -eq $ServerObject.Org) -and ($_.Token -eq $ServerObject.Token)) {
-                Write-Error "You are already connected to that server!" -ErrorAction "Stop"   
+                Write-Error "You are already connected to that server!" -ErrorAction "Stop"
             }
         }
 
         if (-Not (Test-CBCConnection $ServerObject)) {
-            Write-Error "Cannot reach the server!" -ErrorAction "Stop"   
+            Write-Error "Cannot reach the server!" -ErrorAction "Stop"
         }
 
         $CBC_CONFIG.currentConnections.Add($ServerObject) | Out-Null

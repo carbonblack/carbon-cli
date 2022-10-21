@@ -6,13 +6,13 @@ Describe "Connect-CBCServer" {
             Org = "test"
             Token = "test"
         }
-        
+
         $TestServerObject2 = @{
             Uri = "https://test02.adasdagf/"
             Org = "test"
             Token = "test"
         }
-        
+
         $TestServerObject3 = @{
             Uri = "https://test02.adasdagf/"
             Org = "tes331t"
