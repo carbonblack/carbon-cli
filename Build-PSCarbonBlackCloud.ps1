@@ -26,4 +26,4 @@ foreach ($Module in $RequiredModules)
     }
 }
 
-Invoke-ScriptAnalyzer -Path $PSScriptRoot\src\ -Recurse -ExcludeRule PSUseOutputTypeCorrectly
+Invoke-ScriptAnalyzer -Path $PSScriptRoot\src\ -Recurse -ExcludeRule PSUseOutputTypeCorrectly, PSReviewUnusedParameter
