@@ -55,7 +55,9 @@ Describe "Connect-CBCServer" {
 
                 $result = Connect-CBCServer -Menu
 
-                $TestServerObject2 | Should -Be $result
+                $TestServerObject2.Uri | Should -Be $result.Uri
+                $TestServerObject2.Org | Should -Be $result.Org
+                $TestServerObject2.Token | Should -Be $result.Token
                 $CBC_CONFIG.currentConnections.Count | Should -Be 1
             }
 

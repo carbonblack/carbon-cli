@@ -52,7 +52,7 @@ function Connect-CBCServer {
             Write-Warning "You are currently connected to: "
             $CBC_CONFIG.currentConnections | ForEach-Object {
                 $index = $CBC_CONFIG.defaultServers.IndexOf($_) + 1
-                    $OutputMessage = "[${index}]" + $_.Uri + "Organisation: " + $_.Org
+                    $OutputMessage = "[${index}] " + $_.Uri + " Organisation: " + $_.Org
                     Write-Output $OutputMessage
             }
             Write-Warning -Message "If you wish to disconnect the currently connected servers, please use Disconnect-CBCServer cmdlet.`r`nIf you wish to continue connecting to new servers press any key or 'Q' to quit."
@@ -69,13 +69,13 @@ function Connect-CBCServer {
                     Save-CBCCredential $ServerObject
                 }
             }
-            $Menu {
+            "Menu" {
                 if ($CBC_CONFIG.defaultServers.Count -eq 0) {
                     Write-Error "There are no default servers avaliable!" -ErrorAction "Stop"
                 }
                 $CBC_CONFIG.defaultServers | ForEach-Object {
                     $index = $CBC_CONFIG.defaultServers.IndexOf($_) + 1
-                    $OutputMessage = "[${index}]" + $_.Uri + "Organisation: " + $_.Org
+                    $OutputMessage = "[${index}] " + $_.Uri + "Organisation: " + $_.Org
                     Write-Output $OutputMessage
                 }
                 $optionInput = { (Read-Host) -as [int] }

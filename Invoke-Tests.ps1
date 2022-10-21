@@ -1,5 +1,3 @@
-. ./Build-PSCarbonBlackCloud.ps1
-
 if ( -not (Get-Module -ListAvailable -Name "PSCarbonBlackCloud")) {
     Import-Module ./src/PSCarbonBlackCloud.psm1
 } else {
