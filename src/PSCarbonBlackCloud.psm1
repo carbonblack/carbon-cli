@@ -24,6 +24,9 @@ ForEach ($file in @($public + $private)) {
 
 Export-ModuleMember -Function $public.Basename
 
+# Load Endpoints
+$endpoints = Import-PowerShellDataFile -Path $PSScriptRoot\PSCarbonBlackCloudEndpoints.psd1
+
 # Setting the Configuration Variables
 $credentialsPath = "${Home}/.carbonblack/"
 $credentialsFile = "PSCredentials.xml"
@@ -32,6 +35,7 @@ $cbcConfigObject = [ordered] @{
     currentConnections = [System.Collections.ArrayList]@()
     defaultServers = [System.Collections.ArrayList]@()
     credentialsFullPath = ($credentialsPath + $credentialsFile)
+    endpoints = $endpoints
 }
 
 # Try to initialize the credentials files

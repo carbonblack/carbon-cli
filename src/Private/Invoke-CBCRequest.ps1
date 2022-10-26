@@ -1,37 +1,73 @@
 function Invoke-CBCRequest {
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory)]
-        [string]$Uri,
+        [Parameter(Mandatory = $true, Position = 0)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ApiUri, 
 
-        [System.Collections.IDictionary]$Headers,
+        [Parameter(Mandatory = $true, Position = 1)]
+        [Microsoft.PowerShell.Commands.WebRequestMethod] $Method,
 
-        [Parameter(Mandatory)]
-        [string]$Method
+        [ValidateNotNull()]
+        [X509Certificate] $Certificate,
 
+        [switch] $SkipCertificateCheck,
+
+        [System.Collections.IDictionary] ${Headers},
+
+        [Microsoft.PowerShell.Commands.WebSslProtocol] $SslProtocol,
+
+        [string] $UserAgent,
+
+        [switch] $DisableKeepAlive,
+
+        [ValidateRange(0, 2147483647)]
+        [int32] $TimeoutSec,
+
+        [ValidateRange(0, 10)]
+        [int] $MaximumRedirection,
+
+        [switch] $NoProxy,
+
+        [uri] $Proxy,
+
+        [pscredential]
+        [System.Management.Automation.CredentialAttribute()] $ProxyCredential,
+
+        [switch] $ProxyUseDefaultCredentials,
+
+        [System.Object] $Body,
+
+        [string] $ContentType,
+
+        [ValidateSet('chunked', 'compress', 'deflate', 'gzip', 'identity')]
+        [string] $TransferEncoding,
+
+        [switch] $SkipHeaderValidation
     )
-    if ($CBC_USE_JWT -eq $true) {
-        # Process JWT
-    }
-    elseif ($CBC_USE_AT -eq $true) {
 
-        $credentials = Get-Credentials $CBC_AUTH_AT_SECTION
-        $url = $credentials["url"]
-        $org = $credentials["org"]
-        $token = $credentials["token"]
+    if ($CBC_CONFIG.currentConnections.Count -ge 1) {
+        $CBC_CONFIG.currentConnections | ForEach-Object {
+            $url = $_.Uri
+            $org = $_.Org
+            $token = $_.Token
 
-        if ($null -eq $Headers) {
-            $Headers = @{}
+            $PSBoundParameters["Headers"]["X-AUTH-TOKEN"] = $token
+            $PSBoundParameters["Headers"]["Content-Type"] = "application/json"
+            $PSBoundParameters["Headers"]["User-Agent"] = "PSCarbonBlackCloud"
+
+            $PSBoundParameters["Body"] = $PSBoundParameters["Body"] | ConvertTo-Json
+            $PSBoundParameters["Uri"] = 
+            $fullUrl = $url + [string]::Format($CBC_CONFIG.endpoints[$Endpoint][$EndpointMethod], $_.Org, $Id)
+            try {
+                Invoke-WebRequest -Uri $fullUrl -Headers $Headers -Method $Method -Body {$Body | ConvertTo-Json}
+            }
+            catch {
+                Write-Error "Cannot reach the server!" -ErrorAction "Stop"
+            }
         }
-        $Headers["X-AUTH-TOKEN"] = $token
-        $Headers["Content-Type"] = "application/json"
-        $Headers["User-Agent"] = "PSCarbonBlackCloud"
-
-
-        [regex]$pattern = "{}"
-        $Uri = $pattern.replace($Uri, $url, 1)
-        $Uri = $pattern.replace($Uri, $org, 1)
     }
-
-    Invoke-WebRequest -Uri $Uri -Headers $Headers -Method $Method
+    else {
+        Write-Error "There are no current connections!" -ErrorAction "Stop"
+    }       
 }
