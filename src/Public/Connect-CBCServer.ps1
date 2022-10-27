@@ -19,7 +19,6 @@ Connects to a server from the list of recently connected servers.
 
 Online Version: http://devnetworketc/
 #>
-
 function Connect-CBCServer {
     [CmdletBinding(DefaultParameterSetName = "default", HelpUri = "http://devnetworketc/")]
     Param (

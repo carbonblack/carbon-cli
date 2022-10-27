@@ -1,103 +1,57 @@
-InModuleScope PSCarbonBlackCloud {
-    Describe "Invoke-CBCRequest" {
-        BeforeAll {
-            $TestServerObject1 = @{
-                Uri   = "https://test.adasdagf/"
-                Org   = "test"
-                Token = "test"
-            }
+Try {
+    $private = @(Get-ChildItem -Path "$PSScriptRoot\Private" @dotSourceParams)
+}
+Catch {
+    Throw $_
+}
 
-            $TestServerObject2 = @{
-                Uri   = "https://test02.adasdagf/"
-                Org   = "test"
-                Token = "test"
-            }
+ForEach ($file in @($public + $private)) {
+    . $file.FullName
+}
 
-            $TestServerObject3 = @{
-                Uri   = "https://test03.adasdagf/"
-                Org   = "tes331t"
-                Token = "test"
-            }
+Describe "Invoke-CBCRequest" {
+
+    BeforeAll {
+
+        $TestServerObject1 = @{
+            Uri = "https://test.adasdagf/"
+            Org = "test"
+            Token = "test"
         }
 
-        BeforeEach {
-            $CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
+        $TestServerObject2 = @{
+            Uri = "https://test02.adasdagf/"
+            Org = "test"
+            Token = "test"
         }
-        Context "On empty current connections" {
-            It "Should return error" {
-                $Endpoint = "DevicesAPI"
-                $EndpointMethod = "SpecDevInfo"
-                $Method = "Get"
-                $ID = 1
 
-                {Invoke-CBCRequest -Endpoint $Endpoint -EndpointMethod $EndpointMethod -Method $Method -ID $ID} | Should -Throw "There are no current connections!"
-                
-            } 
+        $TestServerObject3 = @{
+            Uri = "https://test03.adasdagf/"
+            Org = "tes331t"
+            Token = "test"
         }
-        Context "On one current connection" {
-            It "Makes a request with one current connection" {
-                $Endpoint = "DevicesAPI"
-                $EndpointMethod = "SpecDevInfo"
-                $Method = "Get"
-                $ID = 1
+    }
 
-                $CBC_CONFIG.currentConnections.Add($TestServerObject1)
-                $fullUrl = $TestServerObject1.Uri + [string]::Format($CBC_CONFIG.endpoints[$Endpoint][$EndpointMethod], $TestServerObject1.Org, $ID)
-                Mock -ModuleName PSCarbonBlackCloud Invoke-WebRequest -MockWith {
-                    return @{
-                        StatusCode = 200
-                    }
-                } -ParameterFilter { $Uri -eq $fullUrl }
-                $response = Invoke-CBCRequest -Endpoint $Endpoint -EndpointMethod $EndpointMethod -Method $Method -ID $ID
-                $response.StatusCode | Should -be 200
+    # Resetting the State of tests
+    BeforeEach {
+        $CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
+    }
+
+    It "Should return status 200" {
+
+        Mock -ModuleName PSCarbonBlackCloud Invoke-WebRequest -MockWith {
+            return @{
+                StatusCode = 200
             }
-
-            It "Should return error" {
-                $Endpoint = "DevicesAPI"
-                $EndpointMethod = "SpecDevInfo"
-                $Method = "Get"
-                $ID = 1
-
-                $CBC_CONFIG.currentConnections.Add($TestServerObject1)
-                $fullUrl = $TestServerObject1.Uri + [string]::Format($CBC_CONFIG.endpoints[$Endpoint][$EndpointMethod], $TestServerObject1.Org, $ID)
-                Mock -ModuleName PSCarbonBlackCloud Invoke-WebRequest -MockWith {
-                    Throw "Exception"
-                } -ParameterFilter { $Uri -eq $fullUrl }
-
-                {Invoke-CBCRequest -Endpoint $Endpoint -EndpointMethod $EndpointMethod -Method $Method -ID $ID } | Should -Throw "Cannot reach the server!"
-            }
+        } -ParameterFilter { 
+            $Uri -match "https://test.adasdagf/appservices/v6/orgs/test/devices/123" 
+            $Method -match "Get" 
+            $Params -match @(123)
         }
 
-        Context "On two current connection" {
-            It "Makes a request with one current connection" {
-                $Endpoint1 = "DevicesAPI"
-                $EndpointMethod1 = "SpecDevInfo"
-                $Method1 = "Get"
-                $ID1 = 1
+        $CBC_CONFIG.currentConnections.Add($TestServerObject1)
 
-                $CBC_CONFIG.currentConnections.Add($TestServerObject1)
-                $CBC_CONFIG.currentConnections.Add($TestServerObject2)
-                
-                $fullUrl1 = $TestServerObject1.Uri + [string]::Format($CBC_CONFIG.endpoints[$Endpoint1][$EndpointMethod1], $TestServerObject1.Org, $ID1)
-                $fullUrl2 = $TestServerObject2.Uri + [string]::Format($CBC_CONFIG.endpoints[$Endpoint1][$EndpointMethod1], $TestServerObject2.Org, $ID1)
-                
-                Mock -ModuleName PSCarbonBlackCloud Invoke-WebRequest -MockWith {
-                    return @{
-                        StatusCode = 200
-                    }
-                } -ParameterFilter { $Uri -eq $fullUrl1 }
+        Invoke-CBCRequest -Uri $CBC_CONFIG.endpoints["Devices"]["SpecDevInfo"] -Method "Get" -Params @(123)
+    }
 
-                Mock -ModuleName PSCarbonBlackCloud Invoke-WebRequest -MockWith {
-                    return @{
-                        StatusCode = 200
-                    }
-                } -ParameterFilter { $Uri -eq $fullUrl2 }
-
-                $response = Invoke-CBCRequest -Endpoint $Endpoint1 -EndpointMethod $EndpointMethod1 -Method $Method1 -ID $ID1
-
-                $response.StatusCode | Should -be @(200, 200)
-               
-            }
-        }
-    } 
 }

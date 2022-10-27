@@ -1,12 +1,20 @@
 function Invoke-CBCRequest {
+    <#
+    .ForwardHelpTargetName
+        Microsoft.PowerShell.Utility\Invoke-WebRequest
+    .ForwardHelpCategory
+        Cmdlet
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory = $true, Position = 0)]
         [ValidateNotNullOrEmpty()]
-        [string] $ApiUri, 
+        [string] $Uri, 
 
         [Parameter(Mandatory = $true, Position = 1)]
         [Microsoft.PowerShell.Commands.WebRequestMethod] $Method,
+
+        [array] $Params,
 
         [ValidateNotNull()]
         [X509Certificate] $Certificate,
@@ -21,7 +29,7 @@ function Invoke-CBCRequest {
 
         [switch] $DisableKeepAlive,
 
-        [ValidateRange(0, 2147483647)]
+        [ValidateRange(0, 20)]
         [int32] $TimeoutSec,
 
         [ValidateRange(0, 10)]
@@ -45,29 +53,25 @@ function Invoke-CBCRequest {
 
         [switch] $SkipHeaderValidation
     )
+    
+    Process {
 
-    if ($CBC_CONFIG.currentConnections.Count -ge 1) {
+        $requestObjects = [System.Collections.ArrayList]@()
+    
         $CBC_CONFIG.currentConnections | ForEach-Object {
-            $url = $_.Uri
-            $org = $_.Org
-            $token = $_.Token
-
-            $PSBoundParameters["Headers"]["X-AUTH-TOKEN"] = $token
+            $PSBoundParameters["Headers"] = @{}
+            $PSBoundParameters["Headers"]["X-AUTH-TOKEN"] = $_.Token
             $PSBoundParameters["Headers"]["Content-Type"] = "application/json"
             $PSBoundParameters["Headers"]["User-Agent"] = "PSCarbonBlackCloud"
-
             $PSBoundParameters["Body"] = $PSBoundParameters["Body"] | ConvertTo-Json
-            $PSBoundParameters["Uri"] = 
-            $fullUrl = $url + [string]::Format($CBC_CONFIG.endpoints[$Endpoint][$EndpointMethod], $_.Org, $Id)
-            try {
-                Invoke-WebRequest -Uri $fullUrl -Headers $Headers -Method $Method -Body {$Body | ConvertTo-Json}
-            }
-            catch {
-                Write-Error "Cannot reach the server!" -ErrorAction "Stop"
-            }
+            $PSBoundParameters["Uri"] = ($_.Uri + $Uri) -f $_.Org, ($Params -Join ',')
+            $PSBoundParameters.Remove("Params")
+            $response = Invoke-WebRequest @PSBoundParameters
+            $requestObjects.Add($response) | Out-Null
         }
+
+        $requestObjects
+
     }
-    else {
-        Write-Error "There are no current connections!" -ErrorAction "Stop"
-    }       
+    
 }
