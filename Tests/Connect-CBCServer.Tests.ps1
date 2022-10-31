@@ -148,14 +148,16 @@ Describe "Connect-CBCServer" {
 
             # Mock the `credentialsFullPath`
             BeforeAll {
-                New-Item -Path "./tmp.xml"
-                Add-Content -Path "./tmp.xml" -Value "<Servers></Servers>"
+                $currentFolder = Get-Location
+                $path = "${currentFolder}/tmp.xml"
+                New-Item -Path $path -ItemType "file"
+                Add-Content -Path $path -Value "<Servers></Servers>"
                 $ENV:orgCredentialsFullPath = $CBC_CONFIG.credentialsFullPath
-                $CBC_CONFIG.credentialsFullPath = "./tmp.xml"
+                $CBC_CONFIG.credentialsFullPath = $path
             }
 
             AfterAll {
-                Remove-Item -Path "./tmp.xml"
+                Remove-Item -Path $path
                 $CBC_CONFIG.credentialsFullPath = $ENV:orgCredentialsFullPath
                 $ENV:orgCredentialsFullPath = $null
             }
