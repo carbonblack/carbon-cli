@@ -1,37 +1,35 @@
 function Invoke-CBCRequest {
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory)]
-        [string]$Uri,
+        [Parameter(Mandatory = $true, Position = 0)]
+        [ValidateNotNullOrEmpty()]
+        [string] $Uri, 
 
-        [System.Collections.IDictionary]$Headers,
+        [Parameter(Mandatory = $true, Position = 1)]
+        [string] $Method,
 
-        [Parameter(Mandatory)]
-        [string]$Method
+        [array] $Params,
 
+        [System.Object] $Body
     )
-    if ($CBC_USE_JWT -eq $true) {
-        # Process JWT
-    }
-    elseif ($CBC_USE_AT -eq $true) {
+    
+    Process {
 
-        $credentials = Get-Credentials $CBC_AUTH_AT_SECTION
-        $url = $credentials["url"]
-        $org = $credentials["org"]
-        $token = $credentials["token"]
+        $requestObjects = [System.Collections.ArrayList]@()
+    
+        $CBC_CONFIG.currentConnections | ForEach-Object {
+            $headers = [System.Collections.IDictionary]@{}
+            $headers["X-AUTH-TOKEN"] = $_.Token
+            $headers["Content-Type"] = "application/json"
+            $headers["User-Agent"] = "PSCarbonBlackCloud"
+           
+            $Params = ,$_.Org + $Params
+            $formatted_uri = $Uri -f $Params
 
-        if ($null -eq $Headers) {
-            $Headers = @{}
+            $FullUri = $_.Uri + $formatted_uri
+            $response = Invoke-WebRequest -Uri $FullUri -Headers $headers -Method $Method
+            $requestObjects.Add(@{$_.Org = $response}) | Out-Null
         }
-        $Headers["X-AUTH-TOKEN"] = $token
-        $Headers["Content-Type"] = "application/json"
-        $Headers["User-Agent"] = "PSCarbonBlackCloud"
-
-
-        [regex]$pattern = "{}"
-        $Uri = $pattern.replace($Uri, $url, 1)
-        $Uri = $pattern.replace($Uri, $org, 1)
-    }
-
-    Invoke-WebRequest -Uri $Uri -Headers $Headers -Method $Method
+        $requestObjects
+    }  
 }

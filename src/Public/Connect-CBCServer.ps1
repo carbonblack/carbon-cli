@@ -19,7 +19,6 @@ Connects to a server from the list of recently connected servers.
 
 Online Version: http://devnetworketc/
 #>
-
 function Connect-CBCServer {
     [CmdletBinding(DefaultParameterSetName = "default", HelpUri = "http://devnetworketc/")]
     Param (
@@ -40,7 +39,6 @@ function Connect-CBCServer {
     )
 
     Process {
-
         $ServerObject = @{
             Uri = $Server
             Org = $Org
@@ -51,7 +49,7 @@ function Connect-CBCServer {
         If ($CBC_CONFIG.currentConnections.Count -ge 1) {
             Write-Warning "You are currently connected to: "
             $CBC_CONFIG.currentConnections | ForEach-Object {
-                $index = $CBC_CONFIG.defaultServers.IndexOf($_) + 1
+                $index = $CBC_CONFIG.currentConnections.IndexOf($_) + 1
                     $OutputMessage = "[${index}] " + $_.Uri + " Organisation: " + $_.Org
                     Write-Output $OutputMessage
             }

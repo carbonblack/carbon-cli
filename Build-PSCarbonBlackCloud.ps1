@@ -17,12 +17,11 @@ if ( -not (Get-PackageProvider -Name "NuGet") ) {
 
 $RequiredModules = Import-PowerShellDataFile -Path "./build.requirements.psd1"
 
-Write-Output "Installing..."
-foreach ($Module in $RequiredModules)
-{
-    if ( -not (Get-Module -ListAvailable -Name $Module.ModuleName))
-    {
-        Install-Module -Name $Module.ModuleName -Scope $Scope -RequiredVersion $Module.RequiredVersion -Force -SkipPublisherCheck 
+Write-Output "Installing..." 
+foreach ($Module in $RequiredModules["requirements"]) {
+    if ( -not (Get-Module -ListAvailable -Name $Module.ModuleName)) {
+        Write-Host $Module.ModuleName
+        Install-Module -Name $Module.ModuleName -Scope AllUsers -RequiredVersion $Module.RequiredVersion -Force -SkipPublisherCheck 
     }
 }
 
