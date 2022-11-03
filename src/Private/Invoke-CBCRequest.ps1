@@ -23,12 +23,20 @@ function Invoke-CBCRequest {
             $headers["Content-Type"] = "application/json"
             $headers["User-Agent"] = "PSCarbonBlackCloud"
            
-            $Params = ,$_.Org + $Params
+            $Params = , $_.Org + $Params
             $formatted_uri = $Uri -f $Params
 
             $FullUri = $_.Uri + $formatted_uri
-            $response = Invoke-WebRequest -Uri $FullUri -Headers $headers -Method $Method
-            $requestObjects.Add(@{$_.Org = $response}) | Out-Null
+            
+            try {
+                $response = Invoke-WebRequest -Uri $FullUri -Headers $headers -Method $Method -Body $Body
+            }
+            catch {
+                Write-Error "ERROR ON REQUEST TO: ${FullUri}"
+                Write-Error $_.Exception.Message -ErrorAction Stop
+            }
+            
+            $requestObjects.Add(@{$_.Org = $response }) | Out-Null
         }
         $requestObjects
     }  
