@@ -27,13 +27,13 @@ function Invoke-CBCRequest {
             $formatted_uri = $Uri -f $Params
 
             $FullUri = $_.Uri + $formatted_uri
-            
+            Write-Host $FullUri
             try {
                 $response = Invoke-WebRequest -Uri $FullUri -Headers $headers -Method $Method -Body $Body
             }
             catch {
-                Write-Error "ERROR ON REQUEST TO: ${FullUri}"
-                Write-Error $_.Exception.Message -ErrorAction Stop
+                # Write-Error "ERROR ON REQUEST TO: ${FullUri}"
+                # Write-Error $_.Exception.Message -ErrorAction Stop
             }
             
             $requestObjects.Add(@{$_.Org = $response }) | Out-Null

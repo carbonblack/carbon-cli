@@ -1,3 +1,18 @@
+<#
+.DESCRIPTION
+This cmdlet returns all devices or a specific device with every current connection.
+
+.PARAMETER All
+Returns all devices.
+.PARAMETER ID
+Returns a device with specified ID.
+.OUTPUTS
+
+
+.LINK
+
+Online Version: http://devnetworketc/
+#>
 function Get-CBCDevice {
 
     [CmdletBinding()]
@@ -17,7 +32,7 @@ function Get-CBCDevice {
                     $response = Invoke-CBCRequest -Uri "appservices/v6/orgs/{0}/devices/_search" -Method POST -Body ($Body | ConvertTo-Json)
                 }
                 "ID" {
-                    $response = Invoke-CBCRequest -Uri "appservices/v6/orgs/{0}/devices/{1}" -Method POST -Params @($ID) -Body ($Body | ConvertTo-Json)
+                    $response = Invoke-CBCRequest -Uri "appservices/v6/orgs/{0}/devices/{1}" -Method GET -Params @($ID) -Body ($Body | ConvertTo-Json)
                 }
             }
 
