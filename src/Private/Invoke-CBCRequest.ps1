@@ -3,7 +3,7 @@ function Invoke-CBCRequest {
     Param(
         [Parameter(Mandatory = $true, Position = 0)]
         [ValidateNotNullOrEmpty()]
-        [string] $Uri, 
+        [string] $Uri,
 
         [Parameter(Mandatory = $true, Position = 1)]
         [string] $Method,
@@ -16,12 +16,17 @@ function Invoke-CBCRequest {
     Process {
 
         $requestObjects = [System.Collections.ArrayList]@()
-    
+        
+        if ($CBC_CONFIG.currentConnections -eq 0) {
+            Write-Error "There are no current connections!" -ErrorAction Stop
+        }
+
         $CBC_CONFIG.currentConnections | ForEach-Object {
-            $headers = [System.Collections.IDictionary]@{}
-            $headers["X-AUTH-TOKEN"] = $_.Token
-            $headers["Content-Type"] = "application/json"
-            $headers["User-Agent"] = "PSCarbonBlackCloud"
+            $headers = @{
+                "X-AUTH-TOKEN" = $_.Token
+                "Content-Type" = "application/json"
+                "User-Agent" = "PSCarbonBlackCloud"
+            }
            
             $Params = , $_.Org + $Params
             $formatted_uri = $Uri -f $Params
@@ -29,11 +34,12 @@ function Invoke-CBCRequest {
             $FullUri = $_.Uri + $formatted_uri
             Write-Host $FullUri
             try {
+                Write-Debug "Requesting ${FullUri}"
                 $response = Invoke-WebRequest -Uri $FullUri -Headers $headers -Method $Method -Body $Body
             }
             catch {
-                # Write-Error "ERROR ON REQUEST TO: ${FullUri}"
-                # Write-Error $_.Exception.Message -ErrorAction Stop
+                Write-Error "ERROR ON REQUEST TO: ${FullUri}"
+                Write-Error $_.Exception.Message -ErrorAction Stop
             }
             
             $requestObjects.Add(@{$_.Org = $response }) | Out-Null

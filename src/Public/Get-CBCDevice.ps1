@@ -4,8 +4,18 @@ This cmdlet returns all devices or a specific device with every current connecti
 
 .PARAMETER All
 Returns all devices.
-.PARAMETER ID
+.PARAMETER Id
 Returns a device with specified ID.
+.PARAMETER Criteria
+Sets the criteria for the search.
+.PARAMETER Exclusions
+Sets the exclusions for the search.
+.PARAMETER Query
+Set the query for the search.
+.PARAMETER Rows
+Set the max num of returned rows.
+.PARAMETER Start
+Set the start of the row.
 .OUTPUTS
 
 
@@ -15,36 +25,69 @@ Online Version: http://devnetworketc/
 #>
 function Get-CBCDevice {
 
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "All")]
     Param(
         [Parameter(ParameterSetName = "All")]
         [switch] $All,
 
-        [Parameter(ParameterSetName = "ID")]
+        [Parameter(ParameterSetName = "GetOne")]
         [ValidateNotNullOrEmpty()]
-        [string] $ID
+        [string] $Id,
+
+        [Parameter(ParameterSetName = "All")]
+        [hashtable] $Criteria,
+
+        [Parameter(ParameterSetName = "All")]
+        [hashtable] $Exclusions,
+
+        [Parameter(ParameterSetName = "All")]
+        [string] $Query,
+
+        [Parameter(ParameterSetName = "All")]
+        [int] $Rows,
+
+        [Parameter(ParameterSetName = "All")]
+        [int] $Start
+
     )
     Process {
-        if ($CBC_CONFIG.currentConnections.Count -ge 1) {
-            switch ($PSCmdlet.ParameterSetName) {
-                "All" {
-                    $Body = @{}
-                    $response = Invoke-CBCRequest -Uri "appservices/v6/orgs/{0}/devices/_search" -Method POST -Body ($Body | ConvertTo-Json)
-                }
-                "ID" {
-                    $response = Invoke-CBCRequest -Uri "appservices/v6/orgs/{0}/devices/{1}" -Method GET -Params @($ID) -Body ($Body | ConvertTo-Json)
-                }
-            }
+        switch ($PSCmdlet.ParameterSetName) {
+            "All" {
+                $Body = "{}" | ConvertFrom-Json
 
-            $result = @()
-            foreach($org in ($response | Select-Object -ExpandProperty Keys)) {
-                $result += $response[$org].Content | ConvertFrom-Json -AsHashtable
-            }
+                if ($Criteria) {
+                    $Body | Add-Member -Name "criteria" -Value $Criteria -MemberType NoteProperty
+                }
 
-            return $result
+                if ($Exclusions) {
+                    $Body | Add-Member -Name "exclusions" -Value $Exclusions -MemberType NoteProperty
+                }
+
+                if ($Query) {
+                    $Body | Add-Member -Name "query" -Value $Exclusions -MemberType NoteProperty
+                }
+                
+                if ($Rows) {
+                    $Body | Add-Member -Name "rows" -Value $Rows -MemberType NoteProperty
+                }
+
+                if ($Start) {
+                    $Body | Add-Member -Name "start" -Value $Start -MemberType NoteProperty
+                }
+
+                $jsonBody = ConvertTo-Json -InputObject $Body
+                $response = Invoke-CBCRequest -Uri $CBC_CONFIG.endpoints.Devices.Search -Method POST -Body $jsonBody
+            }
+            "GetOne" {
+                $response = Invoke-CBCRequest -Uri CBC_CONFIG.endpoints.Devices.SpecificDeviceInfo -Method GET -Params @($ID)
+            }
         }
-        else {
-            Write-Error "There are no current connections" -ErrorAction "Stop"
+
+        $result = @()
+        foreach($org in ($response | Select-Object -ExpandProperty Keys)) {
+            $result += $response[$org].Content | ConvertFrom-Json -AsHashtable
         }
+
+        $result
     }
 }

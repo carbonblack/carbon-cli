@@ -73,7 +73,7 @@ function Connect-CBCServer {
                 }
                 $CBC_CONFIG.defaultServers | ForEach-Object {
                     $index = $CBC_CONFIG.defaultServers.IndexOf($_) + 1
-                    $OutputMessage = "[${index}] " + $_.Uri + "Organisation: " + $_.Org
+                    $OutputMessage = "[${index}] " + $_.Uri + " Organisation: " + $_.Org
                     Write-Output $OutputMessage
                 }
                 $optionInput = { (Read-Host) -as [int] }

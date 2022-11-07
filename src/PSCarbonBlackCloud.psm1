@@ -31,7 +31,7 @@ $endpoints = Import-PowerShellDataFile -Path $PSScriptRoot\PSCarbonBlackCloudEnd
 $credentialsPath = "${Home}/.carbonblack/"
 $credentialsFile = "PSCredentials.xml"
 
-$cbcConfigObject = [ordered] @{
+$cbcConfigObject = @{
     currentConnections = [System.Collections.ArrayList]@()
     defaultServers = [System.Collections.ArrayList]@()
     credentialsFullPath = ($credentialsPath + $credentialsFile)
