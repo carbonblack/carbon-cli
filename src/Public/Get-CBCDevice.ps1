@@ -25,69 +25,79 @@ Online Version: http://devnetworketc/
 #>
 function Get-CBCDevice {
 
-    [CmdletBinding(DefaultParameterSetName = "All")]
     Param(
-        [Parameter(ParameterSetName = "All")]
         [switch] $All,
 
-        [Parameter(ParameterSetName = "GetOne")]
-        [ValidateNotNullOrEmpty()]
-        [string] $Id,
+        [array] $Id,
 
-        [Parameter(ParameterSetName = "All")]
         [hashtable] $Criteria,
 
-        [Parameter(ParameterSetName = "All")]
         [hashtable] $Exclusions,
 
-        [Parameter(ParameterSetName = "All")]
         [string] $Query,
 
-        [Parameter(ParameterSetName = "All")]
-        [int] $Rows,
+        [int] $Rows = 20,
 
-        [Parameter(ParameterSetName = "All")]
-        [int] $Start
+        [int] $Start = 0,
+
+        [PSCustomObject] $Server
 
     )
     Process {
-        switch ($PSCmdlet.ParameterSetName) {
-            "All" {
-                $Body = "{}" | ConvertFrom-Json
 
-                if ($Criteria) {
-                    $Body | Add-Member -Name "criteria" -Value $Criteria -MemberType NoteProperty
-                }
-
-                if ($Exclusions) {
-                    $Body | Add-Member -Name "exclusions" -Value $Exclusions -MemberType NoteProperty
-                }
-
-                if ($Query) {
-                    $Body | Add-Member -Name "query" -Value $Exclusions -MemberType NoteProperty
-                }
-                
-                if ($Rows) {
-                    $Body | Add-Member -Name "rows" -Value $Rows -MemberType NoteProperty
-                }
-
-                if ($Start) {
-                    $Body | Add-Member -Name "start" -Value $Start -MemberType NoteProperty
-                }
-
-                $jsonBody = ConvertTo-Json -InputObject $Body
-                $response = Invoke-CBCRequest -Uri $CBC_CONFIG.endpoints.Devices.Search -Method POST -Body $jsonBody
-            }
-            "GetOne" {
-                $response = Invoke-CBCRequest -Uri CBC_CONFIG.endpoints.Devices.SpecificDeviceInfo -Method GET -Params @($ID)
-            }
+        $ExecuteTo = $CBC_CONFIG.currentConnections
+        if ($Server) {
+            $ExecuteTo = @($Server)
         }
 
-        $result = @()
-        foreach($org in ($response | Select-Object -ExpandProperty Keys)) {
-            $result += $response[$org].Content | ConvertFrom-Json -AsHashtable
+        $Results = @{}
+
+        $Body = "{}" | ConvertFrom-Json
+
+        if ($Criteria) {
+            $Body | Add-Member -Name "criteria" -Value $Criteria -MemberType NoteProperty
         }
 
-        $result
+        if ($Exclusions) {
+            $Body | Add-Member -Name "exclusions" -Value $Exclusions -MemberType NoteProperty
+        }
+
+        if ($Id) {
+            $Body | Add-Member -Name "id" -Value $Id -MemberType NoteProperty
+        }
+
+        if ($Query) {
+            $Body | Add-Member -Name "query" -Value $Query -MemberType NoteProperty
+        }
+        
+        if ($Rows) {
+            $Body | Add-Member -Name "rows" -Value $Rows -MemberType NoteProperty
+        }
+
+        if ($Start) {
+            $Body | Add-Member -Name "start" -Value $Start -MemberType NoteProperty
+        }
+
+        $jsonBody = ConvertTo-Json -InputObject $Body
+
+        $ExecuteTo | ForEach-Object {
+            $ServerName = "[{0}] {1}" -f $_.Org, $_.Uri
+            $Response = Invoke-CBCRequest -Server $_ `
+                -Endpoint $CBC_CONFIG.endpoints["Devices"]["Search"] `
+                -Method POST `
+                -Body $jsonBody
+
+            $ResponseContent = $Response.Content | ConvertFrom-Json
+            $Results = [System.Collections.ArrayList]@()
+
+            $ResponseContent.results | ForEach-Object {
+                $Results[$ServerName].Add([PSCarbonBlackCloud.Device]@{
+                    Id = $_.id
+                }) | Out-Null
+            }
+        }
+        # TODO: Replicate the Get-Modules cmdlet, like it says the different libs for modules
+        # we gonna do the same thing with the different Organizations.
+        return $Results
     }
 }

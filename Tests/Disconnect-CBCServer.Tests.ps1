@@ -1,27 +1,31 @@
 Describe "Disconnect-CBCServer" {
 
     BeforeAll {
-        $TestServerObject1 = @{
+        $TestServerObject1 = [PSCustomObject]@{
+            PSTypeName = "CBCServer"
             Uri = "https://test.adasdagf/"
             Org = "test"
             Token = "test"
         }
-
-        $TestServerObject2 = @{
+        $TestServerObject2 = [PSCustomObject]@{
+            PSTypeName = "CBCServer"
             Uri = "https://test02.adasdagf/"
             Org = "test"
             Token = "test"
         }
-
-        $TestServerObject3 = @{
+        $TestServerObject3 = [PSCustomObject]@{
+            PSTypeName = "CBCServer"
             Uri = "https://test03.adasdagf/"
             Org = "tes331t"
             Token = "test"
         }
     }
 
-    # Resetting the State of tests
     BeforeEach {
+        $CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
+    }
+
+    AfterAll {
         $CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
     }
 
