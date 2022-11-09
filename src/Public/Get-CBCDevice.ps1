@@ -88,16 +88,21 @@ function Get-CBCDevice {
                 -Body $jsonBody
 
             $ResponseContent = $Response.Content | ConvertFrom-Json
-            $Results = [System.Collections.ArrayList]@()
-
+            
+            Write-Host "`r`n`tDevices from: $ServerName`r`n"
             $ResponseContent.results | ForEach-Object {
-                $Results[$ServerName].Add([PSCarbonBlackCloud.Device]@{
-                    Id = $_.id
-                }) | Out-Null
+                $CurrentDevice = $_
+                $DeviceObject = [PSCarbonBlackCloud.Device]@{}
+                ($_ | Get-Member -Type NoteProperty).Name | ForEach-Object {
+                    $key = (ConvertTo-PascalCase $_)
+                    $value = $CurrentDevice.$_
+                    $DeviceObject.$key = $value
+                }
+                $DeviceObject | Format-Table -AutoSize -Property `
+                    Id, Os, CurrentSensorPolicyName, DeploymentType, VcenterUuid, Status `
+                    | Out-String | ForEach-Object { Write-Host $_ }
+                $DeviceObject
             }
         }
-        # TODO: Replicate the Get-Modules cmdlet, like it says the different libs for modules
-        # we gonna do the same thing with the different Organizations.
-        return $Results
     }
 }

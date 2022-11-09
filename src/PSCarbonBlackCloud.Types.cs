@@ -141,52 +141,52 @@ namespace PSCarbonBlackCloud
         public string DeviceMetaDataItemList { get; set;}
 
         public string Id { get; set; }
-        public DateTime LastContactTime { get; set; }
-        public DateTime LastDevicePolicyChangedTime { get; set; }
-        public DateTime LastDevicePolicyRequestedTim { get; set; }
+        public string LastContactTime { get; set; }
+        public string LastDevicePolicyChangedTime { get; set; }
+        public string LastDevicePolicyRequestedTime { get; set; }
         public string LastExternalIpAddress { get; set; }
         public string LastInternalIpAddress { get; set; }
         public string LastLocation { get; set; }
-        public DateTime LastPolicyUpdatedTime { get; set; }
-        public DateTime LastReportedTime { get; set; }
-        public DateTime LastResetTime { get; set; }
-        public DateTime LastShutdownTime { get; set; }
+        public string LastPolicyUpdatedTime { get; set; }
+        public string LastReportedTime { get; set; }
+        public string LastResetTime { get; set; }
+        public string LastShutdownTime { get; set; }
         public string LoginUserName { get; set; }
         public string MacAddress { get; set; }
         public string Name { get; set; }
         public string OrganizationId { get; set; }
         public string OrganizationName { get; set; }
-        public string OS { get; set; }
+        public string Os { get; set; }
         public string OsVersion { get; set; }
         public bool PassiveMode { get; set; }
         public int PolicyId { get; set; }
         public string PolicyName { get; set; }
         public bool Quarantined { get; set; }
-        public DateTime ScanLastActionTime { get; set; }
+        public string ScanLastActionTime { get; set; }
         public string SensorKitType { get; set; }
         public bool SensorOutOfDate { get; set; }
         public bool SensorPendingUpdate { get; set; }
         public string SensorStates { get; set; }
-        public string SensorVersionSensorVersion { get; set; }
+        public string SensorVersion { get; set; }
         public string Status { get; set; }
         public string TargetPriority { get; set; }
         public string VdiBaseDevice { get; set; }
         public int AdGroupId { get; set; }
         public bool PolicyOverride { get; set; }
         public string ActivationCode { get; set; }
-        public DateTime ActivationCodeExpiryTime { get; set; }
-        public DateTime DeregisteredTime { get; set; }
+        public string ActivationCodeExpiryTime { get; set; }
+        public string DeregisteredTime { get; set; }
         public int DeviceOwnerId { get; set; }
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string MiddleName { get; set; }
         public string EncodedActivationCode { get; set; }
         public string LastName { get; set; }
-        public DateTime RegisteredTime { get; set; }
+        public string RegisteredTime { get; set; }
         public string UninstallCode { get; set; }
         public string AvAveVersion { get; set; }
         public string AvEngine { get; set; }
-        public DateTime AvLastScanTime { get; set; }
+        public string AvLastScanTime { get; set; }
         public bool AvMaster { get; set; }
         public string AvPackVersion { get; set; }
         public string AvProductVersion { get; set; }
@@ -221,10 +221,18 @@ namespace PSCarbonBlackCloud
         public long CloudProviderResourceId { get; set; }
         public string[] CloudProviderTags { get; set; }
 
-        public override string ToString()
-        {
-            return Id.ToString();
-        }
-
+        public string HostBasedFirewallFailureReason { get; set; }
+        public string HostBasedFirewallReasons { get; set; }
+        public string HostBasedFirewallStatus { get; set; }
+        public string BaseDevice { get; set; }
+        public string AvVdfVersion { get; set; }
+        public string LinuxKernelVersion { get; set; }
+        public string ScanLastCompleteTime { get; set; }
+        public string ScanStatus { get; set; }
+        public string WindowsPlatform { get; set; }
+        public string VdiProvider { get; set; }
+        public string InfrastructureProvider { get; set; }
+        public string SensorGatewayUrl { get; set; }
+        public string SensorGatewayUuid { get; set; }
     }
 }

@@ -65,7 +65,7 @@ function Connect-CBCServer {
                 }
 
                 if ($SaveCredentials.IsPresent) {
-                    $CBC_CONFIG.defaultServers.Add($ServerObject)
+                    $CBC_CONFIG.defaultServers.Add($ServerObject) | Out-Null
                     Save-CBCCredential $ServerObject
                 }
             }

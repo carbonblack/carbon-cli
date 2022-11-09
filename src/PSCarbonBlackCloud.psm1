@@ -1,5 +1,7 @@
 # Load the PSCarbonBlackCloud namespace from C#
-Add-Type -Path (Join-Path $PSScriptRoot PSCarbonBlackCloud.Types.cs) -ReferencedAssemblies Microsoft.CSharp, Microsoft.PowerShell.Commands.Utility, System.Management.Automation
+if (!("PSCarbonBlackCLoud.Space" -as [Type])) {
+    Add-Type -Path (Join-Path $PSScriptRoot PSCarbonBlackCloud.Types.cs) -ReferencedAssemblies Microsoft.CSharp, Microsoft.PowerShell.Commands.Utility, System.Management.Automation
+}
 
 # Sourcing all the functions
 $dotSourceParams = @{

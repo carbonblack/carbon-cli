@@ -74,7 +74,7 @@ Describe "Get-CBCDevice" {
                       "golden_device_id": null,
                       "host_based_firewall_failure_reason": null,
                       "host_based_firewall_status": null,
-                      "id": 5765373,
+                      "id": 5765374,
                       "last_contact_time": "2022-07-11T22:04:42.993Z",
                       "last_device_policy_changed_time": "2022-07-04T13:22:15.870Z",
                       "last_device_policy_requested_time": "2022-07-04T13:46:25.278Z",
@@ -265,9 +265,8 @@ Describe "Get-CBCDevice" {
                     $Method -eq "POST"
                 }
 
-                $Response = Get-CBCDevice -All
-
-                $Response["[test] https://test.adasdagf/"].StatusCode | Should -Be 200
+                $Results = Get-CBCDevice -All
+                $Results.Count | Should -Be 2
 
             }
 
@@ -299,9 +298,7 @@ Describe "Get-CBCDevice" {
                 }
 
                 $Results = Get-CBCDevice -All
-
-                
-                $Results["[test2] https://test02.adasdagf/"].StatusCode | Should -Be 200
+                $Results.Count | Should -Be 4
 
             }
 
