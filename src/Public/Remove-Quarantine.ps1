@@ -1,10 +1,10 @@
 <#
 .DESCRIPTION
-This cmdlet quarantines a device.
+This cmdlet removes the quarantine from a device.
 .PARAMETER Device
 It acceptsa an array of devices from the pipeline to execute the cmdlet with.
 .PARAMETER Id
-It quarantines a device with specified ID.
+It removes the quarantine of a device with specified ID.
 .PARAMETER Server
 Sets a specified server to execute the cmdlet with.
 .OUTPUTS
@@ -28,7 +28,7 @@ function Set-Quarantine {
         $Body[“action_type”] = “QUARANTINE”
         $Body[“device_id”] = $Id
         $Body[“options”] = @{
-            “toggle” = “ON”
+            “toggle” = “OFF”
         }
         switch ($PSCmdlet.ParameterSetName) {
             “Device” {
