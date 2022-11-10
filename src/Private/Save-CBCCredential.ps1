@@ -1,7 +1,7 @@
 function Save-CBCCredential {
     Param(
         [Parameter(Mandatory = $true)]
-        $ServerObject
+        [PSCustomObject] $ServerObject
     )
 
     Process {

@@ -1,7 +1,7 @@
 function Test-CBCConnection {
     Param(
         [Parameter(Mandatory = $true)]
-        $ServerObject
+        [PSCustomObject] $ServerObject
     )
 
     Process {

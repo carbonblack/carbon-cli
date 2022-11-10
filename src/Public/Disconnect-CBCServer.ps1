@@ -24,7 +24,7 @@ function Disconnect-CBCServer {
         }
 
         # array of Hashtables
-        if ($Server[0] -is [hashtable]) {
+        if ($Server[0] -is [PSCustomObject]) {
             $Server | ForEach-Object {
                 $CBC_CONFIG.currentConnections.Remove($_)
             }
@@ -39,7 +39,7 @@ function Disconnect-CBCServer {
                 }
             }
         }
-    } elseif ($Server -is [hashtable]) {
+    } elseif ($Server -is [PSCustomObject]) {
         $CBC_CONFIG.currentConnections.Remove($Server)
     } elseif ($Server -is [string]) {
         $tmpCurrentConnections = $CBC_CONFIG.currentConnections | Where-Object { $_.Uri -eq $Server }

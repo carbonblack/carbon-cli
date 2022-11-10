@@ -1,3 +1,8 @@
+# Load the PSCarbonBlackCloud namespace from C#
+if (!("PSCarbonBlackCLoud.Space" -as [Type])) {
+    Add-Type -Path (Join-Path $PSScriptRoot PSCarbonBlackCloud.Types.cs) -ReferencedAssemblies Microsoft.CSharp, Microsoft.PowerShell.Commands.Utility, System.Management.Automation
+}
+
 # Sourcing all the functions
 $dotSourceParams = @{
     Filter      = '*.ps1'
@@ -8,12 +13,13 @@ $dotSourceParams = @{
 Try {
     $public = @(Get-ChildItem -Path "$PSScriptRoot\Public" @dotSourceParams)
     $private = @(Get-ChildItem -Path "$PSScriptRoot\Private" @dotSourceParams)
+    $classes = @(Get-ChildItem -Path "$PSScriptRoot\Classes" @dotSourceParams)
 }
 Catch {
     Throw $_
 }
 
-ForEach ($file in @($public + $private)) {
+ForEach ($file in @($public + $private + $classes)) {
     Try {
         . $file.FullName
     }
@@ -31,7 +37,7 @@ $endpoints = Import-PowerShellDataFile -Path $PSScriptRoot\PSCarbonBlackCloudEnd
 $credentialsPath = "${Home}/.carbonblack/"
 $credentialsFile = "PSCredentials.xml"
 
-$cbcConfigObject = [ordered] @{
+$cbcConfigObject = @{
     currentConnections = [System.Collections.ArrayList]@()
     defaultServers = [System.Collections.ArrayList]@()
     credentialsFullPath = ($credentialsPath + $credentialsFile)

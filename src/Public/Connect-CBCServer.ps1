@@ -21,9 +21,11 @@ Online Version: http://devnetworketc/
 #>
 function Connect-CBCServer {
     [CmdletBinding(DefaultParameterSetName = "default", HelpUri = "http://devnetworketc/")]
+    [OutputType([PSCarbonBlackCloud.Server])]
     Param (
         [Parameter(ParameterSetName = "default", Mandatory = $true, Position = 0)]
-        [string] ${Server},
+        [Alias("Server")]
+        [string] ${Uri},
 
         [Parameter(ParameterSetName = "default", Mandatory = $true, Position = 1)]
         [string] ${Org},
@@ -39,12 +41,6 @@ function Connect-CBCServer {
     )
 
     Process {
-        $ServerObject = @{
-            Uri = $Server
-            Org = $Org
-            Token = $Token
-        }
-
         # Show the currently connected servers Warning
         If ($CBC_CONFIG.currentConnections.Count -ge 1) {
             Write-Warning "You are currently connected to: "
@@ -62,8 +58,14 @@ function Connect-CBCServer {
 
         switch ($PSCmdlet.ParameterSetName) {
             "default" {
+                $ServerObject = [PSCarbonBlackCloud.Server]@{
+                    Uri = $Uri
+                    Org = $Org
+                    Token = $Token
+                }
+
                 if ($SaveCredentials.IsPresent) {
-                    $CBC_CONFIG.defaultServers.Add($ServerObject)
+                    $CBC_CONFIG.defaultServers.Add($ServerObject) | Out-Null
                     Save-CBCCredential $ServerObject
                 }
             }
@@ -73,7 +75,7 @@ function Connect-CBCServer {
                 }
                 $CBC_CONFIG.defaultServers | ForEach-Object {
                     $index = $CBC_CONFIG.defaultServers.IndexOf($_) + 1
-                    $OutputMessage = "[${index}] " + $_.Uri + "Organisation: " + $_.Org
+                    $OutputMessage = "[${index}] " + $_.Uri + " Organisation: " + $_.Org
                     Write-Output $OutputMessage
                 }
                 $optionInput = { (Read-Host) -as [int] }

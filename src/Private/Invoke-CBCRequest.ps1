@@ -3,9 +3,13 @@ function Invoke-CBCRequest {
     Param(
         [Parameter(Mandatory = $true, Position = 0)]
         [ValidateNotNullOrEmpty()]
-        [string] $Uri, 
+        [PSCustomObject] $Server,
 
         [Parameter(Mandatory = $true, Position = 1)]
+        [ValidateNotNullOrEmpty()]
+        [string] $Endpoint,
+
+        [Parameter(Mandatory = $true, Position = 2)]
         [string] $Method,
 
         [array] $Params,
@@ -14,22 +18,17 @@ function Invoke-CBCRequest {
     )
     
     Process {
-
-        $requestObjects = [System.Collections.ArrayList]@()
-    
-        $CBC_CONFIG.currentConnections | ForEach-Object {
-            $headers = [System.Collections.IDictionary]@{}
-            $headers["X-AUTH-TOKEN"] = $_.Token
-            $headers["Content-Type"] = "application/json"
-            $headers["User-Agent"] = "PSCarbonBlackCloud"
-           
-            $Params = ,$_.Org + $Params
-            $formatted_uri = $Uri -f $Params
-
-            $FullUri = $_.Uri + $formatted_uri
-            $response = Invoke-WebRequest -Uri $FullUri -Headers $headers -Method $Method
-            $requestObjects.Add(@{$_.Org = $response}) | Out-Null
+        $headers = @{
+            "X-AUTH-TOKEN" = $Server.Token
+            "Content-Type" = "application/json"
+            "User-Agent" = "PSCarbonBlackCloud"
         }
-        $requestObjects
+       
+        $Params = , $Server.Org + $Params
+        $formatted_uri = $Endpoint -f $Params
+
+        $FullUri = $Server.Uri + $formatted_uri
+        Write-Debug "Requesting ${FullUri}"
+        return Invoke-WebRequest -Uri $FullUri -Headers $headers -Method $Method -Body $Body
     }  
 }
