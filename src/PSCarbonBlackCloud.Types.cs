@@ -235,4 +235,15 @@ namespace PSCarbonBlackCloud
         public string SensorGatewayUrl { get; set; }
         public string SensorGatewayUuid { get; set; }
     }
+
+     public class Policy
+    {
+        public long Id { get; set; }
+        public bool IsSystem { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string PriorityLevel { get; set; }
+        public long Position { get; set; }
+        public long NumDevices { get; set; } 
+    }
 }
