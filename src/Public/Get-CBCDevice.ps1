@@ -50,18 +50,25 @@ Online Version: http://devnetworketc/
 function Get-CBCDevice {
 
     Param(
+        [Parameter(ParameterSetName = "all")]
         [switch] $All,
 
+        [Parameter(ParameterSetName = "id")]
         [array] $Id,
 
+        [Parameter(ParameterSetName = "all")]
         [hashtable] $Criteria,
 
+        [Parameter(ParameterSetName = "all")]
         [hashtable] $Exclusions,
 
+        [Parameter(ParameterSetName = "all")]
         [string] $Query,
 
+        [Parameter(ParameterSetName = "all")]
         [int] $Rows = 20,
 
+        [Parameter(ParameterSetName = "all")]
         [int] $Start = 0,
 
         [PSCustomObject] $Server
@@ -74,59 +81,90 @@ function Get-CBCDevice {
             $ExecuteTo = @($Server)
         }
 
-        $Results = @{}
+        # $Results = @{}
+        switch ($PSCmdlet.ParameterSetName) {
 
-        $Body = "{}" | ConvertFrom-Json
+            "all" {
+                $Body = "{}" | ConvertFrom-Json
 
-        if ($Criteria) {
-            $Body | Add-Member -Name "criteria" -Value $Criteria -MemberType NoteProperty
-        }
-
-        if ($Exclusions) {
-            $Body | Add-Member -Name "exclusions" -Value $Exclusions -MemberType NoteProperty
-        }
-
-        if ($Id) {
-            $Body | Add-Member -Name "id" -Value $Id -MemberType NoteProperty
-        }
-
-        if ($Query) {
-            $Body | Add-Member -Name "query" -Value $Query -MemberType NoteProperty
-        }
-        
-        if ($Rows) {
-            $Body | Add-Member -Name "rows" -Value $Rows -MemberType NoteProperty
-        }
-
-        if ($Start) {
-            $Body | Add-Member -Name "start" -Value $Start -MemberType NoteProperty
-        }
-
-        $jsonBody = ConvertTo-Json -InputObject $Body
-        Write-Host $jsonBody
-        $ExecuteTo | ForEach-Object {
-            $ServerName = "[{0}] {1}" -f $_.Org, $_.Uri
-            $Response = Invoke-CBCRequest -Server $_ `
-                -Endpoint $CBC_CONFIG.endpoints["Devices"]["Search"] `
-                -Method POST `
-                -Body $jsonBody
-
-            $ResponseContent = $Response.Content | ConvertFrom-Json
-            
-            Write-Host "`r`n`tDevices from: $ServerName`r`n"
-            $ResponseContent.results | ForEach-Object {
-                $CurrentDevice = $_
-                $DeviceObject = [PSCarbonBlackCloud.Device]@{}
-                ($_ | Get-Member -Type NoteProperty).Name | ForEach-Object {
-                    $key = (ConvertTo-PascalCase $_)
-                    $value = $CurrentDevice.$_
-                    $DeviceObject.$key = $value
+                if ($Criteria) {
+                    $Body | Add-Member -Name "criteria" -Value $Criteria -MemberType NoteProperty
                 }
-                $DeviceObject | Format-Table -AutoSize -Property `
-                    Id, Os, CurrentSensorPolicyName, DeploymentType, VcenterUuid, Status `
-                    | Out-String | ForEach-Object { Write-Host $_ }
-                $DeviceObject
+
+                if ($Exclusions) {
+                    $Body | Add-Member -Name "exclusions" -Value $Exclusions -MemberType NoteProperty
+                }
+
+                if ($Id) {
+                    $Body | Add-Member -Name "id" -Value $Id -MemberType NoteProperty
+                }
+
+                if ($Query) {
+                    $Body | Add-Member -Name "query" -Value $Query -MemberType NoteProperty
+                }
+        
+                if ($Rows) {
+                    $Body | Add-Member -Name "rows" -Value $Rows -MemberType NoteProperty
+                }
+
+                if ($Start) {
+                    $Body | Add-Member -Name "start" -Value $Start -MemberType NoteProperty
+                }
+
+                $jsonBody = ConvertTo-Json -InputObject $Body
+
+                $ExecuteTo | ForEach-Object {
+                    $ServerName = "[{0}] {1}" -f $_.Org, $_.Uri
+                    $Response = Invoke-CBCRequest -Server $_ `
+                        -Endpoint $CBC_CONFIG.endpoints["Devices"]["Search"] `
+                        -Method POST `
+                        -Body $jsonBody
+        
+                    $ResponseContent = $Response.Content | ConvertFrom-Json
+                    
+                    Write-Host "`r`n`tDevices from: $ServerName`r`n"
+                    $ResponseContent.results | ForEach-Object {
+                        $CurrentDevice = $_
+                        $DeviceObject = [PSCarbonBlackCloud.Device]@{}
+                        ($_ | Get-Member -Type NoteProperty).Name | ForEach-Object {
+                            $key = (ConvertTo-PascalCase $_)
+                            $value = $CurrentDevice.$_
+                            $DeviceObject.$key = $value
+                        }
+                        $DeviceObject | Format-Table -AutoSize -Property `
+                            Id, Os, CurrentSensorPolicyName, DeploymentType, VcenterUuid, Status `
+                        | Out-String | ForEach-Object { Write-Host $_ }
+                        $DeviceObject
+                    }
+                }
+            }
+            "id" {
+                $ExecuteTo | ForEach-Object {
+                    $ServerName = "[{0}] {1}" -f $_.Org, $_.Uri
+                    $Response = Invoke-CBCRequest -Server $_ `
+                        -Endpoint $CBC_CONFIG.endpoints["Devices"]["SpecificDeviceInfo"] `
+                        -Method GET `
+                        -Params @($Id)
+        
+                    $ResponseContent = $Response.Content | ConvertFrom-Json
+                    
+                    Write-Host "`r`n`tDevices from: $ServerName`r`n"
+                    $ResponseContent | ForEach-Object {
+                        $CurrentDevice = $_
+                        $DeviceObject = [PSCarbonBlackCloud.Device]@{}
+                        ($_ | Get-Member -Type NoteProperty).Name | ForEach-Object {
+                            $key = (ConvertTo-PascalCase $_)
+                            $value = $CurrentDevice.$_
+                            $DeviceObject.$key = $value
+                        }
+                        $DeviceObject | Format-Table -AutoSize -Property `
+                            Id, Os, CurrentSensorPolicyName, DeploymentType, VcenterUuid, Status `
+                        | Out-String | ForEach-Object { Write-Host $_ }
+                        $DeviceObject
+                    }
+                }
             }
         }
+
     }
 }
