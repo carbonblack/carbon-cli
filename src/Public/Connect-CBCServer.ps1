@@ -13,7 +13,19 @@ Indicates that you want to save the specified credentials in the local credentia
 .PARAMETER Menu
 Connects to a server from the list of recently connected servers.
 .OUTPUTS
+A Server Object
+.NOTES
+-------------------------- Example 1 --------------------------
+Connect-CBCServer -Server "MyServer" -Org "MyOrg" -Token "MyToken"
+Connects with the specified Server, Org, Token.
 
+-------------------------- Example 2 --------------------------
+Connect-CBCServer -Server "MyServer1" -Org "MyOrg1" -Token "MyToken1" -SaveCredential
+Connect with the specified Server, Org, Token and saves the credential in the Credential file.
+
+-------------------------- Example 3 --------------------------
+Connect-CBCServer -Menu
+It prints the available Servers from the Credential file so that the user can choose with which one to connect.
 
 .LINK
 

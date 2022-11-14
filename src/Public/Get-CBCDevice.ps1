@@ -18,6 +18,30 @@ Set the max num of returned rows.
 Set the start of the row.
 .OUTPUTS
 
+.NOTES
+-------------------------- Example 1 --------------------------
+Get-CBCDevice -All
+It returns all devices and the request is made with all current connections.
+
+-------------------------- Example 2 --------------------------
+Get-CBCDevice -Id "SomeId"
+It returns the device with specified Id and the request is made with all current connections.
+
+-------------------------- Example 3 --------------------------
+Get-CBCDevice -All -Server $Server
+It returns all devices but the request is made only with the connection with specified server.
+
+-------------------------- Example 4 --------------------------
+Get-CBCDevice -Id "SomeId" -Server $Server
+It returns the device with specified Id but the request is made only with the connection with specified server.
+
+-------------------------- Example 5 --------------------------
+Get-CBCDevice -All -Criteria $Criteria
+It returns all devices which correspond to the specified criteria.
+
+-------------------------- Example 6 --------------------------
+Get-CBCDevice -All -Exclusions $Exclusions -Query "SomeQuery" -Rows N (the default is 20) -Start N (the default is 0)
+It returns all devices which correspond to the specified criteria build with the specified params (Exclusion, Query, Rows and Start).
 
 .LINK
 

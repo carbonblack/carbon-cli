@@ -5,7 +5,18 @@ This cmdlet removes all or a specific connection from the CBC_CURRENT_CONNECTION
 Specifies the server you want to disconnect. It accepts '*' for all servers, server name,
 array of server names or Server object.
 .OUTPUTS
+.NOTES
+-------------------------- Example 1 --------------------------
+Disconnect-CBCServer *
+It disconnects all current connections.
 
+-------------------------- Example 2 --------------------------
+Disconnect-CBCServer [$ServerObj, $ServerObj1]
+It disconnects the specified Server Object from the current connections.
+
+-------------------------- Example 3 --------------------------
+Disconnect-CBCServer ["Server", "Server1"]
+It searches for Servers with this names from the current connections and disconnects them.
 .LINK
 Online Version: http://devnetworketc/
 #>
