@@ -16,11 +16,11 @@ Connects to a server from the list of recently connected servers.
 A Server Object
 .NOTES
 -------------------------- Example 1 --------------------------
-Connect-CBCServer -Server "MyServer" -Org "MyOrg" -Token "MyToken"
+Connect-CBCServer -Server "http://server.cbc" -Org "MyOrg" -Token "MyToken"
 Connects with the specified Server, Org, Token.
 
 -------------------------- Example 2 --------------------------
-Connect-CBCServer -Server "MyServer1" -Org "MyOrg1" -Token "MyToken1" -SaveCredential
+Connect-CBCServer -Server "http://server1.cbc" -Org "MyOrg1" -Token "MyToken1" -SaveCredential
 Connect with the specified Server, Org, Token and saves the credential in the Credential file.
 
 -------------------------- Example 3 --------------------------

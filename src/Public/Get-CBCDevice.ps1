@@ -16,6 +16,8 @@ Set the query for the search.
 Set the max num of returned rows.
 .PARAMETER Start
 Set the start of the row.
+.PARAMETER Server
+Specifies the Server 
 .OUTPUTS
 
 .NOTES
@@ -131,10 +133,7 @@ function Get-CBCDevice {
                             $value = $CurrentDevice.$_
                             $DeviceObject.$key = $value
                         }
-                        $DeviceObject | Format-Table -AutoSize -Property `
-                            Id, Os, CurrentSensorPolicyName, DeploymentType, VcenterUuid, Status `
-                        | Out-String | ForEach-Object { Write-Host $_ }
-                        $DeviceObject
+                        $DeviceObject 
                     }
                 }
             }
@@ -157,10 +156,7 @@ function Get-CBCDevice {
                             $value = $CurrentDevice.$_
                             $DeviceObject.$key = $value
                         }
-                        $DeviceObject | Format-Table -AutoSize -Property `
-                            Id, Os, CurrentSensorPolicyName, DeploymentType, VcenterUuid, Status `
-                        | Out-String | ForEach-Object { Write-Host $_ }
-                        $DeviceObject
+                        $DeviceObject 
                     }
                 }
             }
