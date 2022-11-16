@@ -1,29 +1,34 @@
 Describe "Connect-CBCServer" {
 
     BeforeAll {
-        $TestServerObject1 = @{
+        $TestServerObject1 = [PSCustomObject]@{
+            PSTypeName = "CBCServer"
             Uri = "https://test.adasdagf/"
             Org = "test"
             Token = "test"
         }
-
-        $TestServerObject2 = @{
+        $TestServerObject2 = [PSCustomObject]@{
+            PSTypeName = "CBCServer"
             Uri = "https://test02.adasdagf/"
             Org = "test"
             Token = "test"
         }
-
-        $TestServerObject3 = @{
-            Uri = "https://test02.adasdagf/"
+        $TestServerObject3 = [PSCustomObject]@{
+            PSTypeName = "CBCServer"
+            Uri = "https://test.adasdagf/"
             Org = "tes331t"
             Token = "test"
         }
     }
 
-    # Resetting the State of tests
     BeforeEach {
         $CBC_CONFIG.defaultServers = [System.Collections.ArrayList]@()
         $CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
+    }
+
+    AfterAll {
+        $CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
+        $CBC_CONFIG.defaultServers = [System.Collections.ArrayList]@()
     }
 
     Context "When in Menu section" {
@@ -84,7 +89,7 @@ Describe "Connect-CBCServer" {
                     StatusCode = 200
                 }
             } -ParameterFilter { $Uri -eq $TestServerObject1.Uri }
-            $ServerObject = Connect-CBCServer -Server $TestServerObject1.Uri -Token $TestServerObject1.Token -Org $TestServerObject1.Org
+            $ServerObject = Connect-CBCServer -Uri $TestServerObject1.Uri -Token $TestServerObject1.Token -Org $TestServerObject1.Org
             
             $TestServerObject1.Uri | Should -be $ServerObject.Uri
             $TestServerObject1.Org | Should -be $ServerObject.Org
@@ -102,7 +107,7 @@ Describe "Connect-CBCServer" {
                     StatusCode = 404
                 }
             } -ParameterFilter { $Uri -eq $Server404Uri }
-            { Connect-CBCServer -Server $Server404Uri -Org "test" -Token "test" } | Should -Throw
+            { Connect-CBCServer -Uri $Server404Uri -Org "test" -Token "test" } | Should -Throw
             $CBC_CONFIG.currentConnections.Count | Should -Be 0
         }
 
@@ -111,7 +116,7 @@ Describe "Connect-CBCServer" {
             Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
                 return ""
             };
-            { Connect-CBCServer -Server $TestServerObject1.Uri -Org $TestServerObject1.Org -Token $TestServerObject1.Token } | Should -Throw
+            { Connect-CBCServer -Uri $TestServerObject1.Uri -Org $TestServerObject1.Org -Token $TestServerObject1.Token } | Should -Throw
             $CBC_CONFIG.currentConnections.Count | Should -Be 1
         }
 
@@ -129,7 +134,7 @@ Describe "Connect-CBCServer" {
 
             $CBC_CONFIG.currentConnections.Add($TestServerObject1)
 
-            $ServerObject = Connect-CBCServer -Server $TestServerObject2.Uri -Token $TestServerObject2.Token -Org $TestServerObject2.Org
+            $ServerObject = Connect-CBCServer -Uri $TestServerObject2.Uri -Token $TestServerObject2.Token -Org $TestServerObject2.Org
 
             $TestServerObject2.Uri | Should -be $ServerObject.Uri
             $TestServerObject2.Org | Should -be $ServerObject.Org
@@ -169,7 +174,7 @@ Describe "Connect-CBCServer" {
                     }
                 } -ParameterFilter { $Uri -eq $TestServerObject1.Uri }
 
-                Connect-CBCServer -Server $TestServerObject1.Uri -Token $TestServerObject1.Token -Org $TestServerObject1.Org -SaveCredentials
+                Connect-CBCServer -Uri $TestServerObject1.Uri -Token $TestServerObject1.Token -Org $TestServerObject1.Org -SaveCredentials
 
                 $serverObjects = Select-Xml -Path $CBC_CONFIG.credentialsFullPath -XPath '/Servers/Server'
                 $serverObjects[0].Node.Uri | Should -Be $TestServerObject1.Uri

@@ -13,7 +13,19 @@ Indicates that you want to save the specified credentials in the local credentia
 .PARAMETER Menu
 Connects to a server from the list of recently connected servers.
 .OUTPUTS
+A Server Object
+.NOTES
+-------------------------- Example 1 --------------------------
+Connect-CBCServer -Server "http://server.cbc" -Org "MyOrg" -Token "MyToken"
+Connects with the specified Server, Org, Token.
 
+-------------------------- Example 2 --------------------------
+Connect-CBCServer -Server "http://server1.cbc" -Org "MyOrg1" -Token "MyToken1" -SaveCredential
+Connect with the specified Server, Org, Token and saves the credential in the Credential file.
+
+-------------------------- Example 3 --------------------------
+Connect-CBCServer -Menu
+It prints the available Servers from the Credential file so that the user can choose with which one to connect.
 
 .LINK
 
@@ -21,9 +33,11 @@ Online Version: http://devnetworketc/
 #>
 function Connect-CBCServer {
     [CmdletBinding(DefaultParameterSetName = "default", HelpUri = "http://devnetworketc/")]
+    [OutputType([PSCarbonBlackCloud.Server])]
     Param (
         [Parameter(ParameterSetName = "default", Mandatory = $true, Position = 0)]
-        [string] ${Server},
+        [Alias("Server")]
+        [string] ${Uri},
 
         [Parameter(ParameterSetName = "default", Mandatory = $true, Position = 1)]
         [string] ${Org},
@@ -39,12 +53,6 @@ function Connect-CBCServer {
     )
 
     Process {
-        $ServerObject = @{
-            Uri = $Server
-            Org = $Org
-            Token = $Token
-        }
-
         # Show the currently connected servers Warning
         If ($CBC_CONFIG.currentConnections.Count -ge 1) {
             Write-Warning "You are currently connected to: "
@@ -62,8 +70,14 @@ function Connect-CBCServer {
 
         switch ($PSCmdlet.ParameterSetName) {
             "default" {
+                $ServerObject = [PSCarbonBlackCloud.Server]@{
+                    Uri = $Uri
+                    Org = $Org
+                    Token = $Token
+                }
+
                 if ($SaveCredentials.IsPresent) {
-                    $CBC_CONFIG.defaultServers.Add($ServerObject)
+                    $CBC_CONFIG.defaultServers.Add($ServerObject) | Out-Null
                     Save-CBCCredential $ServerObject
                 }
             }
@@ -73,7 +87,7 @@ function Connect-CBCServer {
                 }
                 $CBC_CONFIG.defaultServers | ForEach-Object {
                     $index = $CBC_CONFIG.defaultServers.IndexOf($_) + 1
-                    $OutputMessage = "[${index}] " + $_.Uri + "Organisation: " + $_.Org
+                    $OutputMessage = "[${index}] " + $_.Uri + " Organisation: " + $_.Org
                     Write-Output $OutputMessage
                 }
                 $optionInput = { (Read-Host) -as [int] }
