@@ -7,5 +7,6 @@
     }
     "Policy" = @{
         "Summary" = "policyservice/v1/orgs/{0}/policies/summary"
+        "Details" = "policyservice/v1/orgs/{0}/policies/{1}"
     }
 }

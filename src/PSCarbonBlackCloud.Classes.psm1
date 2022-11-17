@@ -1,4 +1,4 @@
-class Policy {
+class PolicySummary {
     [long]$Id
     [switch]$IsSystem
     [string]$Name
@@ -225,4 +225,28 @@ class CBCServer {
     [string]ToString() {
         return "[" + $this.Org + "] " + $this.Uri
     }
+}
+class Rule {
+    [long]$Id
+    [switch]$Required
+    [string]$Action
+    [hashtable]$Application
+    [string]$Operation
+}
+
+class Policy {
+    [long]$Id
+    [string]$Name
+    [string]$OrgKey
+    [string]$PriorityLevel
+    [int]$Position
+    [switch]$IsSystem
+    [string]$Description
+    [long]$AutoDeregisterInactiveVdiIntervalMs
+    [long]$AutoDeleteKnownBadHashesDelay
+    [hashtable]$AvSettings
+    [Rule[]]$Rules
+
+
+
 }
