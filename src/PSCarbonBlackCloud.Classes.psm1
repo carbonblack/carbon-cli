@@ -246,7 +246,11 @@ class Policy {
     [long]$AutoDeleteKnownBadHashesDelay
     [hashtable]$AvSettings
     [Rule[]]$Rules
-
-
-
+    [long]$AutoDeregisterInactiveVmWorkloadsIntervalMs
+    [hashtable[]]$DirectoryActionRules
+    [string[]]$RapidConfigs
+    [hashtable[]]$RuleConfigs
+    [hashtable]$SensorConfigs
+    [hashtable[]]$SensorSettings
+    [string]$UpdateTime
 }
