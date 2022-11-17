@@ -34,7 +34,6 @@ Online Version: http://devnetworketc/
 using module ../PSCarbonBlackCloud.Classes.psm1
 function Connect-CBCServer {
     [CmdletBinding(DefaultParameterSetName = "default", HelpUri = "http://devnetworketc/")]
-    [OutputType([PSCarbonBlackCloud.Server])]
     Param (
         [Parameter(ParameterSetName = "default", Mandatory = $true, Position = 0)]
         [Alias("Server")]

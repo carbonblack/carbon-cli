@@ -58,13 +58,28 @@ function Get-Policy {
                     $ResponseContent = $Response.Content | ConvertFrom-Json
 
                     Write-Host "`r`n`tPolicy from: $ServerName`r`n"
+                    Write-Host $ResponseContent
                     $ResponseContent | ForEach-Object {
                         $CurrentPolicy = $_
                         $PolicyObject = [Policy]::new()
                         ($_ | Get-Member -Type NoteProperty).Name | ForEach-Object {
                             $key = (ConvertTo-PascalCase $_)
                             $value = $CurrentPolicy.$_
-                            $PolicyObject.$key = $value
+                            if ($value -is [PSCustomObject]) {
+                                $obj_hash = @{}
+                                foreach ( $outer_name in $value.psobject.properties.name )
+                                {
+                                    $outer_key = (ConvertTo-PascalCase $outer_name)
+                                    $obj_hash[$outer_key] = @{}
+                                    foreach ( $nested in $value.$outer_name.psobject.properties.name ) {
+                                        $inner_key = (ConvertTo-PascalCase $nested)
+                                        $obj_hash[$outer_key][$inner_key] = $value.$outer_name.$nested
+                                    }
+                                }
+                                $PolicyObject.$key = $obj_hash
+                            } else {
+                                $PolicyObject.$key = $value
+                            }
                         }
                         $PolicyObject
                     }
