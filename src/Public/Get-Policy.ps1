@@ -74,6 +74,8 @@ function Get-Policy {
                                     } else {
                                         $list.Add($obj)
                                     }
+                                }
+                                if ($list.Count -gt 0) {
                                     $PolicyObject.$key = $list
                                 }
                             } else {

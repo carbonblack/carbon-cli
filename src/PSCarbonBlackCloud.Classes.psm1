@@ -250,7 +250,7 @@ class Policy {
     [hashtable[]]$DirectoryActionRules
     [string[]]$RapidConfigs
     [hashtable[]]$RuleConfigs
-    [hashtable]$SensorConfigs
+    [hashtable[]]$SensorConfigs
     [hashtable[]]$SensorSettings
     [string]$UpdateTime
 }
