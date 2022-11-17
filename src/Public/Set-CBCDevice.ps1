@@ -31,6 +31,7 @@ It prints the available Servers from the Credential file so that the user can ch
 
 Online Version: http://devnetworketc/
 #>
+using module ../PSCarbonBlackCloud.Classes.psm1
 function Set-CBCDevice {
     Param(
         [switch]$Quarantine,

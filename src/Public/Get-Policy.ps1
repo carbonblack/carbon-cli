@@ -8,6 +8,7 @@ Sets a specified server to execute the cmdlet with.
 .LINK
 Online Version: http://devnetworketc/
 #>
+using module ../PSCarbonBlackCloud.Classes.psm1
 function Get-Policy{
     Param(
         [PSCustomObject] $Server
@@ -28,15 +29,12 @@ function Get-Policy{
             Write-Host "`r`n`tPolicy from: $ServerName`r`n"
             $ResponseContent.policies | ForEach-Object {
                 $CurrentPolicy = $_
-                $PolicyObject = [PSCarbonBlackCloud.Policy]@{}
+                $PolicyObject = [Policy]::new()
                 ($_ | Get-Member -Type NoteProperty).Name | ForEach-Object {
                     $key = (ConvertTo-PascalCase $_)
                     $value = $CurrentPolicy.$_
                     $PolicyObject.$key = $value
                 }
-                $PolicyObject | Format-Table -AutoSize -Property `
-                    Id, IsSystem, Name, Description, PriorityLevel, Position, NumDevices `
-                    | Out-String | ForEach-Object { Write-Host $_ }
                 $PolicyObject
             }
         }

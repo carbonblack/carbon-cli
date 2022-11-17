@@ -49,6 +49,7 @@ It returns all devices which correspond to the specified criteria build with the
 
 Online Version: http://devnetworketc/
 #>
+using module ../PSCarbonBlackCloud.Classes.psm1
 function Get-CBCDevice {
 
     Param(
@@ -127,7 +128,7 @@ function Get-CBCDevice {
                     Write-Host "`r`n`tDevices from: $ServerName`r`n"
                     $ResponseContent.results | ForEach-Object {
                         $CurrentDevice = $_
-                        $DeviceObject = [PSCarbonBlackCloud.Device]@{}
+                        $DeviceObject = [Device]::new()
                         ($_ | Get-Member -Type NoteProperty).Name | ForEach-Object {
                             $key = (ConvertTo-PascalCase $_)
                             $value = $CurrentDevice.$_
@@ -150,7 +151,7 @@ function Get-CBCDevice {
                     Write-Host "`r`n`tDevices from: $ServerName`r`n"
                     $ResponseContent | ForEach-Object {
                         $CurrentDevice = $_
-                        $DeviceObject = [PSCarbonBlackCloud.Device]@{}
+                        $DeviceObject = [Device]::new()
                         ($_ | Get-Member -Type NoteProperty).Name | ForEach-Object {
                             $key = (ConvertTo-PascalCase $_)
                             $value = $CurrentDevice.$_

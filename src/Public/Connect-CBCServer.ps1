@@ -31,6 +31,7 @@ It prints the available Servers from the Credential file so that the user can ch
 
 Online Version: http://devnetworketc/
 #>
+using module ../PSCarbonBlackCloud.Classes.psm1
 function Connect-CBCServer {
     [CmdletBinding(DefaultParameterSetName = "default", HelpUri = "http://devnetworketc/")]
     [OutputType([PSCarbonBlackCloud.Server])]
@@ -70,11 +71,10 @@ function Connect-CBCServer {
 
         switch ($PSCmdlet.ParameterSetName) {
             "default" {
-                $ServerObject = [PSCarbonBlackCloud.Server]@{
-                    Uri = $Uri
-                    Org = $Org
-                    Token = $Token
-                }
+                $ServerObject = [CBCServer]::new()
+                $ServerObject.Uri = $Uri
+                $ServerObject.Org = $Org
+                $ServerObject.Token = $Token
 
                 if ($SaveCredentials.IsPresent) {
                     $CBC_CONFIG.defaultServers.Add($ServerObject) | Out-Null
