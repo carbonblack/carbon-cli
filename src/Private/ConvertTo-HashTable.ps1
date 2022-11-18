@@ -16,9 +16,9 @@ function ConvertTo-HashTable
                 } else {
                     $list.Add($obj)
                 }
-                if ($list.Count -gt 0) {
+            }
+            if ($list.Count -gt 0) {
                     $ObjectHash[(ConvertTo-PascalCase $_)] = $list
-                }
             }
         } else {
             $ObjectHash[(ConvertTo-PascalCase $_)] =  $Object.$_
