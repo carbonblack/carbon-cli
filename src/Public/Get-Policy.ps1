@@ -1,9 +1,30 @@
 <#
 .DESCRIPTION
-This cmdlet returns an overview of the policies available in the organization
+This cmdlet returns an overview of the policies available in the organization.
+.PARAMETER All
+Returns a summary of all policies in the organisation.
+.PARAMETER Id
+Returns a detailed overview of a policy with the specified Id.
 .PARAMETER Server
 Sets a specified server to execute the cmdlet with.
 .OUTPUTS
+A Policy Object
+.EXAMPLE
+-------------------------- Example 1 --------------------------
+Get-Policy -All
+Returns a summary of all policies in the organisation.
+
+-------------------------- Example 2 --------------------------
+Get-Policy -All -Server ServerObj
+Returns a summary of all policies in the organisation but the request is made only with the connection with specified server.
+
+-------------------------- Example 3 --------------------------
+Get-Policy -Id "SomeId"
+Returns a detailed overview of a policy with the specified Id.
+
+-------------------------- Example 4 --------------------------
+Get-Policy -Id "SomeId2" -Server ServerObj2
+Returns a detailed overview of a policy with the specified Id but the request is made only with the connection with specified server.
 
 .LINK
 Online Version: http://devnetworketc/
