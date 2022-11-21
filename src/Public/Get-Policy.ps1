@@ -91,9 +91,9 @@ function Get-Policy {
                                 $list = [System.Collections.ArrayList]@()
                                 foreach ($obj in $value) {
                                     if ($obj -is [PSCustomObject]) {
-                                        $list.Add((ConvertTo-HashTable $obj))
+                                        ($list.Add((ConvertTo-HashTable $obj))) | Out-Null
                                     } else {
-                                        $list.Add($obj)
+                                        ($list.Add($obj)) | Out-Null
                                     }
                                 }
                                 if ($list.Count -gt 0) {
