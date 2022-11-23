@@ -17,7 +17,7 @@ Set the max num of returned rows.
 .PARAMETER Start
 Set the start of the row.
 .PARAMETER Server
-Specifies the Server 
+Sets a specified server to execute the cmdlet with.
 .OUTPUTS
 
 .NOTES
@@ -84,7 +84,6 @@ function Get-CBCDevice {
             $ExecuteTo = @($Server)
         }
 
-        # $Results = @{}
         switch ($PSCmdlet.ParameterSetName) {
 
             "all" {

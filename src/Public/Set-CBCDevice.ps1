@@ -6,27 +6,43 @@ This cmdlet is used to update, configure and set the state of a device.
 If present the specified device is quarantined.
 .PARAMETER Unquarantine
 If present the specified device is unquarantined.
+.PARAMETER UpdatePolicy
+If present the specified device's policy is updated with some policy Id.
 .PARAMETER Device
 An array of Device objects. Can be passed through the pipeline.
-.PARAMETER Id
-Indicates that you want to save the specified credentials in the local credential store.
-.PARAMETER Menu
-Connects to a server from the list of recently connected servers.
+.PARAMETER DeviceId
+An array of Device Ids.
+.PARAMETER PolicyId
+A PolicyId is used when you want to update a device's policy.
+.PARAMETER Server 
+Sets a specified server to execute the cmdlet with.
+
 .OUTPUTS
-A Server Object
+
 .NOTES
 -------------------------- Example 1 --------------------------
-Connect-CBCServer -Server "http://server.cbc" -Org "MyOrg" -Token "MyToken"
-Connects with the specified Server, Org, Token.
+Set-CBCDevice -Quarantine -DeviceId "1234"
+Quarantines the device with specified Id.
 
 -------------------------- Example 2 --------------------------
-Connect-CBCServer -Server "http://server1.cbc" -Org "MyOrg1" -Token "MyToken1" -SaveCredential
-Connect with the specified Server, Org, Token and saves the credential in the Credential file.
+Get-CBCDevice -Id "1234" | Set-CBCDevice -Quarantine
+This example does the same thing as in 'Example 1'.
 
 -------------------------- Example 3 --------------------------
-Connect-CBCServer -Menu
-It prints the available Servers from the Credential file so that the user can choose with which one to connect.
+Set-CBCDevice -Unquarantine -DevicId "1234"
+Unquarantines the device with specified Id.
 
+-------------------------- Example 4 --------------------------
+Get-CBCDevice -Id "1234" | Set-CBCDevice -Unquarantine
+This example does the same thing as in 'Example 3'.
+
+-------------------------- Example 5 --------------------------
+Set-CBCDevice -UpdatePolicy -DeviceId "1234" -PolicyId "5678"
+Updates the policy of the device with the specified policy id.
+
+-------------------------- Example 6 --------------------------
+Get-CBCDevice -Id "1234" | Set-CBCDevice -UpdatePolicy -PolicyId "5678"
+This example does the same thing as in 'Example 5'.
 .LINK
 
 Online Version: http://devnetworketc/
@@ -38,13 +54,16 @@ function Set-CBCDevice {
 
         [switch]$Unquarantine,
 
-        [Parameter(ParameterSetName = "Device", ValueFromPipeline = $true)]
-        [array]$Device,
+        [switch]$UpdatePolicy,
 
-        [Parameter(ParameterSetName = "Id")]
-        [string[]] $Id,
+        [Parameter(ValueFromPipeline = $true)]
+        [Device[]]$Device,
 
-        [PSCustomObject] $Server
+        [string[]] $DeviceId,
+
+        [string]$PolicyId,
+
+        [PSCustomObject] $Server        
     )
 
     Process {
@@ -55,72 +74,83 @@ function Set-CBCDevice {
         if ($Quarantine) {
             $Body = @{}
             $Body["action_type"] = "QUARANTINE"
-            $Body["device_id"] = $Id
+            if ($Device) {
+                $DeviceIds = @()
+                foreach ($device in $Device) {
+                    $DeviceIds += $device.Id
+                }
+                $Body["device_id"] = $DeviceIds
+            }
+            else {
+                $Body["device_id"] = $DeviceId
+            }
             $Body["options"] = @{
                 "toggle" = "ON"
             }
-            switch ($PSCmdlet.ParameterSetName) {
-                "Device" {
-                    $ids = [System.Collections.ArrayList]@()
-                    foreach ($device in $Device) {
-                        $ids.Add($device.Id)
-                    }
-                    Write-Host $ids
-                    $Body["device_id"] = $ids
-                    $jsonBody = ConvertTo-Json -InputObject $Body
-                    $ExecuteTo | ForEach-Object {
-                        $Response = Invoke-CBCRequest -Server $_ `
-                            -Endpoint $CBC_CONFIG.endpoints["Devices"]["Quarantine"] `
-                            -Method POST `
-                            -Body $jsonBody
-                    }
-                }
-                "Id" {
-                    $jsonBody = ConvertTo-Json -InputObject $Body
-                    $ExecuteTo | ForEach-Object {
-                        $Response = Invoke-CBCRequest -Server $_ `
-                            -Endpoint $CBC_CONFIG.endpoints["Devices"]["Quarantine"] `
-                            -Method POST `
-                            -Body $jsonBody
-                    }
-                }
+            $jsonBody = ConvertTo-Json -InputObject $Body
+            $ExecuteTo | ForEach-Object {
+                $Response = Invoke-CBCRequest -Server $_ `
+                    -Endpoint $CBC_CONFIG.endpoints["Devices"]["Quarantine"] `
+                    -Method POST `
+                    -Body $jsonBody
             }
             return $Response
         }
+        
+    
         if ($Unquarantine) {
             $Body = @{}
             $Body["action_type"] = "QUARANTINE"
-            $Body["device_id"] = $Id
+            if ($Device) {
+                $DeviceIds = @()
+                foreach ($device in $Device) {
+                    $DeviceIds += $device.Id
+                }
+                $Body["device_id"] = $DeviceIds
+            }
+            else {
+                $Body["device_id"] = $DeviceId
+            }
             $Body["options"] = @{
                 "toggle" = "OFF"
             }
-            switch ($PSCmdlet.ParameterSetName) {
-                "Device" {
-                    $ids = [System.Collections.ArrayList]@()
-                    foreach ($device in $Device) {
-                        $ids.Add($device.Id)
-                    }
-                    Write-Host $ids
-                    $Body["device_id"] = $ids
-                    $jsonBody = ConvertTo-Json -InputObject $Body
-                    $ExecuteTo | ForEach-Object {
-                        $Response = Invoke-CBCRequest -Server $_ `
-                            -Endpoint $CBC_CONFIG.endpoints["Devices"]["Quarantine"] `
-                            -Method POST `
-                            -Body $jsonBody
-                    }
-                }
-                "Id" {
-                    $jsonBody = ConvertTo-Json -InputObject $Body
-                    $ExecuteTo | ForEach-Object {
-                        $Response = Invoke-CBCRequest -Server $_ `
-                            -Endpoint $CBC_CONFIG.endpoints["Devices"]["Quarantine"] `
-                            -Method POST `
-                            -Body $jsonBody
-                    }
-                }
+        
+            $jsonBody = ConvertTo-Json -InputObject $Body
+            $ExecuteTo | ForEach-Object {
+                $Response = Invoke-CBCRequest -Server $_ `
+                    -Endpoint $CBC_CONFIG.endpoints["Devices"]["Quarantine"] `
+                    -Method POST `
+                    -Body $jsonBody
+
             }
             return $Response
         }
+        if ($UpdatePolicy) {
+            $Body = @{}
+            $Body["action_type"] = "UPDATE_POLICY"
+            if ($Device) {
+                $DeviceIds = @()
+                foreach ($device in $Device) {
+                    $DeviceIds += $device.Id
+                }
+                $Body["device_id"] = $DeviceIds
+            }
+            else {
+                $Body["device_id"] = $DeviceId
+            }
+            $Body["options"] = @{
+                "policy_id" = $PolicyId
+            }
+
+            $jsonBody = ConvertTo-Json -InputObject $Body
+            $ExecuteTo | ForEach-Object {
+                $Response = Invoke-CBCRequest -Server $_ `
+                    -Endpoint $CBC_CONFIG.endpoints["Devices"]["UpdatePolicy"] `
+                    -Method POST `
+                    -Body $jsonBody
+            }
+            return $Response
+        }
+        
     }
 }
