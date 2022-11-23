@@ -1,3 +1,4 @@
+using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet returns all devices or a specific device with every current connection.
@@ -44,12 +45,11 @@ It returns all devices which correspond to the specified criteria.
 -------------------------- Example 6 --------------------------
 Get-CBCDevice -All -Exclusions $Exclusions -Query "SomeQuery" -Rows N (the default is 20) -Start N (the default is 0)
 It returns all devices which correspond to the specified criteria build with the specified params (Exclusion, Query, Rows and Start).
-
 .LINK
 
 Online Version: http://devnetworketc/
 #>
-using module ../PSCarbonBlackCloud.Classes.psm1
+
 function Get-CBCDevice {
 
     Param(

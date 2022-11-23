@@ -1,3 +1,4 @@
+using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet is used to update, configure and set the state of a device.
@@ -14,6 +15,8 @@ An array of Device objects. Can be passed through the pipeline.
 An array of Device Ids.
 .PARAMETER PolicyId
 A PolicyId is used when you want to update a device's policy.
+.PARAMETER OS
+Sets a specified server to execute the cmdlet with.
 .PARAMETER Server 
 Sets a specified server to execute the cmdlet with.
 
@@ -43,11 +46,15 @@ Updates the policy of the device with the specified policy id.
 -------------------------- Example 6 --------------------------
 Get-CBCDevice -Id "1234" | Set-CBCDevice -UpdatePolicy -PolicyId "5678"
 This example does the same thing as in 'Example 5'.
+
+-------------------------- Example 7 --------------------------
+Set-CBCDevice -UpdateSensor -DeviceId "1234" -OS "SomeOS" -SensorVersion "1.0.0.0"
+Updates the Sensor version of the device.
 .LINK
 
 Online Version: http://devnetworketc/
 #>
-using module ../PSCarbonBlackCloud.Classes.psm1
+
 function Set-CBCDevice {
     Param(
         [switch]$Quarantine,
@@ -56,12 +63,18 @@ function Set-CBCDevice {
 
         [switch]$UpdatePolicy,
 
+        [switch]$UpdateSensor,
+
         [Parameter(ValueFromPipeline = $true)]
         [Device[]]$Device,
 
         [string[]] $DeviceId,
 
         [string]$PolicyId,
+
+        [string]$OS,
+
+        [string]$SensorVersion,
 
         [PSCustomObject] $Server        
     )
@@ -146,6 +159,45 @@ function Set-CBCDevice {
             $ExecuteTo | ForEach-Object {
                 $Response = Invoke-CBCRequest -Server $_ `
                     -Endpoint $CBC_CONFIG.endpoints["Devices"]["UpdatePolicy"] `
+                    -Method POST `
+                    -Body $jsonBody
+            }
+            return $Response
+        }
+
+        if ($UpdateSensor) {
+            $osArr = @("XP", "WINDOWS", "MAC", "AV_SIG", "OTHER", "RHEL", "UBUNTU", "SUSE", "AMAZON_LINUX", "MAC_OSX")
+            $Body = @{}
+            $Body["action_type"] = "UPDATE_SENSOR_VERSION"
+            if ($Device) {
+                $DeviceIds = @()
+                foreach ($device in $Device) {
+                    $DeviceIds += $device.Id
+                }
+                $Body["device_id"] = $DeviceIds
+            }
+            else {
+                $Body["device_id"] = $DeviceId
+            }
+            if ($osArr.Contains($OS)) {
+                $OS = $OS.ToUpper()
+                $Body["options"] = @{
+                    "sensor_version" = @{
+                        $OS = $SensorVersion
+                    }
+                }
+            }
+            else {
+                $Body["options"] = @{
+                    "sensor_version" = @{
+                        "OTHER" = $SensorVersion
+                    }
+                }
+            }
+            $jsonBody = ConvertTo-Json -InputObject $Body
+            $ExecuteTo | ForEach-Object {
+                $Response = Invoke-CBCRequest -Server $_ `
+                    -Endpoint $CBC_CONFIG.endpoints["Devices"]["UpdateSensor"] `
                     -Method POST `
                     -Body $jsonBody
             }

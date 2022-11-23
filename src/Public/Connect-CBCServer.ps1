@@ -1,3 +1,4 @@
+using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet establishes a connection to the CBC server specified by the -Server parameter.
@@ -14,6 +15,7 @@ Indicates that you want to save the specified credentials in the local credentia
 Connects to a server from the list of recently connected servers.
 .OUTPUTS
 A Server Object
+
 .NOTES
 -------------------------- Example 1 --------------------------
 Connect-CBCServer -Server "http://server.cbc" -Org "MyOrg" -Token "MyToken"
@@ -31,7 +33,6 @@ It prints the available Servers from the Credential file so that the user can ch
 
 Online Version: http://devnetworketc/
 #>
-using module ../PSCarbonBlackCloud.Classes.psm1
 function Connect-CBCServer {
     [CmdletBinding(DefaultParameterSetName = "default", HelpUri = "http://devnetworketc/")]
     Param (

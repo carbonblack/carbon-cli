@@ -1,3 +1,4 @@
+using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet returns an overview of the policies available in the organization.
@@ -9,7 +10,7 @@ Returns a detailed overview of a policy with the specified Id.
 Sets a specified server to execute the cmdlet with.
 .OUTPUTS
 A Policy Object
-.EXAMPLE
+.NOTES
 -------------------------- Example 1 --------------------------
 Get-Policy -All
 Returns a summary of all policies in the organisation.
@@ -29,7 +30,7 @@ Returns a detailed overview of a policy with the specified Id but the request is
 .LINK
 Online Version: http://devnetworketc/
 #>
-using module ../PSCarbonBlackCloud.Classes.psm1
+
 function Get-Policy {
     Param(
         [Parameter(ParameterSetName = "all")]
