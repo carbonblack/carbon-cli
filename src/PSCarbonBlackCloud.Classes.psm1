@@ -226,13 +226,6 @@ class CBCServer {
         return "[" + $this.Org + "] " + $this.Uri
     }
 }
-class Rule {
-    [long]$Id
-    [switch]$Required
-    [string]$Action
-    [hashtable]$Application
-    [string]$Operation
-}
 
 class Policy {
     [long]$Id
