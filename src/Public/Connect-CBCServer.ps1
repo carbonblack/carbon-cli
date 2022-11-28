@@ -77,8 +77,10 @@ function Connect-CBCServer {
                 $ServerObject.Token = $Token
 
                 if ($SaveCredentials.IsPresent) {
-                    $CBC_CONFIG.defaultServers.Add($ServerObject) | Out-Null
-                    Save-CBCCredential $ServerObject
+                    if (Test-CBCConnection $ServerObject) {
+                        $CBC_CONFIG.defaultServers.Add($ServerObject) | Out-Null
+                        Save-CBCCredential $ServerObject | Out-Null
+                    } 
                 }
             }
             "Menu" {

@@ -9,6 +9,10 @@ If present the specified device is quarantined.
 If present the specified device is unquarantined.
 .PARAMETER UpdatePolicy
 If present the specified device's policy is updated with some policy Id.
+.PARAMETER UpdateSensor
+If present the specified device's sensor version is updated with the passed sensor version.
+.PARAMETER UninstallSensor
+If present the specified device's sennsor is uninstalled.
 .PARAMETER Device
 An array of Device objects. Can be passed through the pipeline.
 .PARAMETER DeviceId
@@ -50,6 +54,9 @@ This example does the same thing as in 'Example 5'.
 -------------------------- Example 7 --------------------------
 Set-CBCDevice -UpdateSensor -DeviceId "1234" -OS "SomeOS" -SensorVersion "1.0.0.0"
 Updates the Sensor version of the device.
+-------------------------- Example 8 --------------------------
+Set-CBCDevice -UninstallSensor -DeviceId "1234"
+Uninstalles the sensor on the specified device.
 .LINK
 
 Online Version: http://devnetworketc/
@@ -64,6 +71,8 @@ function Set-CBCDevice {
         [switch]$UpdatePolicy,
 
         [switch]$UpdateSensor,
+
+        [switch]$UninstallSensor,
 
         [Parameter(ValueFromPipeline = $true)]
         [Device[]]$Device,
@@ -198,6 +207,29 @@ function Set-CBCDevice {
             $ExecuteTo | ForEach-Object {
                 $Response = Invoke-CBCRequest -Server $_ `
                     -Endpoint $CBC_CONFIG.endpoints["Devices"]["UpdateSensor"] `
+                    -Method POST `
+                    -Body $jsonBody
+            }
+            return $Response
+        }
+
+        if ($UninstallSensor) {
+            $Body = @{}
+            $Body["action_type"] = "UNINSTALL_SENSOR"
+            if ($Device) {
+                $DeviceIds = @()
+                foreach ($device in $Device) {
+                    $DeviceIds += $device.Id
+                }
+                $Body["device_id"] = $DeviceIds
+            }
+            else {
+                $Body["device_id"] = $DeviceId
+            }
+            $jsonBody = ConvertTo-Json -InputObject $Body
+            $ExecuteTo | ForEach-Object {
+                $Response = Invoke-CBCRequest -Server $_ `
+                    -Endpoint $CBC_CONFIG.endpoints["Devices"]["UninstallSensor"] `
                     -Method POST `
                     -Body $jsonBody
             }

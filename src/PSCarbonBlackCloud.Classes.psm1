@@ -238,7 +238,7 @@ class Policy {
     [long]$AutoDeregisterInactiveVdiIntervalMs
     [long]$AutoDeleteKnownBadHashesDelay
     [hashtable]$AvSettings
-    [Rule[]]$Rules
+    [hashtable[]]$Rules
     [long]$AutoDeregisterInactiveVmWorkloadsIntervalMs
     [hashtable[]]$DirectoryActionRules
     [string[]]$RapidConfigs
