@@ -226,13 +226,6 @@ class CBCServer {
         return "[" + $this.Org + "] " + $this.Uri
     }
 }
-class Rule {
-    [long]$Id
-    [switch]$Required
-    [string]$Action
-    [hashtable]$Application
-    [string]$Operation
-}
 
 class Policy {
     [long]$Id
@@ -245,7 +238,7 @@ class Policy {
     [long]$AutoDeregisterInactiveVdiIntervalMs
     [long]$AutoDeleteKnownBadHashesDelay
     [hashtable]$AvSettings
-    [Rule[]]$Rules
+    [hashtable[]]$Rules
     [long]$AutoDeregisterInactiveVmWorkloadsIntervalMs
     [hashtable[]]$DirectoryActionRules
     [string[]]$RapidConfigs
