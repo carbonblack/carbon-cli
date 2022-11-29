@@ -83,7 +83,7 @@ Describe "Connect-CBCServer" {
 
     Context "When in Default section" {
 
-        It "Should return a Server Object on all Args" {
+        It "Should return a CBC Server Object on all Args" {
             Mock -ModuleName PSCarbonBlackCloud Invoke-WebRequest -MockWith {
                 return @{
                     StatusCode = 200
@@ -111,7 +111,7 @@ Describe "Connect-CBCServer" {
             $CBC_CONFIG.currentConnections.Count | Should -Be 0
         }
 
-        It "Should throw an error when you are already connected to the same server" {
+        It "Should throw an error when you are already connected to the same CBC server" {
             $CBC_CONFIG.currentConnections.Add($TestServerObject1)
             Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
                 return ""
@@ -120,7 +120,7 @@ Describe "Connect-CBCServer" {
             $CBC_CONFIG.currentConnections.Count | Should -Be 1
         }
 
-        It "Should connect to a second server when already connected to another" {
+        It "Should connect to a second CBC server when already connected to another" {
             Mock -ModuleName PSCarbonBlackCloud Invoke-WebRequest -MockWith {
                 return @{
                     StatusCode = 200
@@ -156,7 +156,7 @@ Describe "Connect-CBCServer" {
                 $currentFolder = Get-Location
                 $path = "${currentFolder}/tmp.xml"
                 New-Item -Path $path -ItemType "file"
-                Add-Content -Path $path -Value "<Servers></Servers>"
+                Add-Content -Path $path -Value "<CBCServers></CBCServers>"
                 $ENV:orgCredentialsFullPath = $CBC_CONFIG.credentialsFullPath
                 $CBC_CONFIG.credentialsFullPath = $path
             }
@@ -176,7 +176,7 @@ Describe "Connect-CBCServer" {
 
                 Connect-CBCServer -Uri $TestServerObject1.Uri -Token $TestServerObject1.Token -Org $TestServerObject1.Org -SaveCredentials
 
-                $serverObjects = Select-Xml -Path $CBC_CONFIG.credentialsFullPath -XPath '/Servers/Server'
+                $serverObjects = Select-Xml -Path $CBC_CONFIG.credentialsFullPath -XPath '/CBCServers/CBCServer'
                 $serverObjects[0].Node.Uri | Should -Be $TestServerObject1.Uri
                 $serverObjects[0].Node.Org | Should -Be $TestServerObject1.Org
                 $serverObjects[0].Node.Token | Should -Be $TestServerObject1.Token

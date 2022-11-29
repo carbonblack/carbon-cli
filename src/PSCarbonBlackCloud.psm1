@@ -53,15 +53,15 @@ if (-Not (Test-Path -Path $cbcConfigObject.credentialsFullPath)) {
     Try {
         New-Item -Path $cbcConfigObject.credentialsFullPath | Write-Debug
         # Init an empty structure
-        Add-Content $cbcConfigObject.credentialsFullPath "<Servers></Servers>"
+        Add-Content $cbcConfigObject.credentialsFullPath "<CBCServers></CBCServers>"
     }
     Catch {
         Write-Error -Message "Cannot create file ${cbcConfigObject.credentialsFullPath}" -ErrorAction "Stop"
     }
 }
 
-# Add the existing servers if any from the `PSCredentials.xml` file
-Select-Xml -Path $cbcConfigObject.credentialsFullPath -XPath '/Servers/Server' | ForEach-Object {
+# Add the existing CBC servers if any from the `PSCredentials.xml` file
+Select-Xml -Path $cbcConfigObject.credentialsFullPath -XPath '/CBCServers/CBCServer' | ForEach-Object {
     $cbcConfigObject.defaultServers.Add(
         @{
             Uri = $_.Node.Uri

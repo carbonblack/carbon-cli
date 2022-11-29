@@ -1,9 +1,10 @@
+using module ../PSCarbonBlackCloud.Classes.psm1
 function Invoke-CBCRequest {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory = $true, Position = 0)]
         [ValidateNotNullOrEmpty()]
-        [PSCustomObject] $Server,
+        [CBCServer] $CBCServer,
 
         [Parameter(Mandatory = $true, Position = 1)]
         [ValidateNotNullOrEmpty()]
@@ -19,16 +20,24 @@ function Invoke-CBCRequest {
     
     Process {
         $headers = @{
-            "X-AUTH-TOKEN" = $Server.Token
+            "X-AUTH-TOKEN" = $CBCServer.Token
             "Content-Type" = "application/json"
             "User-Agent" = "PSCarbonBlackCloud"
         }
        
-        $Params = , $Server.Org + $Params
+        $Params = , $CBCServer.Org + $Params
         $formatted_uri = $Endpoint -f $Params
 
-        $FullUri = $Server.Uri + $formatted_uri
+        $FullUri = $CBCServer.Uri + $formatted_uri
         Write-Debug "Requesting ${FullUri}"
-        return Invoke-WebRequest -Uri $FullUri -Headers $headers -Method $Method -Body $Body
+        try {
+            $response = Invoke-WebRequest -Uri $FullUri -Headers $headers -Method $Method -Body $Body
+            return $response
+        }
+        catch {
+            $StatusCode = $_.Exception.Response.StatusCode
+            Write-Error "Request to ${FullUri} failed. Status Code: ${StatusCode}"
+        }
+        return $null
     }  
 }

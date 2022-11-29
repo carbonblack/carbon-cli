@@ -1,9 +1,9 @@
 <#
 .DESCRIPTION
 This cmdlet removes all or a specific connection from the CBC_CURRENT_CONNECTIONS.
-.PARAMETER Server
+.PARAMETER CBCServer
 Specifies the server you want to disconnect. It accepts '*' for all servers, server name,
-array of server names or Server object.
+array of server names or CBCServer object.
 .OUTPUTS
 .NOTES
 -------------------------- Example 1 --------------------------
@@ -12,11 +12,11 @@ It disconnects all current connections.
 
 -------------------------- Example 2 --------------------------
 Disconnect-CBCServer [$ServerObj, $ServerObj1]
-It disconnects the specified Server Object from the current connections.
+It disconnects the specified Server Objects from the current connections.
 
 -------------------------- Example 3 --------------------------
 Disconnect-CBCServer ["Server", "Server1"]
-It searches for Servers with this names from the current connections and disconnects them.
+It searches for CBC Servers with this names from the current connections and disconnects them.
 .LINK
 Online Version: http://devnetworketc/
 #>
@@ -24,36 +24,39 @@ function Disconnect-CBCServer {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory = $true)]
-        $Server
+        $CBCServer
     )
 
-    if ($Server -eq '*') {
+    if ($CBCServer -eq '*') {
         $CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
-    } elseif ($Server -is [array]) {
-        if ($Server.Count -eq 0) {
+    }
+    elseif ($CBCServer -is [array]) {
+        if ($CBCServer.Count -eq 0) {
             Write-Error "Empty array" -ErrorAction "Stop"
         }
 
         # array of Hashtables
-        if ($Server[0] -is [PSCustomObject]) {
-            $Server | ForEach-Object {
+        if ($CBCServer[0] -is [PSCustomObject]) {
+            $CBCServer | ForEach-Object {
                 $CBC_CONFIG.currentConnections.Remove($_)
             }
         }
 
         # array of Strings
-        if ($Server[0] -is [string]) {
-            foreach ($s in $Server) {
+        if ($CBCServer[0] -is [string]) {
+            foreach ($s in $CBCServer) {
                 $tmpCurrentConnections = $CBC_CONFIG.currentConnections | Where-Object { $_.Uri -eq $s }
                 foreach ($c in $tmpCurrentConnections) {
                     $CBC_CONFIG.currentConnections.Remove($c)
                 }
             }
         }
-    } elseif ($Server -is [PSCustomObject]) {
-        $CBC_CONFIG.currentConnections.Remove($Server)
-    } elseif ($Server -is [string]) {
-        $tmpCurrentConnections = $CBC_CONFIG.currentConnections | Where-Object { $_.Uri -eq $Server }
+    }
+    elseif ($CBCServer -is [PSCustomObject]) {
+        $CBC_CONFIG.currentConnections.Remove($CBCServer)
+    }
+    elseif ($CBCServer -is [string]) {
+        $tmpCurrentConnections = $CBC_CONFIG.currentConnections | Where-Object { $_.Uri -eq $CBCServer }
         foreach ($c in $tmpCurrentConnections) {
             $CBC_CONFIG.currentConnections.Remove($c)
         }

@@ -260,7 +260,7 @@ Describe "Get-CBCDevice" {
                         Content = $MutlipleResultsResponse
                     }
                 } -ParameterFilter { 
-                    $Server -match $TestServerObject1
+                    $CBCServer -match $TestServerObject1
                     $Endpoint -eq $CBC_CONFIG.endpoints["Devices"]["Search"]
                     $Method -eq "POST"
                 }
@@ -281,7 +281,7 @@ Describe "Get-CBCDevice" {
                         Content = $MutlipleResultsResponse
                     }
                 } -ParameterFilter { 
-                    $Server -match $TestServerObject1
+                    $CBCServer -match $TestServerObject1
                     $Endpoint -eq $CBC_CONFIG.endpoints["Devices"]["Search"]
                     $Method -eq "POST"
                 }
@@ -292,7 +292,7 @@ Describe "Get-CBCDevice" {
                         Content = $MutlipleResultsResponse
                     }
                 } -ParameterFilter { 
-                    $Server -match $TestServerObject2
+                    $CBCServer -match $TestServerObject2
                     $Endpoint -eq $CBC_CONFIG.endpoints["Devices"]["Search"]
                     $Method -eq "POST"
                 }

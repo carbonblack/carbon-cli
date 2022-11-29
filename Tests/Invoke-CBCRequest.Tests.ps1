@@ -26,7 +26,7 @@ Describe "Invoke-CBCRequest" {
                 }
 
                 $endpoint = $CBC_CONFIG.endpoints["Devices"]["Search"]
-                $response = Invoke-CBCRequest -Server @{
+                $response = Invoke-CBCRequest -CBCServer @{
                     Uri = "https://test.adasdagf/"
                     Org = "test"
                     Token = "test"

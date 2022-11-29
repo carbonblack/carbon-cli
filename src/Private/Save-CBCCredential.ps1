@@ -1,7 +1,8 @@
+using module ../PSCarbonBlackCloud.Classes.psm1
 function Save-CBCCredential {
     Param(
         [Parameter(Mandatory = $true)]
-        [PSCustomObject] $ServerObject
+        [CBCServer] $CBCServerObject
     )
 
     Process {
@@ -12,27 +13,18 @@ function Save-CBCCredential {
         else {
             New-Item -Path $CBC_CONFIG.credentialsFullPath
             # Add root element
-            Add-Content -Path $CBC_CONFIG.credentialsFullPath "<Servers>"
-            Add-Content -Path $CBC_CONFIG.credentialsFullPath "</Servers>"
+            Add-Content -Path $CBC_CONFIG.credentialsFullPath "<CBCServers>"
+            Add-Content -Path $CBC_CONFIG.credentialsFullPath "</CBCServers>"
             # Load file
             $credentialsDoc.Load($CBC_CONFIG.credentialsFullPath)
         }
 
-        $serverElement = $credentialsDoc.CreateElement("Server")
-        $serverElement.SetAttribute("Uri", $ServerObject.Uri)
-        $serverElement.SetAttribute("Org", $ServerObject.Org)
-        $serverElement.SetAttribute("Token", $ServerObject.Token)
+        $serverElement = $credentialsDoc.CreateElement("CBCServer")
+        $serverElement.SetAttribute("Uri", $CBCServerObject.Uri)
+        $serverElement.SetAttribute("Org", $CBCServerObject.Org)
+        $serverElement.SetAttribute("Token", $CBCServerObject.Token)
 
-        # $root = $credentialsDoc.DocumentElement;
-
-        $serversNode = $credentialsDoc.SelectSingleNode("Servers")
-        #$uri = $ServerObject.Uri
-        #$serverNode = $credentialsDoc.SelectSingleNode("//Server[@Uri=${uri}]")
-        #if ($serverNode -eq $null) {
-        #    $serversNode.AppendChild($serverElement)
-        #} else {
-        #    Write-Host "Found it"
-        # }
+        $serversNode = $credentialsDoc.SelectSingleNode("CBCServers")
         $serversNode.AppendChild($serverElement)
         $credentialsDoc.Save($CBC_CONFIG.credentialsFullPath)
     }
