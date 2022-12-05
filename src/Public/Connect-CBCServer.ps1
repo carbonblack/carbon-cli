@@ -30,8 +30,7 @@ Connect-CBCServer -Menu
 It prints the available CBC Servers from the Credential file so that the user can choose with which one to connect.
 
 .LINK
-
-Online Version: http://devnetworketc/
+API Documentation: http://devnetworketc/
 #>
 function Connect-CBCServer {
     [CmdletBinding(DefaultParameterSetName = "default", HelpUri = "http://devnetworketc/")]

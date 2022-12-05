@@ -11,14 +11,16 @@ Disconnect-CBCServer *
 It disconnects all current connections.
 
 -------------------------- Example 2 --------------------------
-Disconnect-CBCServer [$ServerObj, $ServerObj1]
+$ServerObj = Connect-CBCServer -CBCServer ""https://dev01.io/" -Org "1234" -Token "5678"
+$ServerObj1 = Connect-CBCServer -CBCServer ""https://dev02.io/" -Org "1234" -Token "5678"
+Disconnect-CBCServer $ServerObj, $ServerObj1
 It disconnects the specified Server Objects from the current connections.
 
 -------------------------- Example 3 --------------------------
-Disconnect-CBCServer ["Server", "Server1"]
+Disconnect-CBCServer "https://dev01.io/", "https://dev02.io/"
 It searches for CBC Servers with this names from the current connections and disconnects them.
 .LINK
-Online Version: http://devnetworketc/
+API Documentation: http://devnetworketc/
 #>
 function Disconnect-CBCServer {
     [CmdletBinding()]

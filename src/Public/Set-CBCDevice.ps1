@@ -40,7 +40,7 @@ Get-CBCDevice -Id "1234" | Set-CBCDevice -UninstallSensor
 Uninstalles the sensor on the specified device.
 
 .LINK
-Online Version: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/
+API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/
 #>
 
 function Set-CBCDevice {
