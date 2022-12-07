@@ -35,7 +35,7 @@ Get-CBCAlert -CBCServer $CBCServer
 It returns all alerts but the request is made only with the connection with specified CBC server.
 
 -------------------------- Example 5 --------------------------
-Get-CBCDevice -Id "11a1a1a1-b22b-3333-44cc-dd5555d5d55d" -CBCServer $CBCServer
+Get-CBCAlert -Id "11a1a1a1-b22b-3333-44cc-dd5555d5d55d" -CBCServer $CBCServer
 It returns the alert with specified Id but the request is made only with the connection with specified CBC server.
 
 -------------------------- Example 6 --------------------------
@@ -87,11 +87,11 @@ Get-CBCAlert -Criteria $Criteria
 It returns all alerts which correspond to the specified criteria.
 
 -------------------------- Example 7 --------------------------
-Get-CBCDevice -Query "os:LINUX"
+Get-CBCAlert -Query "device_id:123456789"
 It returns all alerts which correspond to the specified query with lucene syntax.
 
 -------------------------- Example 8 --------------------------
-Get-CBCDevice -Criteria $Criteria -Query $Query -Rows 20 -Start 0
+Get-CBCAlert -Criteria $Criteria -Query $Query -Rows 20 -Start 0
 It returns all alerts which correspond to the specified criteria build with the specified params (Query, Rows and Start).
 
 .LINK
