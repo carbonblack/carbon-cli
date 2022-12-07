@@ -10,16 +10,16 @@ Describe "Get-CBCDevice" {
 
             $TestServerObject1 = [PSCustomObject]@{
                 PSTypeName = "CBCServer"
-                Uri = "https://test.adasdagf/"
-                Org = "test"
-                Token = "test"
+                Uri        = "https://test.adasdagf/"
+                Org        = "test"
+                Token      = "test"
             }
 
             $TestServerObject2 = [PSCustomObject]@{
                 PSTypeName = "CBCServer"
-                Uri = "https://test02.adasdagf/"
-                Org = "test2"
-                Token = "test"
+                Uri        = "https://test02.adasdagf/"
+                Org        = "test2"
+                Token      = "test"
             }
 
             $MutlipleResultsResponse = @"
@@ -257,10 +257,10 @@ Describe "Get-CBCDevice" {
                 Mock Invoke-CBCRequest -MockWith {
                     return @{
                         StatusCode = 200
-                        Content = $MutlipleResultsResponse
+                        Content    = $MutlipleResultsResponse
                     }
                 } -ParameterFilter { 
-                    $Server -match $TestServerObject1
+                    $CBCServer -match $TestServerObject1
                     $Endpoint -eq $CBC_CONFIG.endpoints["Devices"]["Search"]
                     $Method -eq "POST"
                 }
@@ -278,10 +278,10 @@ Describe "Get-CBCDevice" {
                 Mock Invoke-CBCRequest -MockWith {
                     return @{
                         StatusCode = 200
-                        Content = $MutlipleResultsResponse
+                        Content    = $MutlipleResultsResponse
                     }
                 } -ParameterFilter { 
-                    $Server -match $TestServerObject1
+                    $CBCServer -match $TestServerObject1
                     $Endpoint -eq $CBC_CONFIG.endpoints["Devices"]["Search"]
                     $Method -eq "POST"
                 }
@@ -289,10 +289,10 @@ Describe "Get-CBCDevice" {
                 Mock Invoke-CBCRequest -MockWith {
                     return @{
                         StatusCode = 200
-                        Content = $MutlipleResultsResponse
+                        Content    = $MutlipleResultsResponse
                     }
                 } -ParameterFilter { 
-                    $Server -match $TestServerObject2
+                    $CBCServer -match $TestServerObject2
                     $Endpoint -eq $CBC_CONFIG.endpoints["Devices"]["Search"]
                     $Method -eq "POST"
                 }

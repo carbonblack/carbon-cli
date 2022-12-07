@@ -17,20 +17,20 @@ Describe "Invoke-CBCRequest" {
                 } -ParameterFilter { 
                     $Uri -match "https://test.adasdagf/appservices/v6/orgs/test/devices/123"
                     $Method -eq "Get"
-                    $Body -eq @{test = "test"}
+                    $Body -eq @{test = "test" }
                     $Headers -match @{
                         "X-AUTH-TOKEN" = "test"
                         "Content-Type" = "application/json"
-                        "User-Agent" = "PSCarbonBlackCloud"
+                        "User-Agent"   = "PSCarbonBlackCloud"
                     }
                 }
 
                 $endpoint = $CBC_CONFIG.endpoints["Devices"]["Search"]
-                $response = Invoke-CBCRequest -Server @{
-                    Uri = "https://test.adasdagf/"
-                    Org = "test"
+                $response = Invoke-CBCRequest -CBCServer @{
+                    Uri   = "https://test.adasdagf/"
+                    Org   = "test"
                     Token = "test"
-                } -Endpoint $endpoint -Method Get -Params @(123) -Body @{test = "test"}
+                } -Endpoint $endpoint -Method Get -Params @(123) -Body @{test = "test" }
     
                 $response.StatusCode | Should -Be 200
 

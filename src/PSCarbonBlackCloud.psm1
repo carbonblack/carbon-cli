@@ -33,10 +33,10 @@ $credentialsPath = "${Home}/.carbonblack/"
 $credentialsFile = "PSCredentials.xml"
 
 $cbcConfigObject = @{
-    currentConnections = [System.Collections.ArrayList]@()
-    defaultServers = [System.Collections.ArrayList]@()
+    currentConnections  = [System.Collections.ArrayList]@()
+    defaultServers      = [System.Collections.ArrayList]@()
     credentialsFullPath = ($credentialsPath + $credentialsFile)
-    endpoints = $endpoints
+    endpoints           = $endpoints
 }
 
 # Try to initialize the credentials files
@@ -53,20 +53,20 @@ if (-Not (Test-Path -Path $cbcConfigObject.credentialsFullPath)) {
     Try {
         New-Item -Path $cbcConfigObject.credentialsFullPath | Write-Debug
         # Init an empty structure
-        Add-Content $cbcConfigObject.credentialsFullPath "<Servers></Servers>"
+        Add-Content $cbcConfigObject.credentialsFullPath "<CBCServers></CBCServers>"
     }
     Catch {
         Write-Error -Message "Cannot create file ${cbcConfigObject.credentialsFullPath}" -ErrorAction "Stop"
     }
 }
 
-# Add the existing servers if any from the `PSCredentials.xml` file
-Select-Xml -Path $cbcConfigObject.credentialsFullPath -XPath '/Servers/Server' | ForEach-Object {
+# Add the existing CBC servers if any from the `PSCredentials.xml` file
+Select-Xml -Path $cbcConfigObject.credentialsFullPath -XPath '/CBCServers/CBCServer' | ForEach-Object {
     $cbcConfigObject.defaultServers.Add(
         @{
-            Uri = $_.Node.Uri
+            Uri   = $_.Node.Uri
             Token = $_.Node.Token
-            Org = $_.Node.Org
+            Org   = $_.Node.Org
         }
     )
 }

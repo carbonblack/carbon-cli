@@ -6,109 +6,73 @@ This cmdlet returns an overview of the policies available in the organization.
 Returns a summary of all policies in the organisation.
 .PARAMETER Id
 Returns a detailed overview of a policy with the specified Id.
-.PARAMETER Server
-Sets a specified server to execute the cmdlet with.
+.PARAMETER CBCServer
+Sets a specified CBC Server from the current connections to execute the cmdlet with.
 .OUTPUTS
 A Policy Object
 .NOTES
 -------------------------- Example 1 --------------------------
-Get-Policy -All
-Returns a summary of all policies in the organisation.
+Get-Policy 
+Returns a summary of all policies and the request is made with every current connection.
 
 -------------------------- Example 2 --------------------------
-Get-Policy -All -Server ServerObj
-Returns a summary of all policies in the organisation but the request is made only with the connection with specified server.
+Get-Policy -CBCServer $ServerObj
+Returns a summary of all policies in the organisation but the request is made only with the connection with specified CBC server.
 
 -------------------------- Example 3 --------------------------
-Get-Policy -Id "SomeId"
+Get-Policy "1234"
 Returns a detailed overview of a policy with the specified Id.
 
 -------------------------- Example 4 --------------------------
-Get-Policy -Id "SomeId2" -Server ServerObj2
-Returns a detailed overview of a policy with the specified Id but the request is made only with the connection with specified server.
+Get-Policy -Id "1234"
+Returns a detailed overview of a policy with the specified Id.
+
+-------------------------- Example 5 --------------------------
+Get-Policy -Id "1234" -CBCServer $CBCServerObj
+Returns a detailed overview of a policy with the specified Id but the request is made only with the connection with specified CBC server.
 
 .LINK
-Online Version: http://devnetworketc/
+API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/policy-service/
 #>
 
 function Get-Policy {
+    [CmdletBinding(DefaultParameterSetName = "all")]
     Param(
-        [Parameter(ParameterSetName = "all")]
-        [switch] $All,
+        [Parameter(ParameterSetName = "id", Position = 0)]
+        [array] $Id,
 
-        [Parameter(ParameterSetName = "id")]
-        [string] $Id,
-
-        [PSCustomObject] $Server
+        [CBCServer] $CBCServer
     )
 
     Process {
         $ExecuteTo = $CBC_CONFIG.currentConnections
-        if ($Server) {
-            $ExecuteTo = @($Server)
+        if ($CBCServer) {
+            $ExecuteTo = @($CBCServer)
         }
         switch ($PSCmdlet.ParameterSetName) {
-            "All" {
+            "all" {
                 $ExecuteTo | ForEach-Object {
-                    $ServerName = "[{0}] {1}" -f $_.Org, $_.Uri
-                    $Response = Invoke-CBCRequest -Server $_ `
+                    $CurrentCBCServer = $_
+                    $CBCServerName = "[{0}] {1}" -f $_.Org, $_.Uri
+                    $Response = Invoke-CBCRequest -CBCServer $CurrentCBCServer `
                         -Endpoint $CBC_CONFIG.endpoints["Policy"]["Summary"] `
                         -Method GET `
                     
-                    $ResponseContent = $Response.Content | ConvertFrom-Json
-                    Write-Host "`r`n`tPolicy from: $ServerName`r`n"
-                    $ResponseContent.policies | ForEach-Object {
-                        $CurrentPolicy = $_
-                        $PolicyObject = [PolicySummary]::new()
-                        ($_ | Get-Member -Type NoteProperty).Name | ForEach-Object {
-                            $key = (ConvertTo-PascalCase $_)
-                            $value = $CurrentPolicy.$_
-                            $PolicyObject.$key = $value
-                        }
-                        $PolicyObject
-                    }
+                    Get-PolicyAPIResponse $Response $CBCServerName $CurrentCBCServer
                 }
             }
-            "Id" {
+            "id" {
                 $ExecuteTo | ForEach-Object {
-                    $ServerName = "[{0}] {1}" -f $_.Org, $_.Uri
-                    $Response = Invoke-CBCRequest -Server $_ `
+                    $CurrentCBCServer = $_
+                    $CBCServerName = "[{0}] {1}" -f $_.Org, $_.Uri
+                    $Response = Invoke-CBCRequest -CBCServer $CurrentCBCServer `
                         -Endpoint $CBC_CONFIG.endpoints["Policy"]["Details"] `
                         -Method GET `
                         -Params @($Id)
-                
-                    $ResponseContent = $Response.Content | ConvertFrom-Json
 
-                    Write-Host "`r`n`tPolicy from: $ServerName`r`n"
-                    $ResponseContent | ForEach-Object {
-                        $CurrentPolicy = $_
-                        $PolicyObject = [Policy]::new()
-                        ($_ | Get-Member -Type NoteProperty).Name | ForEach-Object {
-                            $key = (ConvertTo-PascalCase $_)
-                            $value = $CurrentPolicy.$_
-                            if ($value -is [PSCustomObject]) {
-                                $PolicyObject.$key = (ConvertTo-HashTable $value)
-                            } elseif ($value -is [System.Object[]]) {
-                                $list = [System.Collections.ArrayList]@()
-                                foreach ($obj in $value) {
-                                    if ($obj -is [PSCustomObject]) {
-                                        ($list.Add((ConvertTo-HashTable $obj))) | Out-Null
-                                    } else {
-                                        ($list.Add($obj)) | Out-Null
-                                    }
-                                }
-                                if ($list.Count -gt 0) {
-                                    $PolicyObject.$key = $list
-                                }
-                            } else {
-                                $PolicyObject.$key = $value
-                            }
-                        }
-                        $PolicyObject
-                    }
+                    Get-PolicyAPIResponse $Response $CBCServerName $CurrentCBCServer
                 }
             }
-        
         }
     }
 }

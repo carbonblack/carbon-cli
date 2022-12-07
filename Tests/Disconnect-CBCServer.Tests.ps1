@@ -3,21 +3,21 @@ Describe "Disconnect-CBCServer" {
     BeforeAll {
         $TestServerObject1 = [PSCustomObject]@{
             PSTypeName = "CBCServer"
-            Uri = "https://test.adasdagf/"
-            Org = "test"
-            Token = "test"
+            Uri        = "https://test.adasdagf/"
+            Org        = "test"
+            Token      = "test"
         }
         $TestServerObject2 = [PSCustomObject]@{
             PSTypeName = "CBCServer"
-            Uri = "https://test02.adasdagf/"
-            Org = "test"
-            Token = "test"
+            Uri        = "https://test02.adasdagf/"
+            Org        = "test"
+            Token      = "test"
         }
         $TestServerObject3 = [PSCustomObject]@{
             PSTypeName = "CBCServer"
-            Uri = "https://test03.adasdagf/"
-            Org = "tes331t"
-            Token = "test"
+            Uri        = "https://test03.adasdagf/"
+            Org        = "tes331t"
+            Token      = "test"
         }
     }
 

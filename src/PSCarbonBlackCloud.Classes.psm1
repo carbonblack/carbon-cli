@@ -6,6 +6,7 @@ class PolicySummary {
     [string]$PriorityLevel
     [long]$Position
     [long]$NumDevices
+    [CBCServer]$CBCServer
 }
 
 class DeploymentType {
@@ -114,6 +115,15 @@ class AVStatus {
     [string]$ProductUpdateDisabled = "PRODUCT_UPDATE_DISABLED";
 }
 
+class CBCServer {
+    [string]$Uri 
+    [string]$Org 
+    [string]$Token 
+
+    [string]ToString() {
+        return "[" + $this.Org + "] " + $this.Uri
+    }
+}
 class Device {
 
     [string]$CurrentSensorPolicyName
@@ -215,18 +225,8 @@ class Device {
     [string]$InfrastructureProvider
     [string]$SensorGatewayUrl
     [string]$SensorGatewayUuid
+    [CBCServer]$CBCServer
 }
-
-class CBCServer {
-    [string]$Uri 
-    [string]$Org 
-    [string]$Token 
-
-    [string]ToString() {
-        return "[" + $this.Org + "] " + $this.Uri
-    }
-}
-
 class Policy {
     [long]$Id
     [string]$Name
@@ -246,4 +246,5 @@ class Policy {
     [hashtable[]]$SensorConfigs
     [hashtable[]]$SensorSettings
     [string]$UpdateTime
+    [CBCServer]$CBCServer
 }
