@@ -3,8 +3,6 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 .DESCRIPTION
 This cmdlet returns all devices or a specific device with every current connection.
 
-.PARAMETER All
-Returns all devices.
 .PARAMETER Id
 Returns a device with specified ID.
 .PARAMETER Criteria

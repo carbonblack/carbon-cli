@@ -2,8 +2,7 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet returns an overview of the policies available in the organization.
-.PARAMETER All
-Returns a summary of all policies in the organisation.
+
 .PARAMETER Id
 Returns a detailed overview of a policy with the specified Id.
 .PARAMETER CBCServer
