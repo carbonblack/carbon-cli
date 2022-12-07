@@ -7,7 +7,7 @@ function Save-CBCCredential {
 
     Process {
         $credentialsDoc = New-Object System.Xml.XmlDocument
-        if(Test-Path -Path $CBC_CONFIG.credentialsFullPath) {
+        if (Test-Path -Path $CBC_CONFIG.credentialsFullPath) {
             $credentialsDoc.Load($CBC_CONFIG.credentialsFullPath)
         }
         else {

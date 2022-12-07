@@ -22,7 +22,7 @@ function Invoke-CBCRequest {
         $headers = @{
             "X-AUTH-TOKEN" = $CBCServer.Token
             "Content-Type" = "application/json"
-            "User-Agent" = "PSCarbonBlackCloud"
+            "User-Agent"   = "PSCarbonBlackCloud"
         }
        
         $Params = , $CBCServer.Org + $Params

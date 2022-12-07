@@ -33,10 +33,10 @@ $credentialsPath = "${Home}/.carbonblack/"
 $credentialsFile = "PSCredentials.xml"
 
 $cbcConfigObject = @{
-    currentConnections = [System.Collections.ArrayList]@()
-    defaultServers = [System.Collections.ArrayList]@()
+    currentConnections  = [System.Collections.ArrayList]@()
+    defaultServers      = [System.Collections.ArrayList]@()
     credentialsFullPath = ($credentialsPath + $credentialsFile)
-    endpoints = $endpoints
+    endpoints           = $endpoints
 }
 
 # Try to initialize the credentials files
@@ -64,9 +64,9 @@ if (-Not (Test-Path -Path $cbcConfigObject.credentialsFullPath)) {
 Select-Xml -Path $cbcConfigObject.credentialsFullPath -XPath '/CBCServers/CBCServer' | ForEach-Object {
     $cbcConfigObject.defaultServers.Add(
         @{
-            Uri = $_.Node.Uri
+            Uri   = $_.Node.Uri
             Token = $_.Node.Token
-            Org = $_.Node.Org
+            Org   = $_.Node.Org
         }
     )
 }

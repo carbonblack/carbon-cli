@@ -3,21 +3,21 @@ Describe "Connect-CBCServer" {
     BeforeAll {
         $TestServerObject1 = [PSCustomObject]@{
             PSTypeName = "CBCServer"
-            Uri = "https://test.adasdagf/"
-            Org = "test"
-            Token = "test"
+            Uri        = "https://test.adasdagf/"
+            Org        = "test"
+            Token      = "test"
         }
         $TestServerObject2 = [PSCustomObject]@{
             PSTypeName = "CBCServer"
-            Uri = "https://test02.adasdagf/"
-            Org = "test"
-            Token = "test"
+            Uri        = "https://test02.adasdagf/"
+            Org        = "test"
+            Token      = "test"
         }
         $TestServerObject3 = [PSCustomObject]@{
             PSTypeName = "CBCServer"
-            Uri = "https://test.adasdagf/"
-            Org = "tes331t"
-            Token = "test"
+            Uri        = "https://test.adasdagf/"
+            Org        = "tes331t"
+            Token      = "test"
         }
     }
 
@@ -128,7 +128,7 @@ Describe "Connect-CBCServer" {
             } -ParameterFilter { $Uri -eq $TestServerObject2.Uri }
 
             # Mock the Warning prompt
-            Mock -ModuleName PSCarbonBlackCloud -CommandName "Read-Host" -MockWith{
+            Mock -ModuleName PSCarbonBlackCloud -CommandName "Read-Host" -MockWith {
                 return "2"
             }
 

@@ -10,16 +10,16 @@ Describe "Get-CBCDevice" {
 
             $TestServerObject1 = [PSCustomObject]@{
                 PSTypeName = "CBCServer"
-                Uri = "https://test.adasdagf/"
-                Org = "test"
-                Token = "test"
+                Uri        = "https://test.adasdagf/"
+                Org        = "test"
+                Token      = "test"
             }
 
             $TestServerObject2 = [PSCustomObject]@{
                 PSTypeName = "CBCServer"
-                Uri = "https://test02.adasdagf/"
-                Org = "test2"
-                Token = "test"
+                Uri        = "https://test02.adasdagf/"
+                Org        = "test2"
+                Token      = "test"
             }
 
             $MutlipleResultsResponse = @"
@@ -257,7 +257,7 @@ Describe "Get-CBCDevice" {
                 Mock Invoke-CBCRequest -MockWith {
                     return @{
                         StatusCode = 200
-                        Content = $MutlipleResultsResponse
+                        Content    = $MutlipleResultsResponse
                     }
                 } -ParameterFilter { 
                     $CBCServer -match $TestServerObject1
@@ -278,7 +278,7 @@ Describe "Get-CBCDevice" {
                 Mock Invoke-CBCRequest -MockWith {
                     return @{
                         StatusCode = 200
-                        Content = $MutlipleResultsResponse
+                        Content    = $MutlipleResultsResponse
                     }
                 } -ParameterFilter { 
                     $CBCServer -match $TestServerObject1
@@ -289,7 +289,7 @@ Describe "Get-CBCDevice" {
                 Mock Invoke-CBCRequest -MockWith {
                     return @{
                         StatusCode = 200
-                        Content = $MutlipleResultsResponse
+                        Content    = $MutlipleResultsResponse
                     }
                 } -ParameterFilter { 
                     $CBCServer -match $TestServerObject2
