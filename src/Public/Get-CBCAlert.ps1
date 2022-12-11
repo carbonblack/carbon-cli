@@ -87,17 +87,17 @@ Get-CBCAlert -Criteria $Criteria
 It returns all alerts which correspond to the specified criteria.
 
 -------------------------- Example 7 --------------------------
-Get-CBCDevice -Query "os:LINUX"
+Get-CBCAlert -Query "device_id:123456789"
 It returns all alerts which correspond to the specified query with lucene syntax.
 
 -------------------------- Example 8 --------------------------
-Get-CBCDevice -Criteria $Criteria -Query $Query -Rows 20 -Start 0
+Get-CBCAlert -Criteria $Criteria -Query $Query -Rows 20 -Start 0
 It returns all alerts which correspond to the specified criteria build with the specified params (Query, Rows and Start).
 
 .LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api/
 #>
-function Get-CBCAlert{
+function Get-CBCAlert {
     [CmdletBinding(DefaultParameterSetName = "all")]
     Param(
         [Parameter(ParameterSetName = "id", Position = 0)]
@@ -118,8 +118,14 @@ function Get-CBCAlert{
         [CBCServer] $CBCServer
     )
 
-    Process{
-        $ExecuteTo = $CBC_CONFIG.currentConnections
+    Process {
+        if ($CBC_CONFIG.currentConnections) {
+            $ExecuteTo = $CBC_CONFIG.currentConnections
+        }
+        else {
+            Write-Error "There is no active connection!" -ErrorAction "Stop"
+        }
+        
         if ($CBCServer) {
             $ExecuteTo = @($CBCServer)
         }

@@ -76,8 +76,11 @@ function Connect-CBCServer {
                 $CBCServerObject.Token = $Token
 
                 if ($SaveCredentials.IsPresent) {
+                    # TODO: Check if credential is already saved
+                    
                     $CBC_CONFIG.defaultServers.Add($CBCServerObject) | Out-Null
                     Save-CBCCredential $CBCServerObject | Out-Null
+                    
                 }
             }
             "Menu" {

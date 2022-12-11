@@ -126,7 +126,12 @@ function Get-CBCDevice {
     )
     Process {
 
-        $ExecuteTo = $CBC_CONFIG.currentConnections
+        if ($CBC_CONFIG.currentConnections) {
+            $ExecuteTo = $CBC_CONFIG.currentConnections
+        }
+        else {
+            Write-Error "There is no active connection!" -ErrorAction "Stop"
+        }
         if ($CBCServer) {
             $ExecuteTo = @($CBCServer)
         }
