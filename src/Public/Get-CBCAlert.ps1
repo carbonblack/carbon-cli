@@ -35,7 +35,7 @@ Get-CBCAlert -CBCServer $CBCServer
 It returns all alerts but the request is made only with the connection with specified CBC server.
 
 -------------------------- Example 5 --------------------------
-Get-CBCDevice -Id "11a1a1a1-b22b-3333-44cc-dd5555d5d55d" -CBCServer $CBCServer
+Get-CBCAlert -Id "11a1a1a1-b22b-3333-44cc-dd5555d5d55d" -CBCServer $CBCServer
 It returns the alert with specified Id but the request is made only with the connection with specified CBC server.
 
 -------------------------- Example 6 --------------------------
