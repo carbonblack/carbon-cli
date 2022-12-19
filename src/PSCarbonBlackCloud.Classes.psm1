@@ -125,7 +125,7 @@ class CBCServer {
     }
 }
 class Device {
-
+    [CBCServer]$CBCServer
     [string]$CurrentSensorPolicyName
     [string]$DeploymentType
 
@@ -225,9 +225,9 @@ class Device {
     [string]$InfrastructureProvider
     [string]$SensorGatewayUrl
     [string]$SensorGatewayUuid
-    [CBCServer]$CBCServer
 }
 class Policy {
+    [CBCServer]$CBCServer
     [long]$Id
     [string]$Name
     [string]$OrgKey
@@ -246,5 +246,197 @@ class Policy {
     [hashtable[]]$SensorConfigs
     [hashtable[]]$SensorSettings
     [string]$UpdateTime
+}
+
+class CBAnalyticsAlert {
     [CBCServer]$CBCServer
+    [string]$Category
+    [string]$CreateTime
+    [int]$DeviceId
+    [string]$DeviceName
+    [string]$DeviceOs
+    [string]$DeviceOsVersion
+    [string]$DeviceUsername
+    [string]$FirstEventTime
+    [hashtable]$GroupDetails
+    [string]$Id
+    [string]$LastEventTime
+    [string]$LastUpdateTime
+    [string]$LegacyAlertId
+    [switch]$NotesPresent
+    [string]$OrgKey
+    [string]$PolicyId
+    [string]$PolicyName
+    [int]$Severity
+    [string[]]$Tags
+    [string]$TargetValue
+    [string]$ThreatId
+    [string]$Type
+    [PSCustomObject]$Workflow
+    [string]$BlockedThreatCategory
+    [string]$CreatedByEventId
+    [string]$DeviceLocation
+    [string[]]$KillChainStatus
+    [string]$NotBlockedThreatCategory
+    [string]$PolicyApplied
+    [string]$ProcessName
+    [string]$Reason
+    [string]$ReasonCode
+    [string]$RunState
+    [string]$SensorAction
+    [string]$ThreatActivityC2
+    [string]$ThreatActivityDlp
+    [string]$ThreatActivityPhish
+    [string]$ThreatCauseActorName
+    [string]$ThreatCauseActorProcessPid
+    [string]$ThreatCauseActorSha256
+    [string]$ThreatCauseCauseEventId
+    [string]$ThreatCauseReputation
+    [string]$ThreatCauseThreatCategory
+    [string]$ThreatCauseVector
+    [pscustomobject]$ThreatIndicators
+    # Not Documented
+    [string]$AlertClassification
+    [string]$ThreatCauseParentGuid
+    [string]$ThreatCauseProcessGuid
+
+}
+
+class DeviceControlAlert {
+    [CBCServer]$CBCServer
+    [string]$Category
+    [string]$CreateTime
+    [int]$DeviceId
+    [string]$DeviceName
+    [string]$DeviceOs
+    [string]$DeviceOsVersion
+    [string]$DeviceUsername
+    [string]$FirstEventTime
+    [hashtable]$GroupDetails
+    [string]$Id
+    [string]$LastEventTime
+    [string]$LastUpdateTime
+    [string]$LegacyAlertId
+    [switch]$NotesPresent
+    [string]$OrgKey
+    [string]$PolicyId
+    [string]$PolicyName
+    [int]$Severity
+    [string[]]$Tags
+    [string]$TargetValue
+    [string]$ThreatId
+    [string]$Type
+    [PSCustomObject]$Workflow
+    [string]$DeviceLocation
+    [string]$ExternalDeviceFriendlyName
+    [string]$PolicyApplied
+    [string]$ProductId
+    [string]$ProductName
+    [string]$Reason
+    [string]$ReasonCode
+    [string]$RunState
+    [string]$SensorAction
+    [string]$SerialNumber
+    [string]$ThreatCauseCauseEventId
+    [string]$ThreatCauseThreatCategory
+    [string]$ThreatCauseVector
+    [string]$VendorName
+    [string]$VendorId
+}
+
+class WatchlistAlert {
+    [CBCServer]$CBCServer
+    [string]$Category
+    [string]$CreateTime
+    [int]$DeviceId
+    [string]$DeviceName
+    [string]$DeviceOs
+    [string]$DeviceOsVersion
+    [string]$DeviceUsername
+    [string]$FirstEventTime
+    [hashtable]$GroupDetails
+    [string]$Id
+    [string]$LastEventTime
+    [string]$LastUpdateTime
+    [string]$LegacyAlertId
+    [switch]$NotesPresent
+    [string]$OrgKey
+    [string]$PolicyId
+    [string]$PolicyName
+    [int]$Severity
+    [string[]]$Tags
+    [string]$TargetValue
+    [string]$ThreatId
+    [string]$Type
+    [PSCustomObject]$Workflow
+    [string]$IocField
+    [string]$IocHit
+    [string]$IocId
+    [string]$ProcessGuid
+    [string]$ProcessName
+    [string]$Reason
+    [string]$ReportId
+    [string]$ReportName
+    [string]$RunState
+    [string]$ThreatCauseActorMd5
+    [string]$ThreatCauseActorName
+    [string]$ThreatCauseActorSha256
+    [string]$ThreatCauseReputation
+    [string]$ThreatCauseThreatCategory
+    [string]$ThreatCauseVector
+    [pscustomobject]$ThreatIndicators
+    [pscustomobject]$Watchlists
+    # Not documented
+    [string]$AlertClassification
+    [int]$Count
+    [string]$DocumentGuid
+}
+
+class ContainerRuntimeAlert {
+    [CBCServer]$CBCServer
+    [string]$Category
+    [string]$CreateTime
+    [int]$DeviceId
+    [string]$DeviceName
+    [string]$DeviceOs
+    [string]$DeviceOsVersion
+    [string]$DeviceUsername
+    [string]$FirstEventTime
+    [hashtable]$GroupDetails
+    [string]$Id
+    [string]$LastEventTime
+    [string]$LastUpdateTime
+    [string]$LegacyAlertId
+    [switch]$NotesPresent
+    [string]$OrgKey
+    [string]$PolicyId
+    [string]$PolicyName
+    [int]$Severity
+    [string[]]$Tags
+    [string]$TargetValue
+    [string]$ThreatId
+    [string]$Type
+    [PSCustomObject]$Workflow
+    [string]$ClusterName
+    [enum]$ConnectionType
+    [string]$EgressGroupId
+    [string]$EgressGroupName
+    [int]$IpReputation
+    [string]$Namespace
+    [int]$Port
+    [string]$Protocol
+    [string]$RemoteDomain
+    [string]$RemoteIp
+    [switch]$RemoteIsPrivate
+    [string]$RemoteNamespace
+    [string]$RemoteReplicaId
+    [string]$RemoteWorkloadId
+    [string]$RemoteWorkloadKind
+    [string]$RemoteWorkloadName
+    [string]$ReplicaId
+    [string]$RuleId
+    [string]$RuleName
+    [string]$WorkloadId
+    [string]$WorkloadKind
+    [string]$WorkloadName
 }

@@ -2,8 +2,7 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet returns an overview of the policies available in the organization.
-.PARAMETER All
-Returns a summary of all policies in the organisation.
+
 .PARAMETER Id
 Returns a detailed overview of a policy with the specified Id.
 .PARAMETER CBCServer
@@ -45,7 +44,12 @@ function Get-Policy {
     )
 
     Process {
-        $ExecuteTo = $CBC_CONFIG.currentConnections
+        if ($CBC_CONFIG.currentConnections) {
+            $ExecuteTo = $CBC_CONFIG.currentConnections
+        }
+        else {
+            Write-Error "There is no active connection!" -ErrorAction "Stop"
+        }
         if ($CBCServer) {
             $ExecuteTo = @($CBCServer)
         }

@@ -76,8 +76,11 @@ function Connect-CBCServer {
                 $CBCServerObject.Token = $Token
 
                 if ($SaveCredentials.IsPresent) {
+                    # TODO: Check if credential is already saved
+                    
                     $CBC_CONFIG.defaultServers.Add($CBCServerObject) | Out-Null
                     Save-CBCCredential $CBCServerObject | Out-Null
+                    
                 }
             }
             "Menu" {
@@ -94,7 +97,10 @@ function Connect-CBCServer {
                 if (($option -gt $CBC_CONFIG.defaultServers.Count) -or ($option -lt 0)) {
                     Write-Error "There is no default CBC server with that index" -ErrorAction "Stop"
                 }
-                $CBCServerObject = $CBC_CONFIG.defaultServers[$option - 1]
+                $CBCServerObject = [CBCServer]::new()
+                $CBCServerObject.Uri = $CBC_CONFIG.defaultServers[$option - 1].Uri
+                $CBCServerObject.Org = $CBC_CONFIG.defaultServers[$option - 1].Org
+                $CBCServerObject.Token =$CBC_CONFIG.defaultServers[$option - 1].Token
             }
         }
 
