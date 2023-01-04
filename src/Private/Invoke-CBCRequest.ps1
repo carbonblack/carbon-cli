@@ -29,7 +29,7 @@ function Invoke-CBCRequest {
         $formatted_uri = $Endpoint -f $Params
 
         $FullUri = $CBCServer.Uri + $formatted_uri
-        Write-Debug "Requesting ${FullUri}"
+        Write-Host "Requesting ${FullUri}"
         try {
             $response = Invoke-WebRequest -Uri $FullUri -Headers $headers -Method $Method -Body $Body
             return $response

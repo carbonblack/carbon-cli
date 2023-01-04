@@ -59,7 +59,7 @@ function Connect-CBCServer {
             $CBC_CONFIG.currentConnections | ForEach-Object {
                 $index = $CBC_CONFIG.currentConnections.IndexOf($_) + 1
                 $OutputMessage = "[${index}] " + $_.Uri + " Organisation: " + $_.Org
-                Write-Output $OutputMessage
+                Write-Host $OutputMessage
             }
             Write-Warning -Message "If you wish to disconnect the currently connected CBC servers, please use Disconnect-CBCServer cmdlet.`r`nIf you wish to continue connecting to new servers press any key or 'Q' to quit."
             $option = Read-Host

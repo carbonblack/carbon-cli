@@ -4,7 +4,7 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 This cmdlet returns all alerts or a specific alert with every current connection.
 
 .PARAMETER Id
-Returns a device with specified ID.
+Returns an alert with specified ID.
 .PARAMETER Criteria
 Sets the criteria for the search.
 .PARAMETER Query

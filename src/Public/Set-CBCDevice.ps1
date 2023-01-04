@@ -15,9 +15,6 @@ If present the specified device's sensor version is updated with the specified s
 If present the specified device's sensor is uninstalled.
 .PARAMETER Device
 An array of Device objects. Can be passed through the pipeline and used with the Set-CBCDevice options.
-.PARAMETER Alert
-An array of Alert objects. Can be passed through the pipeline and used with the Set-CBCDevice options(Quarantine, Unquarantine and UpdatePolicy only).
-
 
 .OUTPUTS
 Response code.
@@ -42,18 +39,6 @@ Updates the Sensor version of the device with the specified one.
 Get-CBCDevice -Id "1234" | Set-CBCDevice -UninstallSensor
 Uninstalles the sensor on the specified device.
 
--------------------------- Example 6 --------------------------
-Get-CBCAlert -Id "1234" | Set-CBCDevice -Quarantine
-Quarantines the device from the returned alert.
-
--------------------------- Example 7 --------------------------
-Get-CBCAlert -Id "1234" | Set-CBCDevice -Unquarantine
-Unquarantines the device from the returned alert.
-
--------------------------- Example 8 --------------------------
-Get-CBCAlert -Id "1234" | Set-CBCDevice -UpdatePolicy -PolicyId "5678"
-Updates the policy of the device from the returned alert with the specified policy id.
-
 .LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/
 #>
@@ -77,12 +62,12 @@ function Set-CBCDevice {
 
         [Parameter(ValueFromPipeline = $true)]
         [Device[]]$Device,
-
-        [Parameter(ValueFromPipeline = $true)]
-        $Alert,
     
         [Parameter(ParameterSetName = "UpdateSensor", Mandatory = $true)]
-        [string]$SensorVersion
+        [string]$SensorVersion,
+
+        [Parameter(ParameterSetName = "UpdatePolicy", Mandatory = $true)]
+        [string]$PolicyId
     )
 
     Process {
@@ -99,25 +84,6 @@ function Set-CBCDevice {
                         $jsonBody = ConvertTo-Json -InputObject $Body
                         if ($null -ne $device.CBCServer) {
                             $Response = Invoke-CBCRequest -CBCServer $device.CBCServer `
-                                -Endpoint $CBC_CONFIG.endpoints["Devices"]["Quarantine"] `
-                                -Method POST `
-                                -Body $jsonBody
-                            $Response
-                        }
-                    
-                    }
-                }
-                elseif ($Alert) {
-                    foreach ($alert in $Alert) {
-                        $Body = @{}
-                        $Body["action_type"] = "QUARANTINE"
-                        $Body["device_id"] = @($alert.DeviceId)
-                        $Body["options"] = @{
-                            "toggle" = "ON"
-                        }
-                        $jsonBody = ConvertTo-Json -InputObject $Body
-                        if ($null -ne $alert.CBCServer) {
-                            $Response = Invoke-CBCRequest -CBCServer $alert.CBCServer `
                                 -Endpoint $CBC_CONFIG.endpoints["Devices"]["Quarantine"] `
                                 -Method POST `
                                 -Body $jsonBody
@@ -146,25 +112,6 @@ function Set-CBCDevice {
                         }
                     }
                 }
-                elseif ($Alert) {
-                    foreach ($alert in $Alert) {
-                        $Body = @{}
-                        $Body["action_type"] = "QUARANTINE"
-                        $Body["device_id"] = @($alert.DeviceId)
-                        $Body["options"] = @{
-                            "toggle" = "OFF"
-                        }
-                        $jsonBody = ConvertTo-Json -InputObject $Body
-                        if ($null -ne $alert.CBCServer) {
-                            $Response = Invoke-CBCRequest -CBCServer $alert.CBCServer `
-                                -Endpoint $CBC_CONFIG.endpoints["Devices"]["Quarantine"] `
-                                -Method POST `
-                                -Body $jsonBody
-                            $Response
-                        }
-                    
-                    }
-                }
             }
             "UpdatePolicy" {
                 if ($Device) {
@@ -178,24 +125,6 @@ function Set-CBCDevice {
                         $jsonBody = ConvertTo-Json -InputObject $Body
                         if ($null -ne $device.CBCServer) {
                             $Response = Invoke-CBCRequest -CBCServer $device.CBCServer `
-                                -Endpoint $CBC_CONFIG.endpoints["Devices"]["UpdatePolicy"] `
-                                -Method POST `
-                                -Body $jsonBody
-                            $Response
-                        }
-                    }
-                }
-                elseif ($Alert) {
-                    foreach ($alert in $Alert) {
-                        $Body = @{}
-                        $Body["action_type"] = "UPDATE_POLICY"
-                        $Body["device_id"] = @($alert.DeviceId)
-                        $Body["options"] = @{
-                            "policy_id" = $PolicyId
-                        }
-                        $jsonBody = ConvertTo-Json -InputObject $Body
-                        if ($null -ne $alert.CBCServer) {
-                            $Response = Invoke-CBCRequest -CBCServer $alert.CBCServer `
                                 -Endpoint $CBC_CONFIG.endpoints["Devices"]["UpdatePolicy"] `
                                 -Method POST `
                                 -Body $jsonBody
@@ -226,26 +155,6 @@ function Set-CBCDevice {
                         }
                     }
                 }
-                elseif ($Alert) {
-                    foreach ($alert in $Alert) {
-                        $Body = @{}
-                        $Body["action_type"] = "UPDATE_SENSOR_VERSION"
-                        $Body["device_id"] = @($alert.DeviceId)
-                        $Body["options"] = @{
-                            "sensor_version" = @{
-                                $alert.DeviceOs = $SensorVersion
-                            }
-                        }
-                        $jsonBody = ConvertTo-Json -InputObject $Body
-                        if ($null -ne $alert.CBCServer) {
-                            $Response = Invoke-CBCRequest -CBCServer $alert.CBCServer `
-                                -Endpoint $CBC_CONFIG.endpoints["Devices"]["UpdateSensor"] `
-                                -Method POST `
-                                -Body $jsonBody
-                            $Response
-                        }
-                    }
-                }
             }
             "UninstallSensor" {
                 if ($Device) {
@@ -260,21 +169,6 @@ function Set-CBCDevice {
                                 -Method POST `
                                 -Body $jsonBody
                         
-                            $Response
-                        }
-                    }
-                }
-                elseif ($Alert) {
-                    foreach ($alert in $Alert) {
-                        $Body = @{}
-                        $Body["action_type"] = "UNINSTALL_SENSOR"
-                        $Body["device_id"] = @($alert.DeviceId)
-                        $jsonBody = ConvertTo-Json -InputObject $Body
-                        if ($null -ne $alert.CBCServer) {
-                            $Response = Invoke-CBCRequest -CBCServer $alert.CBCServer `
-                                -Endpoint $CBC_CONFIG.endpoints["Devices"]["UninstallSensor"] `
-                                -Method POST `
-                                -Body $jsonBody
                             $Response
                         }
                     }
