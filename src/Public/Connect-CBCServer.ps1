@@ -1,137 +1,139 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
+
 <#
 .DESCRIPTION
-This cmdlet establishes a connection to the CBC Server specified by the -CBCServer parameter.
-
+    This cmdlet establishes a connection to the CBC Server specified by the -CBCServer parameter.
 .PARAMETER CBCServer
-Specifies the IP or HTTP addresses of the CBC Server you want to connect to.
+    Specifies the IP or HTTP addresses of the CBC Server you want to connect to.
 .PARAMETER Token
-Specifies the Token that is going to be used in the authentication process.
+    Specifies the Token that is going to be used in the authentication process.
 .PARAMETER Org
-Specifies the Organization that is going to be used in the authentication process.
+    Specifies the Organization that is going to be used in the authentication process.
 .PARAMETER SaveCredentials
-Indicates that you want to save the specified credentials in the local credential store.
+    Indicates that you want to save the specified credentials in the local credential store.
 .PARAMETER Menu
-Connects to a CBC Server from the list of recently connected servers.
+    Connects to a CBC Server from the list of recently connected servers.
 .OUTPUTS
-A CBCServer Object
-
+    A CBCServer Object
 .NOTES
-Example 1:
+    -------------------------- EXAMPLE 1 --------------------------
 
-Connect-CBCServer -CBCServer "http://cbcserver.cbc" -Org "MyOrg" -Token "MyToken"
-Connects with the specified Server, Org, Token and returns a CBCServer Object.
+    PS > Connect-CBCServer -CBCServer "http://cbcserver.cbc" -Org "MyOrg" -Token "MyToken"
 
-Example 2:
+    Connects with the specified Server, Org, Token and returns a CBCServer Object.
 
-Connect-CBCServer -CBCServer "http://cbcserver1.cbc" -Org "MyOrg1" -Token "MyToken1" -SaveCredential
-Connect with the specified Server, Org, Token, returns a CBCServer Object and saves 
-the credentials in the Credential file.
 
--------------------------- Example 3 --------------------------
-Connect-CBCServer -Menu
-It prints the available CBC Servers from the Credential file so that the user can choose with which one to connect.
+
+    -------------------------- EXAMPLE 2 --------------------------
+
+    PS > Connect-CBCServer -CBCServer "http://cbcserver1.cbc" -Org "MyOrg1" -Token "MyToken1" -SaveCredential
+
+    Connect with the specified Server, Org, Token, returns a CBCServer Object and saves 
+    the credentials in the Credential file.
+
+
+
+    -------------------------- EXAMPLE 3 --------------------------
+
+    PS > Connect-CBCServer -Menu
+
+    It prints the available CBC Servers from the Credential file so that the user can choose with which one to connect.
+
+
 
 .LINK
 API Documentation: http://devnetworketc/
 #>
 function Connect-CBCServer {
-  [CmdletBinding(DefaultParameterSetName = "default",HelpUri = "http://devnetworketc/")]
-  param(
-    [Parameter(ParameterSetName = "default",Mandatory = $true,Position = 0)]
-    [Alias("Server")]
-    [string]${Uri},
+	[CmdletBinding(DefaultParameterSetName = "default",HelpUri = "http://devnetworketc/")]
+	param(
+		[Parameter(ParameterSetName = "default",Mandatory = $true,Position = 0)]
+		[Alias("Server")]
+		[string]${Uri},
 
-    [Parameter(ParameterSetName = "default",Mandatory = $true,Position = 1)]
-    [string]${Org},
+		[Parameter(ParameterSetName = "default",Mandatory = $true,Position = 1)]
+		[string]${Org},
 
-    [Parameter(ParameterSetName = "default",Mandatory = $true,Position = 2)]
-    [string]${Token},
+		[Parameter(ParameterSetName = "default",Mandatory = $true,Position = 2)]
+		[string]${Token},
 
-    [Parameter(ParameterSetName = "default")]
-    [switch]${SaveCredentials},
+		[Parameter(ParameterSetName = "default")]
+		[switch]${SaveCredentials},
 
-    [Parameter(ParameterSetName = "menu")]
-    [switch]$Menu
-  )
+		[Parameter(ParameterSetName = "menu")]
+		[switch]$Menu
+	)
 
-  begin {
-    Write-Verbose "[$($MyInvocation.MyCommand.Name)] function started"
-  }
+	begin {
+		Write-Verbose "[$($MyInvocation.MyCommand.Name)] function started"
+	}
 
-  process {
+	process {
 
-    # Show the currently connected CBC servers warning
-    if ($CBC_CONFIG.currentConnections.Count -ge 1) {
-      Write-Warning "You are currently connected to: "
-      $CBC_CONFIG.currentConnections | ForEach-Object {
-        $index = $CBC_CONFIG.currentConnections.IndexOf($_) + 1
-        $OutputMessage = "[${index}] " + $_.Uri + " Organisation: " + $_.Org
-        Write-Output $OutputMessage
-      }
-      Write-Warning -Message "If you wish to disconnect the currently connected CBC servers, please use Disconnect-CBCServer cmdlet.`r`nIf you wish to continue connecting to new servers press any key or 'Q' to quit."
-      $option = Read-Host
-      if ($option.ToLower() -eq 'q') {
-        Write-Error "Exit" -ErrorAction "Stop"
-      }
-    }
+		# Show the currently connected CBC servers warning
+		if ($global:CBC_CONFIG.currentConnections.Count -ge 1) {
+			Write-Warning -Message "You are currently connected to: "
+			$global:CBC_CONFIG.currentConnections | ForEach-Object {
+				$Index = $global:CBC_CONFIG.currentConnections.IndexOf($_) + 1
+				$OutputMessage = "[${Index}] " + $_.Uri + " Organization: " + $_.Org
+				Write-Warning $OutputMessage
+			}
+			Write-Warning -Message 'If you wish to disconnect the currently connected CBC servers, please use Disconnect-CBCServer cmdlet. 
+         If you wish to continue connecting to new servers press any key or `Q` to quit.'
+			$Option = Read-Host
+			if ($Option.ToLower() -eq 'q') {
+				Write-Error 'Exit' -ErrorAction 'Stop'
+			}
+		}
 
-    # Creating the $CBCServerObject within the switch
-    switch ($PSCmdlet.ParameterSetName) {
-      "default" {
-        Write-Verbose "[$($MyInvocation.MyCommand.Name)] Processing (default) [$Uri, $Org, $Token]"
+		# Creating the $CBCServerObject within the switch
+		switch ($PSCmdlet.ParameterSetName) {
+			"default" {
+				Write-Verbose "[$($MyInvocation.MyCommand.Name)] Processing (default) [$Uri, $Org, $Token]"
 
-        $CBCServerObject = [CBCServer]::new()
-        $CBCServerObject.Uri = $Uri
-        $CBCServerObject.Org = $Org
-        $CBCServerObject.Token = $Token
+				$CBCServerObject = [CBCServer]::new($Uri,$Org,$Token)
+				if ($SaveCredentials.IsPresent) {
+					if ($global:CBC_CONFIG.credentials.IsInFile($CBCServerObject)) {
+						Write-Error "The credentials are already saved!" -ErrorAction "Stop"
+					} else {
+						$global:CBC_CONFIG.defaultServers.Add($CBCServerObject) | Out-Null
+						$global:CBC_CONFIG.credentials.SaveToFile($CBCServerObject)
+					}
+				}
+			}
+			"menu" {
+				Write-Verbose "[$($MyInvocation.MyCommand.Name)] Processing (menu)"
 
-        if ($SaveCredentials.IsPresent) {
-          # TODO: Check if credential is already saved
+				if ($global:CBC_CONFIG.defaultServers.Count -eq 0) {
+					Write-Error "There are no default servers avaliable!" -ErrorAction "Stop"
+				}
+				$global:CBC_CONFIG.defaultServers | ForEach-Object {
+					$Index = $global:CBC_CONFIG.defaultServers.IndexOf($_) + 1
+					$OutputMessage = "[${Index}] " + $_.Uri + " Organization: " + $_.Org
+					Write-Output $OutputMessage
+				}
+				$OptionInput = { (Read-Host) -as [int] }
+				$Option = & $OptionInput
+				if (($Option -gt $global:CBC_CONFIG.defaultServers.Count) -or ($Option -lt 0)) {
+					Write-Error "There is no default server with that index" -ErrorAction "Stop"
+				}
+				$CBCServerObject = [CBCServer]::new(
+					$global:CBC_CONFIG.defaultServers[$Option - 1].Uri,
+					$global:CBC_CONFIG.defaultServers[$Option - 1].Org,
+					$global:CBC_CONFIG.defaultServers[$Option - 1].Token
+				)
+			}
+		}
 
-          $CBC_CONFIG.defaultServers.Add($CBCServerObject) | Out-Null
-          $CBC_CONFIG.credentials.SaveServerToFile($CBCServerObject)
-        }
-      }
-      "menu" {
-        Write-Verbose "[$($MyInvocation.MyCommand.Name)] Processing (menu)"
+		if ($CBCServerObject.IsConnected()) {
+			Write-Error "You are already connected to this server and organization!" -ErrorAction Stop
+		}
 
-        if ($CBC_CONFIG.defaultServers.Count -eq 0) {
-          Write-Error "There are no default CBC servers avaliable!" -ErrorAction "Stop"
-        }
-        $CBC_CONFIG.defaultServers | ForEach-Object {
-          $index = $CBC_CONFIG.defaultServers.IndexOf($_) + 1
-          $OutputMessage = "[${index}] " + $_.Uri + " Organisation: " + $_.Org
-          Write-Output $OutputMessage
-        }
-        $optionInput = { (Read-Host) -as [int] }
-        $option = & $optionInput
-        if (($option -gt $CBC_CONFIG.defaultServers.Count) -or ($option -lt 0)) {
-          Write-Error "There is no default CBC server with that index" -ErrorAction "Stop"
-        }
-        $CBCServerObject = [CBCServer]::new()
-        $CBCServerObject.Uri = $CBC_CONFIG.defaultServers[$option - 1].Uri
-        $CBCServerObject.Org = $CBC_CONFIG.defaultServers[$option - 1].Org
-        $CBCServerObject.Token = $CBC_CONFIG.defaultServers[$option - 1].Token
-      }
-    }
+		$global:CBC_CONFIG.currentConnections.Add($CBCServerObject) | Out-Null
+		return $CBCServerObject
 
-    # Check if you are currently connected to this server
-    $CBC_CONFIG.currentConnections | ForEach-Object {
-      if (($_.Uri -eq $CBCServerObject.Uri) -and ($_.Org -eq $CBCServerObject.Org) -and ($_.Token -eq $CBCServerObject.Token)) {
-        Write-Error "You are already connected to that CBC server!" -ErrorAction "Stop"
-      }
-    }
-
-    if (-not (Test-CBCConnection $CBCServerObject)) {
-      Write-Error "Cannot reach the CBC Server!" -ErrorAction "Stop"
-    }
-
-    $CBC_CONFIG.currentConnections.Add($CBCServerObject) | Out-Null
-    return $CBCServerObject
-
-    end {
-      Write-Verbose "[$($MyInvocation.MyCommand.Name)] function finished"
-    }
-  }
+		end {
+			Write-Verbose "[$($MyInvocation.MyCommand.Name)] function finished"
+		}
+	}
 }

@@ -1,43 +1,50 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 function Invoke-CBCRequest {
-  [CmdletBinding()]
-  param(
-    [Parameter(Mandatory = $true,Position = 0)]
-    [ValidateNotNullOrEmpty()]
-    [CBCServer]$CBCServer,
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true,Position = 0)]
+		[ValidateNotNullOrEmpty()]
+		[CBCServer]$CBCServer,
 
-    [Parameter(Mandatory = $true,Position = 1)]
-    [ValidateNotNullOrEmpty()]
-    [string]$Endpoint,
+		[Parameter(Mandatory = $true,Position = 1)]
+		[ValidateNotNullOrEmpty()]
+		[string]$Endpoint,
 
-    [Parameter(Mandatory = $true,Position = 2)]
-    [string]$Method,
+		[Parameter(Mandatory = $true,Position = 2)]
+		[string]$Method,
 
-    [array]$Params,
+		[array]$Params,
 
-    [System.Object]$Body
-  )
+		[System.Object]$Body
+	)
 
-  process {
-    $headers = @{
-      "X-AUTH-TOKEN" = $CBCServer.Token
-      "Content-Type" = "application/json"
-      "User-Agent" = "PSCarbonBlackCloud"
-    }
+	begin {
+		Write-Verbose "[$($MyInvocation.MyCommand.Name)] function started"
+	}
 
-    $Params =,$CBCServer.Org + $Params
-    $formatted_uri = $Endpoint -f $Params
+	process {
+		$Headers = @{
+			"X-AUTH-TOKEN" = $CBCServer.Token
+			"Content-Type" = "application/json"
+			"User-Agent" = "PSCarbonBlackCloud"
+		}
 
-    $FullUri = $CBCServer.Uri + $formatted_uri
-    Write-Debug "Requesting ${FullUri}"
-    try {
-      $response = Invoke-WebRequest -Uri $FullUri -Headers $headers -Method $Method -Body $Body
-      return $response
-    }
-    catch {
-      $StatusCode = $_.Exception.Response.StatusCode
-      Write-Error "Request to ${FullUri} failed. Status Code: ${StatusCode}"
-    }
-    return $null
-  }
+		$Params =,$CBCServer.Org + $Params
+		$FormattedUri = $Endpoint -f $Params
+
+		$FullUri = $CBCServer.Uri + $FormattedUri
+		Write-Debug "[$($MyInvocation.MyCommand.Name)] Requesting ${FullUri}"
+		try {
+			return Invoke-WebRequest -Uri $FullUri -Headers $Headers -Method $Method -Body $Body
+		}
+		catch {
+			$StatusCode = $_.Exception.Response.StatusCode
+			Write-Error "Request to ${FullUri} failed. Status Code: ${StatusCode}"
+		}
+		return $null
+	}
+
+	end {
+		Write-Verbose "[$($MyInvocation.MyCommand.Name)] function finished"
+	}
 }

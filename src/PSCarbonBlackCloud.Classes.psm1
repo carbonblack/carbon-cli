@@ -61,9 +61,9 @@ class CBCCredentials{
 	SaveToFile ($Server) {
 		try {
 			$ServerElement = $this.XmlDocument.CreateElement("CBCServer")
-			$ServerElement.SetAttribute("Uri", $Server.Uri)
-			$ServerElement.SetAttribute("Org", $Server.Org)
-			$ServerElement.SetAttribute("Token", $Server.Token)
+			$ServerElement.SetAttribute("Uri",$Server.Uri)
+			$ServerElement.SetAttribute("Org",$Server.Org)
+			$ServerElement.SetAttribute("Token",$Server.Token)
 
 			$ServersNode = $this.XmlDocument.SelectSingleNode("CBCServers")
 			$ServersNode.AppendChild($ServerElement)
@@ -75,13 +75,13 @@ class CBCCredentials{
 	}
 
 	[void] RemoveFromFile ($Server) {
-		$Node = $this.XmlDocument.SelectSingleNode($("//CBCServer[@Uri = '{0}'][@Org = '{1}']" -f $Server.Uri, $Server.Org))
+		$Node = $this.XmlDocument.SelectSingleNode($("//CBCServer[@Uri = '{0}'][@Org = '{1}']" -f $Server.Uri,$Server.Org))
 		$Node.ParentNode.RemoveChild($Node) | Out-Null
 		$this.XmlDocument.Save($this.FullPath)
 	}
 
 	[bool] IsInFile ($Server) {
-		$Node = $this.XmlDocument.SelectSingleNode($("//CBCServer[@Uri = '{0}'][@Org = '{1}']" -f $Server.Uri, $Server.Org))
+		$Node = $this.XmlDocument.SelectSingleNode($("//CBCServer[@Uri = '{0}'][@Org = '{1}']" -f $Server.Uri,$Server.Org))
 		if (-not $Node) {
 			return $false
 		}

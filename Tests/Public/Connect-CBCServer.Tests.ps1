@@ -47,8 +47,8 @@ Describe "Connect-CBCServer" {
 		}
 		It 'Should connect to a second server successfully' {
 			Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
-                return ""
-            };
+				return ""
+			};
 
 			$server = Connect-CBCServer -Server $s1.Uri -Org $s1.Org -Token $s1.Token
 			$server2 = Connect-CBCServer -Server $s2.Uri -Org $s2.Org -Token $s2.Token
@@ -60,8 +60,8 @@ Describe "Connect-CBCServer" {
 		}
 		It 'Should exit (on the warning) when connecting to a second server' {
 			Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
-                return "Q"
-            };
+				return "Q"
+			};
 
 			$server = Connect-CBCServer -Server $s1.Uri -Org $s1.Org -Token $s1.Token
 
@@ -75,7 +75,7 @@ Describe "Connect-CBCServer" {
 
 	Context 'When using the `menu` parameter set' {
 		It 'Should choose a server and connect to it successfully' {
-			
+
 		}
 	}
 }
