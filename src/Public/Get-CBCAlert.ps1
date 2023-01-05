@@ -98,83 +98,83 @@ It returns all alerts which correspond to the specified criteria build with the 
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api/
 #>
 function Get-CBCAlert {
-    [CmdletBinding(DefaultParameterSetName = "all")]
-    Param(
-        [Parameter(ParameterSetName = "id", Position = 0)]
-        [array] $Id,
+  [CmdletBinding(DefaultParameterSetName = "all")]
+  param(
+    [Parameter(ParameterSetName = "id",Position = 0)]
+    [array]$Id,
 
-        [Parameter(ParameterSetName = "all")]
-        [hashtable] $Criteria,
+    [Parameter(ParameterSetName = "all")]
+    [hashtable]$Criteria,
 
-        [Parameter(ParameterSetName = "all")]
-        [string] $Query,
+    [Parameter(ParameterSetName = "all")]
+    [string]$Query,
 
-        [Parameter(ParameterSetName = "all")]
-        [int] $Rows = 20,
+    [Parameter(ParameterSetName = "all")]
+    [int]$Rows = 20,
 
-        [Parameter(ParameterSetName = "all")]
-        [int] $Start = 0,
+    [Parameter(ParameterSetName = "all")]
+    [int]$Start = 0,
 
-        [CBCServer] $CBCServer
-    )
+    [CBCServer]$CBCServer
+  )
 
-    Process {
-        if ($CBC_CONFIG.currentConnections) {
-            $ExecuteTo = $CBC_CONFIG.currentConnections
-        }
-        else {
-            Write-Error "There is no active connection!" -ErrorAction "Stop"
-        }
-        
-        if ($CBCServer) {
-            $ExecuteTo = @($CBCServer)
-        }
-
-        switch ($PSCmdlet.ParameterSetName) {
-            "all" {
-                $Body = "{}" | ConvertFrom-Json
-
-                if ($Criteria) {
-                    $Body | Add-Member -Name "criteria" -Value $Criteria -MemberType NoteProperty
-                }
-
-                if ($Query) {
-                    $Body | Add-Member -Name "query" -Value $Query -MemberType NoteProperty
-                }
-        
-                if ($Rows) {
-                    $Body | Add-Member -Name "rows" -Value $Rows -MemberType NoteProperty
-                }
-
-                if ($Start) {
-                    $Body | Add-Member -Name "start" -Value $Start -MemberType NoteProperty
-                }
-
-                $jsonBody = ConvertTo-Json -InputObject $Body
-
-                $ExecuteTo | ForEach-Object {
-                    $CurrentCBCServer = $_
-                    $CBCServerName = "[{0}] {1}" -f $_.Org, $_.Uri
-                    $Response = Invoke-CBCRequest -CBCServer $CurrentCBCServer `
-                        -Endpoint $CBC_CONFIG.endpoints["Alert"]["Search"] `
-                        -Method POST `
-                        -Body $jsonBody
-                    
-                    Get-AlertAPIResponse $Response $CBCServerName $CurrentCBCServer
-                }
-            }
-            "id" {
-                $ExecuteTo | ForEach-Object {
-                    $CurrentCBCServer = $_
-                    $CBCServerName = "[{0}] {1}" -f $_.Org, $_.Uri
-                    $Response = Invoke-CBCRequest -CBCServer $CurrentCBCServer `
-                        -Endpoint $CBC_CONFIG.endpoints["Alert"]["SpecificAlert"] `
-                        -Method GET `
-                        -Params @($Id)
-                    
-                    Get-AlertAPIResponse $Response $CBCServerName $CurrentCBCServer
-                }
-            }
-        }
+  process {
+    if ($CBC_CONFIG.currentConnections) {
+      $ExecuteTo = $CBC_CONFIG.currentConnections
     }
+    else {
+      Write-Error "There is no active connection!" -ErrorAction "Stop"
+    }
+
+    if ($CBCServer) {
+      $ExecuteTo = @($CBCServer)
+    }
+
+    switch ($PSCmdlet.ParameterSetName) {
+      "all" {
+        $Body = "{}" | ConvertFrom-Json
+
+        if ($Criteria) {
+          $Body | Add-Member -Name "criteria" -Value $Criteria -MemberType NoteProperty
+        }
+
+        if ($Query) {
+          $Body | Add-Member -Name "query" -Value $Query -MemberType NoteProperty
+        }
+
+        if ($Rows) {
+          $Body | Add-Member -Name "rows" -Value $Rows -MemberType NoteProperty
+        }
+
+        if ($Start) {
+          $Body | Add-Member -Name "start" -Value $Start -MemberType NoteProperty
+        }
+
+        $jsonBody = ConvertTo-Json -InputObject $Body
+
+        $ExecuteTo | ForEach-Object {
+          $CurrentCBCServer = $_
+          $CBCServerName = "[{0}] {1}" -f $_.Org,$_.Uri
+          $Response = Invoke-CBCRequest -CBCServer $CurrentCBCServer `
+             -Endpoint $CBC_CONFIG.endpoints["Alert"]["Search"] `
+             -Method POST `
+             -Body $jsonBody
+
+          Get-AlertAPIResponse $Response $CBCServerName $CurrentCBCServer
+        }
+      }
+      "id" {
+        $ExecuteTo | ForEach-Object {
+          $CurrentCBCServer = $_
+          $CBCServerName = "[{0}] {1}" -f $_.Org,$_.Uri
+          $Response = Invoke-CBCRequest -CBCServer $CurrentCBCServer `
+             -Endpoint $CBC_CONFIG.endpoints["Alert"]["SpecificAlert"] `
+             -Method GET `
+             -Params @($Id)
+
+          Get-AlertAPIResponse $Response $CBCServerName $CurrentCBCServer
+        }
+      }
+    }
+  }
 }

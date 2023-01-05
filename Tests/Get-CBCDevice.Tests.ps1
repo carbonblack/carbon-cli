@@ -1,28 +1,28 @@
-Describe "Get-CBCDevice" {   
-    
-    BeforeEach {
-        $CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
-    }
+Describe "Get-CBCDevice" {
 
-    InModuleScope PSCarbonBlackCloud {
+  BeforeEach {
+    $CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
+  }
 
-        BeforeAll {
+  InModuleScope PSCarbonBlackCloud {
 
-            $TestServerObject1 = [PSCustomObject]@{
-                PSTypeName = "CBCServer"
-                Uri        = "https://test.adasdagf/"
-                Org        = "test"
-                Token      = "test"
-            }
+    BeforeAll {
 
-            $TestServerObject2 = [PSCustomObject]@{
-                PSTypeName = "CBCServer"
-                Uri        = "https://test02.adasdagf/"
-                Org        = "test2"
-                Token      = "test"
-            }
+      $TestServerObject1 = [pscustomobject]@{
+        PSTypeName = "CBCServer"
+        Uri = "https://test.adasdagf/"
+        Org = "test"
+        Token = "test"
+      }
 
-            $MutlipleResultsResponse = @"
+      $TestServerObject2 = [pscustomobject]@{
+        PSTypeName = "CBCServer"
+        Uri = "https://test02.adasdagf/"
+        Org = "test2"
+        Token = "test"
+      }
+
+      $MutlipleResultsResponse = @"
             {
                 "results": [
                   {
@@ -246,64 +246,64 @@ Describe "Get-CBCDevice" {
             }
 "@
 
-        }
-
-        Context "When in All Section" {
-
-            It "Should return one result" {
-                
-                $CBC_CONFIG.currentConnections.Add($TestServerObject1) | Out-Null
-            
-                Mock Invoke-CBCRequest -MockWith {
-                    return @{
-                        StatusCode = 200
-                        Content    = $MutlipleResultsResponse
-                    }
-                } -ParameterFilter { 
-                    $CBCServer -match $TestServerObject1
-                    $Endpoint -eq $CBC_CONFIG.endpoints["Devices"]["Search"]
-                    $Method -eq "POST"
-                }
-
-                $Results = Get-CBCDevice -All
-                $Results.Count | Should -Be 2
-
-            }
-
-            It "Should return multiple result" {
-                
-                $CBC_CONFIG.currentConnections.Add($TestServerObject1) | Out-Null
-                $CBC_CONFIG.currentConnections.Add($TestServerObject2) | Out-Null
-            
-                Mock Invoke-CBCRequest -MockWith {
-                    return @{
-                        StatusCode = 200
-                        Content    = $MutlipleResultsResponse
-                    }
-                } -ParameterFilter { 
-                    $CBCServer -match $TestServerObject1
-                    $Endpoint -eq $CBC_CONFIG.endpoints["Devices"]["Search"]
-                    $Method -eq "POST"
-                }
-
-                Mock Invoke-CBCRequest -MockWith {
-                    return @{
-                        StatusCode = 200
-                        Content    = $MutlipleResultsResponse
-                    }
-                } -ParameterFilter { 
-                    $CBCServer -match $TestServerObject2
-                    $Endpoint -eq $CBC_CONFIG.endpoints["Devices"]["Search"]
-                    $Method -eq "POST"
-                }
-
-                $Results = Get-CBCDevice -All
-                $Results.Count | Should -Be 4
-
-            }
-
-        }
-        
     }
+
+    Context "When in All Section" {
+
+      It "Should return one result" {
+
+        $CBC_CONFIG.currentConnections.Add($TestServerObject1) | Out-Null
+
+        Mock Invoke-CBCRequest -MockWith {
+          return @{
+            StatusCode = 200
+            Content = $MutlipleResultsResponse
+          }
+        } -ParameterFilter {
+          $CBCServer -match $TestServerObject1
+          $Endpoint -eq $CBC_CONFIG.endpoints["Devices"]["Search"]
+          $Method -eq "POST"
+        }
+
+        $Results = Get-CBCDevice -All
+        $Results.Count | Should -Be 2
+
+      }
+
+      It "Should return multiple result" {
+
+        $CBC_CONFIG.currentConnections.Add($TestServerObject1) | Out-Null
+        $CBC_CONFIG.currentConnections.Add($TestServerObject2) | Out-Null
+
+        Mock Invoke-CBCRequest -MockWith {
+          return @{
+            StatusCode = 200
+            Content = $MutlipleResultsResponse
+          }
+        } -ParameterFilter {
+          $CBCServer -match $TestServerObject1
+          $Endpoint -eq $CBC_CONFIG.endpoints["Devices"]["Search"]
+          $Method -eq "POST"
+        }
+
+        Mock Invoke-CBCRequest -MockWith {
+          return @{
+            StatusCode = 200
+            Content = $MutlipleResultsResponse
+          }
+        } -ParameterFilter {
+          $CBCServer -match $TestServerObject2
+          $Endpoint -eq $CBC_CONFIG.endpoints["Devices"]["Search"]
+          $Method -eq "POST"
+        }
+
+        $Results = Get-CBCDevice -All
+        $Results.Count | Should -Be 4
+
+      }
+
+    }
+
+  }
 
 }

@@ -35,48 +35,48 @@ API Documentation: https://developer.carbonblack.com/reference/carbon-black-clou
 #>
 
 function Get-Policy {
-    [CmdletBinding(DefaultParameterSetName = "all")]
-    Param(
-        [Parameter(ParameterSetName = "id", Position = 0)]
-        [array] $Id,
+  [CmdletBinding(DefaultParameterSetName = "all")]
+  param(
+    [Parameter(ParameterSetName = "id",Position = 0)]
+    [array]$Id,
 
-        [CBCServer] $CBCServer
-    )
+    [CBCServer]$CBCServer
+  )
 
-    Process {
-        if ($CBC_CONFIG.currentConnections) {
-            $ExecuteTo = $CBC_CONFIG.currentConnections
-        }
-        else {
-            Write-Error "There is no active connection!" -ErrorAction "Stop"
-        }
-        if ($CBCServer) {
-            $ExecuteTo = @($CBCServer)
-        }
-        switch ($PSCmdlet.ParameterSetName) {
-            "all" {
-                $ExecuteTo | ForEach-Object {
-                    $CurrentCBCServer = $_
-                    $CBCServerName = "[{0}] {1}" -f $_.Org, $_.Uri
-                    $Response = Invoke-CBCRequest -CBCServer $CurrentCBCServer `
-                        -Endpoint $CBC_CONFIG.endpoints["Policy"]["Summary"] `
-                        -Method GET `
-                    
-                    Get-PolicyAPIResponse $Response $CBCServerName $CurrentCBCServer
-                }
-            }
-            "id" {
-                $ExecuteTo | ForEach-Object {
-                    $CurrentCBCServer = $_
-                    $CBCServerName = "[{0}] {1}" -f $_.Org, $_.Uri
-                    $Response = Invoke-CBCRequest -CBCServer $CurrentCBCServer `
-                        -Endpoint $CBC_CONFIG.endpoints["Policy"]["Details"] `
-                        -Method GET `
-                        -Params @($Id)
-
-                    Get-PolicyAPIResponse $Response $CBCServerName $CurrentCBCServer
-                }
-            }
-        }
+  process {
+    if ($CBC_CONFIG.currentConnections) {
+      $ExecuteTo = $CBC_CONFIG.currentConnections
     }
+    else {
+      Write-Error "There is no active connection!" -ErrorAction "Stop"
+    }
+    if ($CBCServer) {
+      $ExecuteTo = @($CBCServer)
+    }
+    switch ($PSCmdlet.ParameterSetName) {
+      "all" {
+        $ExecuteTo | ForEach-Object {
+          $CurrentCBCServer = $_
+          $CBCServerName = "[{0}] {1}" -f $_.Org,$_.Uri
+          $Response = Invoke-CBCRequest -CBCServer $CurrentCBCServer `
+             -Endpoint $CBC_CONFIG.endpoints["Policy"]["Summary"] `
+             -Method GET `
+
+          Get-PolicyAPIResponse $Response $CBCServerName $CurrentCBCServer
+        }
+      }
+      "id" {
+        $ExecuteTo | ForEach-Object {
+          $CurrentCBCServer = $_
+          $CBCServerName = "[{0}] {1}" -f $_.Org,$_.Uri
+          $Response = Invoke-CBCRequest -CBCServer $CurrentCBCServer `
+             -Endpoint $CBC_CONFIG.endpoints["Policy"]["Details"] `
+             -Method GET `
+             -Params @($Id)
+
+          Get-PolicyAPIResponse $Response $CBCServerName $CurrentCBCServer
+        }
+      }
+    }
+  }
 }
