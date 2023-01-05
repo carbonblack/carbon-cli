@@ -1,54 +1,45 @@
 # Sourcing all the functions
-$dotSourceParams = @{
-  Filter = '*.ps1'
-  Recurse = $true
-  ErrorAction = 'Stop'
+$DotSourceParams = @{
+	Filter = '*.ps1'
+	Recurse = $true
+	ErrorAction = 'Stop'
 }
 
-try {
-  $public = @(Get-ChildItem -Path "$PSScriptRoot\Public" @dotSourceParams)
-  $private = @(Get-ChildItem -Path "$PSScriptRoot\Private" @dotSourceParams)
-  $classes = @(Get-ChildItem -Path "$PSScriptRoot\Classes" @dotSourceParams)
-}
-catch {
-  throw $_
+$Public = @(Get-ChildItem -Path "$PSScriptRoot\Public" @DotSourceParams)
+$Private = @(Get-ChildItem -Path "$PSScriptRoot\Private" @DotSourceParams)
+$Classes = @(Get-ChildItem -Path "$PSScriptRoot\Classes" @DotSourceParams)
+
+
+foreach ($File in @($Public + $Private + $Classes)) {
+	.$File.FullName
 }
 
-foreach ($file in @($public + $private + $classes)) {
-  try {
-    .$file.FullName
-  }
-  catch {
-    throw "Unable to dot source [$($file.FullName)]"
-  }
-}
-
-Export-ModuleMember -Function $public.BaseName
+Export-ModuleMember -Function $Public.BaseName
 
 # Load Endpoints
-$endpoints = Import-PowerShellDataFile -Path $PSScriptRoot\PSCarbonBlackCloudEndpoints.psd1
+$Endpoints = Import-PowerShellDataFile -Path $PSScriptRoot\PSCarbonBlackCloudEndpoints.psd1
 
 # Setting the Configuration Variables
-$credentialsPath = "${Home}\.carbonblack\PSCredentials.xml"
-$credentials = [CBCCredentials]::new($credentialsPath)
+$CredentialsPath = "${Home}\.carbonblack\PSCredentials.xml"
+$Credentials = [CBCCredentials]::new($CredentialsPath)
 
 # Set the default Global options
-$cbcConfigObject = @{
-  currentConnections = [System.Collections.ArrayList]@()
-  defaultServers = [System.Collections.ArrayList]@()
-  credentials = $credentials
-  endpoints = $endpoints
+$CBCConfigObject = @{
+	currentConnections = [System.Collections.ArrayList]@()
+	defaultServers = [System.Collections.ArrayList]@()
+	credentials = $Credentials
+	endpoints = $Endpoints
 }
 
 # Add the existing CBC servers if any from the `PSCredentials.xml` file
-Select-Xml -Path $credentialsPath -XPath '/CBCServers/CBCServer' | ForEach-Object {
-  $cbcConfigObject.defaultServers.Add(
-    @{
-      Uri = $_.Node.Uri
-      Token = $_.Node.Token
-      Org = $_.Node.Org
-    }
-  )
+Select-Xml -Path $CredentialsPath -XPath '/CBCServers/CBCServer' | ForEach-Object {
+	$CBCConfigObject.defaultServers.Add(
+		@{
+			Uri = $_.Node.Uri
+			Token = $_.Node.Token
+			Org = $_.Node.Org
+		}
+	)
 }
 
-Set-Variable -Name CBC_CONFIG -Value $cbcConfigObject -Scope global
+Set-Variable -Name CBC_CONFIG -Value $CBCConfigObject -Scope global
