@@ -11,7 +11,7 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 	-------------------------- EXAMPLE 1 --------------------------
 	PS > Disconnect-CBCServer *
 	
-	It disconnects all current connections.
+		It disconnects all current connections.
 
 
 
@@ -20,18 +20,18 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 	PS > $ServerObj1 = Connect-CBCServer -CBCServer "http://cbcserver2.cbc" -Org "1234" -Token "5678"
 	PS > Disconnect-CBCServer $ServerObj, $ServerObj1
 	
-	It disconnects the specified Server Objects from the current connections.
+		It disconnects the specified Server Objects from the current connections.
 
 
 
 	-------------------------- EXAMPLE 3 --------------------------
 	PS > Disconnect-CBCServer "http://cbcserver.cbc", "http://cbcserver2.cbc"
 	
-	It searches for CBC Servers with this names from the current connections and disconnects them.
+		It searches for CBC Servers with this names from the current connections and disconnects them.
 
 
 .LINK
-	API Documentation: http://devnetworketc/
+	API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud
 #>
 function Disconnect-CBCServer {
 	[CmdletBinding()]

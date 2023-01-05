@@ -1,48 +1,42 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 
 <#
+.SYNOPSIS
+This cmdlet establishes a connection to the CBC Server
 .DESCRIPTION
-    This cmdlet establishes a connection to the CBC Server specified by the -CBCServer parameter.
+This cmdlet establishes a connection to the CBC Server
+Takes `-Server, -Org, -Token` parameters.
 .PARAMETER CBCServer
-    Specifies the IP or HTTP addresses of the CBC Server you want to connect to.
+Specifies the IP or HTTP addresses of the CBC Server you want to connect to.
 .PARAMETER Token
-    Specifies the Token that is going to be used in the authentication process.
+Specifies the Token that is going to be used in the authentication process.
 .PARAMETER Org
-    Specifies the Organization that is going to be used in the authentication process.
+Specifies the Organization that is going to be used in the authentication process.
 .PARAMETER SaveCredentials
-    Indicates that you want to save the specified credentials in the local credential store.
+Indicates that you want to save the specified credentials in the local credential store.
 .PARAMETER Menu
-    Connects to a CBC Server from the list of recently connected servers.
+Connects to a CBC Server from the list of recently connected servers.
 .OUTPUTS
-    A CBCServer Object
-.NOTES
-    -------------------------- EXAMPLE 1 --------------------------
+CBCServer
+.EXAMPLE
+PS > Connect-CBCServer -CBCServer "http://cbcserver.cbc" -Org "MyOrg" -Token "MyToken"
 
-    PS > Connect-CBCServer -CBCServer "http://cbcserver.cbc" -Org "MyOrg" -Token "MyToken"
+Connects with the specified Server, Org, Token and returns a CBCServer Object.
 
-    Connects with the specified Server, Org, Token and returns a CBCServer Object.
+.EXAMPLE
+PS > Connect-CBCServer -CBCServer "http://cbcserver1.cbc" -Org "MyOrg1" -Token "MyToken1" -SaveCredential
 
+Connect with the specified Server, Org, Token, returns a CBCServer Object and saves 
+the credentials in the Credential file.
 
+.EXAMPLE
+PS > Connect-CBCServer -Menu
 
-    -------------------------- EXAMPLE 2 --------------------------
-
-    PS > Connect-CBCServer -CBCServer "http://cbcserver1.cbc" -Org "MyOrg1" -Token "MyToken1" -SaveCredential
-
-    Connect with the specified Server, Org, Token, returns a CBCServer Object and saves 
-    the credentials in the Credential file.
-
-
-
-    -------------------------- EXAMPLE 3 --------------------------
-
-    PS > Connect-CBCServer -Menu
-
-    It prints the available CBC Servers from the Credential file so that the user can choose with which one to connect.
-
-
+It prints the available CBC Servers from the Credential file so that the user can choose with which 
+one to connect.
 
 .LINK
-API Documentation: http://devnetworketc/
+API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud
 #>
 function Connect-CBCServer {
 	[CmdletBinding(DefaultParameterSetName = "default",HelpUri = "http://devnetworketc/")]
