@@ -17,10 +17,10 @@ foreach ($File in @($Public + $Private + $Classes)) {
 Export-ModuleMember -Function $Public.BaseName
 
 # Load Endpoints
-$Endpoints = Import-PowerShellDataFile -Path $PSScriptRoot\PSCarbonBlackCloudEndpoints.psd1
+$Endpoints = Import-PowerShellDataFile -Path $PSScriptRoot/PSCarbonBlackCloudEndpoints.psd1
 
 # Setting the Configuration Variables
-$CredentialsPath = "${Home}\.carbonblack\PSCredentials.xml"
+$CredentialsPath = "${Home}/.carbonblack/PSCredentials.xml"
 $Credentials = [CBCCredentials]::new($CredentialsPath)
 
 # Set the default Global options
@@ -41,5 +41,6 @@ Select-Xml -Path $CredentialsPath -XPath '/CBCServers/CBCServer' | ForEach-Objec
 		}
 	)
 }
+
 
 Set-Variable -Name CBC_CONFIG -Value $CBCConfigObject -Scope global

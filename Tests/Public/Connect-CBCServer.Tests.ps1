@@ -75,7 +75,40 @@ Describe "Connect-CBCServer" {
 
 	Context 'When using the `menu` parameter set' {
 		It 'Should choose a server and connect to it successfully' {
+			Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
+				return "1"
+			};
 
+			$global:CBC_CONFIG.defaultServers.Add($s1)
+
+			Connect-CBCServer -Menu
+
+			$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
+			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $s1.Uri
+		}
+		It 'Should choose the second server and connect to it successfully' {
+			Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
+				return "2"
+			};
+
+			$global:CBC_CONFIG.defaultServers.Add($s1)
+			$global:CBC_CONFIG.defaultServers.Add($s2)
+
+			Connect-CBCServer -Menu
+
+			$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
+			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $s2.Uri
+		}
+		It 'Should not choose any server and throw error' {
+			Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
+				return "q"
+			};
+
+			$global:CBC_CONFIG.defaultServers.Add($s1)
+
+			{ Connect-CBCServer -Menu } | Should -Throw
+
+			$global:CBC_CONFIG.currentConnections.Count | Should -Be 0
 		}
 	}
 }

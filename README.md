@@ -8,11 +8,21 @@ A set of powershell cmdlets to interract with Carbon Black Cloud.
 PS> ./Build-PSCarbonBlackCloud.ps1
 ```
 
-## Design Guides
+Install `pre-commit`
 
-You are strongly recommended to follow these guide lines:
+macOS:
 
-https://learn.microsoft.com/en-us/powershell/scripting/developer/cmdlet/strongly-encouraged-development-guidelines?view=powershell-7.3 
+```
+$ brew install pre-commit
+$ pre-commit install
+```
+
+Using pip:
+
+```
+$ pip install pre-commit
+$ pre-commit install
+```
 
 ## Run Tests
 

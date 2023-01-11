@@ -2,36 +2,26 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 
 <#
 .DESCRIPTION
-	This cmdlet removes all or a specific connection from the CBC_CURRENT_CONNECTIONS.
+This cmdlet removes all or a specific connection from the CBC_CURRENT_CONNECTIONS.
 .PARAMETER CBCServer
-	Specifies the server you want to disconnect. It accepts '*' for all servers, server name,
-	array of server names or CBCServer object.
-.OUTPUTS
-.NOTES
-	-------------------------- EXAMPLE 1 --------------------------
-	PS > Disconnect-CBCServer *
-	
-		It disconnects all current connections.
+Specifies the server you want to disconnect. It accepts '*' for all servers, server name,
+array of server names or CBCServer object.
+.EXAMPLE
+PS > Disconnect-CBCServer *
 
+It disconnects all current connections.
+.EXAMPLE
+PS > $ServerObj = Connect-CBCServer -CBCServer "http://cbcserver.cbc" -Org "1234" -Token "5678"
+PS > $ServerObj1 = Connect-CBCServer -CBCServer "http://cbcserver2.cbc" -Org "1234" -Token "5678"
+PS > Disconnect-CBCServer $ServerObj, $ServerObj1
 
+It disconnects the specified Server Objects from the current connections.
+.EXAMPLE
+PS > Disconnect-CBCServer "http://cbcserver.cbc", "http://cbcserver2.cbc"
 
-	-------------------------- EXAMPLE 2 --------------------------
-	PS > $ServerObj = Connect-CBCServer -CBCServer "http://cbcserver.cbc" -Org "1234" -Token "5678"
-	PS > $ServerObj1 = Connect-CBCServer -CBCServer "http://cbcserver2.cbc" -Org "1234" -Token "5678"
-	PS > Disconnect-CBCServer $ServerObj, $ServerObj1
-	
-		It disconnects the specified Server Objects from the current connections.
-
-
-
-	-------------------------- EXAMPLE 3 --------------------------
-	PS > Disconnect-CBCServer "http://cbcserver.cbc", "http://cbcserver2.cbc"
-	
-		It searches for CBC Servers with this names from the current connections and disconnects them.
-
-
+It searches for CBC Servers with this names from the current connections and disconnects them.
 .LINK
-	API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud
+API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud
 #>
 function Disconnect-CBCServer {
 	[CmdletBinding()]

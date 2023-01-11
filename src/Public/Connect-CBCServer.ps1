@@ -22,19 +22,16 @@ CBCServer
 PS > Connect-CBCServer -CBCServer "http://cbcserver.cbc" -Org "MyOrg" -Token "MyToken"
 
 Connects with the specified Server, Org, Token and returns a CBCServer Object.
-
 .EXAMPLE
 PS > Connect-CBCServer -CBCServer "http://cbcserver1.cbc" -Org "MyOrg1" -Token "MyToken1" -SaveCredential
 
-Connect with the specified Server, Org, Token, returns a CBCServer Object and saves 
+Connect with the specified Server, Org, Token, returns a CBCServer Object and saves
 the credentials in the Credential file.
-
 .EXAMPLE
 PS > Connect-CBCServer -Menu
 
-It prints the available CBC Servers from the Credential file so that the user can choose with which 
+It prints the available CBC Servers from the Credential file so that the user can choose with which
 one to connect.
-
 .LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud
 #>
@@ -66,14 +63,14 @@ function Connect-CBCServer {
 
 		# Show the currently connected CBC servers warning
 		if ($global:CBC_CONFIG.currentConnections.Count -ge 1) {
-			Write-Warning -Message "You are currently connected to: "
+			Write-Output "You are currently connected to: "
 			$global:CBC_CONFIG.currentConnections | ForEach-Object {
 				$Index = $global:CBC_CONFIG.currentConnections.IndexOf($_) + 1
 				$OutputMessage = "[${Index}] " + $_.Uri + " Organization: " + $_.Org
-				Write-Warning $OutputMessage
+				Write-Output $OutputMessage
 			}
-			Write-Warning -Message 'If you wish to disconnect the currently connected CBC servers, please use Disconnect-CBCServer cmdlet. 
-         If you wish to continue connecting to new servers press any key or `Q` to quit.'
+			Write-Output `r`n 'If you wish to disconnect the currently connected CBC servers, please use Disconnect-CBCServer cmdlet.
+If you wish to continue connecting to new servers press any key or `Q` to quit.'
 			$Option = Read-Host
 			if ($Option.ToLower() -eq 'q') {
 				Write-Error 'Exit' -ErrorAction 'Stop'
