@@ -5,9 +5,9 @@ $DotSourceParams = @{
 	ErrorAction = 'Stop'
 }
 
-$Public = @(Get-ChildItem -Path "$PSScriptRoot\Public" @DotSourceParams)
-$Private = @(Get-ChildItem -Path "$PSScriptRoot\Private" @DotSourceParams)
-$Classes = @(Get-ChildItem -Path "$PSScriptRoot\Classes" @DotSourceParams)
+$Public = @(Get-ChildItem -Path "$PSScriptRoot/Public" @DotSourceParams)
+$Private = @(Get-ChildItem -Path "$PSScriptRoot/Private" @DotSourceParams)
+$Classes = @(Get-ChildItem -Path "$PSScriptRoot/Classes" @DotSourceParams)
 
 
 foreach ($File in @($Public + $Private + $Classes)) {

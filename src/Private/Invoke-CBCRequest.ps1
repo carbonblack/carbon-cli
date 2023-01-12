@@ -35,7 +35,10 @@ function Invoke-CBCRequest {
 		$FullUri = $Server.Uri + $FormattedUri
 		Write-Debug "[$($MyInvocation.MyCommand.Name)] requesting: ${FullUri}"
 		try {
-			return Invoke-WebRequest -Uri $FullUri -Headers $Headers -Method $Method -Body $Body
+			$Request = Invoke-WebRequest -Uri $FullUri -Headers $Headers -Method $Method -Body $Body
+			Write-Debug $Request.Content
+			Write-Debug $Request.StatusCode
+			return $Request
 		}
 		catch {
 			Write-Debug $_.Exception

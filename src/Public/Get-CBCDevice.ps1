@@ -19,7 +19,7 @@ Sets a specified CBC Server from the current connections to execute the cmdlet w
 .OUTPUTS
 CBCDevice[]
 .EXAMPLE
-PS > Get-CBCDevice
+PS > Get-CBCDevice | ft
 
 Returns all devices
 
@@ -84,7 +84,7 @@ $Exclusions = @{
 PS > Get-CBCDevice -Include $Criteria
 PS > Get-CBCDevice -Exclude $Exclusions
 PS > Get-CBCDevice -Include $Criteria -Exclude $Exclusions
-PS > Get-CBCDevice -Include $Criteria -Exclude $Exclusions -MaxResults 50
+PS > Get-CBCDevice -Include $Criteria -Exclude $Exclusions -MaxResults 50 | ft
 PS > Get-CBCDevice -Include @{"os"= @("WINDOWS")}
 
 Returns all devices which correspond to the specified $Crtieria/$Exclusions.
@@ -94,15 +94,15 @@ you can add the `-Server` param.
 
 PS > Get-CBCDevice -Include $Criteria -Server $SpecifiedServer
 .EXAMPLE
-PS > Get-CBCDevice -Filter "os:WINDOWS"
-PS > Get-CBCDevice -Filter "os:WINDOWS" -MaxResults 50
+PS > Get-CBCDevice -Filter "WINDOWS" | ft
+PS > Get-CBCDevice -Filter "WINDOWS" -MaxResults 10 | ft
 
 Returns all devices which correspond to the specified filter with lucene syntax.
 
 If you have multiple connections and you want devices from a specific server
 you can add the `-Server` param.
 
-PS > Get-CBCDevice -Filter "os:WINDOWS" -MaxResults 50 -Server $SpecifiedServer
+PS > Get-CBCDevice -Filter "os:WINDOWS" -MaxResults 50 -Server $SpecifiedServer | ft
 .LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/
 #>
