@@ -63,14 +63,21 @@ function Connect-CBCServer {
 
 		# Show the currently connected CBC servers warning
 		if ($global:CBC_CONFIG.currentConnections.Count -ge 1) {
-			Write-Output "You are currently connected to: "
+
+			# Check if you are already connected to this server
+			$global:CBC_CONFIG.currentConnections | ForEach-Object {
+				if (($_.Uri -eq $Uri) -and ($_.Org -eq $Org)) {
+					Write-Error 'You are already connected to this server!' -ErrorAction 'Stop'
+				}
+			}
+
+			Write-Warning -Message "You are currently connected to: "
 			$global:CBC_CONFIG.currentConnections | ForEach-Object {
 				$Index = $global:CBC_CONFIG.currentConnections.IndexOf($_) + 1
 				$OutputMessage = "[${Index}] " + $_.Uri + " Organization: " + $_.Org
-				Write-Output $OutputMessage
+				Write-Warning -Message $OutputMessage
 			}
-			Write-Output `r`n 'If you wish to disconnect the currently connected CBC servers, please use Disconnect-CBCServer cmdlet.
-If you wish to continue connecting to new servers press any key or `Q` to quit.'
+			Write-Warning -Message "If you wish to disconnect the currently connected CBC servers, please use Disconnect-CBCServer cmdlet. If you wish to continue connecting to new servers press any key or `Q` to quit."
 			$Option = Read-Host
 			if ($Option.ToLower() -eq 'q') {
 				Write-Error 'Exit' -ErrorAction 'Stop'
@@ -118,6 +125,11 @@ If you wish to continue connecting to new servers press any key or `Q` to quit.'
 
 		if ($CBCServerObject.IsConnected()) {
 			Write-Error "You are already connected to this server and organization!" -ErrorAction Stop
+		}
+
+		$TestConnection = Invoke-CBCRequest -Server $CBCServerObject -Endpoint "/" -Method Get
+		if ($TestConnection.StatusCode -ne 200) {
+			Write-Error "Cannot connect to the server" -ErrorAction Stop
 		}
 
 		$global:CBC_CONFIG.currentConnections.Add($CBCServerObject) | Out-Null

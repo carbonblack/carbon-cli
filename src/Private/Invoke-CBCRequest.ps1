@@ -4,7 +4,7 @@ function Invoke-CBCRequest {
 	param(
 		[Parameter(Mandatory = $true,Position = 0)]
 		[ValidateNotNullOrEmpty()]
-		[CBCServer]$CBCServer,
+		[CBCServer]$Server,
 
 		[Parameter(Mandatory = $true,Position = 1)]
 		[ValidateNotNullOrEmpty()]
@@ -24,16 +24,16 @@ function Invoke-CBCRequest {
 
 	process {
 		$Headers = @{
-			"X-AUTH-TOKEN" = $CBCServer.Token
+			"X-AUTH-TOKEN" = $Server.Token
 			"Content-Type" = "application/json"
 			"User-Agent" = "PSCarbonBlackCloud"
 		}
 
-		$Params =,$CBCServer.Org + $Params
+		$Params = ,$Server.Org + $Params
 		$FormattedUri = $Endpoint -f $Params
 
-		$FullUri = $CBCServer.Uri + $FormattedUri
-		Write-Debug "[$($MyInvocation.MyCommand.Name)] Requesting ${FullUri}"
+		$FullUri = $Server.Uri + $FormattedUri
+		Write-Debug "[$($MyInvocation.MyCommand.Name)] requesting: ${FullUri}"
 		try {
 			return Invoke-WebRequest -Uri $FullUri -Headers $Headers -Method $Method -Body $Body
 		}
