@@ -77,42 +77,43 @@ Describe "Get-CBCDevice" {
 
             Context "When using the -Exclude parameter" {
                 It "Should return the devices according to the exclusion" {
-                    $ExampleJSONBody = '{"exclusions": { "os": ["WINDOWS"] } }' | ConvertFrom-Json | ConvertTo-Json
+                    $ExampleJSONBody = '{"exclusions": { "sensor_version": ["windows:1.0.0"] }, "rows": 50 }' | ConvertFrom-Json | ConvertTo-Json
+
                     Mock Invoke-CBCRequest -ModuleName PSCarbonBlackCloud {
                         return @{
                             StatusCode = 200
                             Content = Get-Content "$ProjectRoot/Tests/resources/device_api/exclusions_devices.json"
                         }
                     } -ParameterFilter {
-                        $Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Search"]
-                        $Method -eq "POST"
-                        $Server -eq $s1
+                        $Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Search"] -and
+                        $Method -eq "POST" -and
+                        $Server -eq $s1 -and
                         $Body -eq $ExampleJSONBody
                     }
                     $Exclusions = @{
-                        "os" = "WINDOWS"
+                        "sensor_version" = @("windows:1.0.0")
                     }
 
                     $devices = Get-CBCDevice -Exclude $Exclusions
 
                     $devices.Count | Should -Be 1
-                    $devices[0].CBCServer | Should -Be $s1
+                    $devices[0].CBCServer | Should -Be  $s1
                     $devices[0].User | Should -Be "test3@carbonblack.com"
                     $devices[0].Os | Should -Be "LINUX"
                 }
             }
             Context "When using the -Include parameter" {
                 It "Should return the devices according to the inclusion" {
-                    $ExampleJSONBody = '{"criteria": { "os": ["WINDOWS"] } }' | ConvertFrom-Json | ConvertTo-Json
+                    $ExampleJSONBody = '{"rows": 50, "criteria": { "os": ["WINDOWS"] }}' | ConvertFrom-Json | ConvertTo-Json
                     Mock Invoke-CBCRequest -ModuleName PSCarbonBlackCloud {
                         return @{
                             StatusCode = 200
                             Content = Get-Content "$ProjectRoot/Tests/resources/device_api/criteria_devices.json"
                         }
                     } -ParameterFilter {
-                        $Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Search"]
-                        $Method -eq "POST"
-                        $Server -eq $s1
+                        $Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Search"] -and
+                        $Method -eq "POST" -and
+                        ($Server -eq $s1 -or $Server -eq $s2) -and
                         $Body -eq $ExampleJSONBody
                     }
                     $Criteria = @{
@@ -136,28 +137,27 @@ Describe "Get-CBCDevice" {
                     # actually receives the `exclusions` part of the request. The other stuff
                     # are already tested and redundant. The test would be useful for future
                     # supported fileds, more than just the `sensor_version`.
-                    $ExampleJSONBody = '{"criteria": { "os": ["WINDOWS"] }, "exclusions": { "sensor_version": ["windows:1.0.0"]}, "rows": 20 }' | ConvertFrom-Json | ConvertTo-Json
+                    $ExampleJSONBody = '{"exclusions": { "sensor_version": ["windows:1.0.0"]},"rows": 20, "criteria": { "os": ["WINDOWS"] }}' | ConvertFrom-Json | ConvertTo-Json
                     Mock Invoke-CBCRequest -ModuleName PSCarbonBlackCloud {
                         return @{
                             StatusCode = 200
                             Content = Get-Content "$ProjectRoot/Tests/resources/device_api/exclusions_criteria_devices.json"
                         }
                     } -ParameterFilter {
-                        $Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Search"]
-                        $Method -eq "POST"
-                        $Server -eq $s1
+                        $Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Search"] -and
+                        $Method -eq "POST" -and
+                        $Server -eq $s1 -and
                         $Body -eq $ExampleJSONBody
                     }
                     $Criteria = @{
                         "os" = @("WINDOWS")
                     }
                     $Exclusions = @{
-                        "sensor_version" = "windows:1.0.0"
+                        "sensor_version" = @("windows:1.0.0")
                     }
 
                     $devices = Get-CBCDevice -Exclude $Exclusions -Include $Criteria -MaxResults 20
 
-                    $devices = Get-CBCDevice
                     $devices.Count | Should -Be 3
                     $devices[0].User | Should -Be "test1@carbonblack.com"
                     $devices[1].User | Should -Be "test2@carbonblack.com"
@@ -327,11 +327,17 @@ Describe "Get-CBCDevice" {
             }
 
             It "Should return devices based on the query" {
+                $ExampleJSONBody = '{"query": "os:Windows", "rows": 50 }' | ConvertFrom-Json | ConvertTo-Json
                 Mock Invoke-CBCRequest -ModuleName PSCarbonBlackCloud {
                     return @{
                         StatusCode = 200
                         Content = Get-Content "$ProjectRoot/Tests/resources/device_api/criteria_devices.json"
                     }
+                } -ParameterFilter {
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Search"] -and
+                    $Method -eq "POST" -and
+                    $Server -eq $s1 -and
+                    $Body -eq $ExampleJSONBody
                 }
 
                 $devices = Get-CBCDevice -Filter "os:Windows"

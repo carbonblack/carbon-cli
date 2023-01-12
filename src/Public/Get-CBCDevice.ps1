@@ -85,6 +85,7 @@ PS > Get-CBCDevice -Include $Criteria
 PS > Get-CBCDevice -Exclude $Exclusions
 PS > Get-CBCDevice -Include $Criteria -Exclude $Exclusions
 PS > Get-CBCDevice -Include $Criteria -Exclude $Exclusions -MaxResults 50
+PS > Get-CBCDevice -Include @{"os"= @("WINDOWS")}
 
 Returns all devices which correspond to the specified $Crtieria/$Exclusions.
 
@@ -164,7 +165,11 @@ function Get-CBCDevice {
 						$RequestBody.rows = 50
 					}
 
-					$RequestBody = $RequestBody | ConvertTo-Json
+					$RequestBody = ($RequestBody | ConvertTo-Json)
+
+					Write-Debug "Invoking $CurrentServer"
+					Write-Debug $("Endpoint {0}" -f $global:CBC_CONFIG.endpoints["Devices"]["Search"])
+					Write-Debug "With Request Body: `r`n $RequestBody"
 
 					$Response = Invoke-CBCRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Search"] `
 						-Method POST `
@@ -225,7 +230,7 @@ function Get-CBCDevice {
 					$CurrentServer = $_
 
 					$RequestBody = @{
-						query = $Query
+						query = $Filter
 					}
 
 					if ($MaxResults) {
@@ -235,6 +240,10 @@ function Get-CBCDevice {
 					}
 
 					$RequestBody = $RequestBody | ConvertTo-Json
+
+					Write-Debug "Invoking $CurrentServer"
+					Write-Debug $("Endpoint {0}" -f $global:CBC_CONFIG.endpoints["Devices"]["Search"])
+					Write-Debug "With Request Body: `r`n $RequestBody"
 
 					$Response = Invoke-CBCRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Search"] `
 						-Method POST `

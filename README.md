@@ -30,6 +30,12 @@ $ pre-commit install
 PS> ./Invoke-Tests.ps1
 ```
 
+If you want to enable debug information
+
+```powershell
+$DebugPreference = 'Continue'
+```
+
 ## Importing the Module
 
 ```console

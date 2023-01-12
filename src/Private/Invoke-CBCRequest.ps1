@@ -38,6 +38,7 @@ function Invoke-CBCRequest {
 			return Invoke-WebRequest -Uri $FullUri -Headers $Headers -Method $Method -Body $Body
 		}
 		catch {
+			Write-Debug $_.Exception
 			$StatusCode = $_.Exception.Response.StatusCode
 			Write-Error "Request to ${FullUri} failed. Status Code: ${StatusCode}"
 		}
