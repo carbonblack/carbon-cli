@@ -10,12 +10,12 @@ AfterAll {
 	Remove-Module -Name PSCarbonBlackCloud -Force
 }
 
-Describe "Disconnect-CBCServer" {
+Describe "Disconnect-CbcServer" {
 
 	BeforeAll {
-		$s1 = [CBCServer]::new("https://t.te/","test","test")
-		$s2 = [CBCServer]::new("https://t2.te/","test2","test2")
-		$s3 = [CBCServer]::new("https://t3.te/","test3","test3")
+		$s1 = [CbcServer]::new("https://t.te/","test","test")
+		$s2 = [CbcServer]::new("https://t2.te/","test2","test2")
+		$s3 = [CbcServer]::new("https://t3.te/","test3","test3")
 	}
 
 	BeforeEach {
@@ -27,7 +27,7 @@ Describe "Disconnect-CBCServer" {
 		$global:CBC_CONFIG.currentConnections.Add($s1) | Out-Null
 		$global:CBC_CONFIG.currentConnections.Add($s2) | Out-Null
 
-		Disconnect-CBCServer *
+		Disconnect-CbcServer *
 
 		$global:CBC_CONFIG.currentConnections.Count | Should -Be 0
 	}
@@ -36,7 +36,7 @@ Describe "Disconnect-CBCServer" {
 		$global:CBC_CONFIG.currentConnections.Add($s1)
 		$global:CBC_CONFIG.currentConnections.Add($s2)
 
-		Disconnect-CBCServer $s1
+		Disconnect-CbcServer $s1
 
 		$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
 		$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $s2.Uri
@@ -46,7 +46,7 @@ Describe "Disconnect-CBCServer" {
 		$global:CBC_CONFIG.currentConnections.Add($s1)
 		$global:CBC_CONFIG.currentConnections.Add($s2)
 
-		Disconnect-CBCServer @($s1,$s2)
+		Disconnect-CbcServer @($s1,$s2)
 
 		$global:CBC_CONFIG.currentConnections.Count | Should -Be 0
 	}
@@ -55,7 +55,7 @@ Describe "Disconnect-CBCServer" {
 		$global:CBC_CONFIG.currentConnections.Add($s1)
 		$global:CBC_CONFIG.currentConnections.Add($s2)
 
-		Disconnect-CBCServer $s1.Uri
+		Disconnect-CbcServer $s1.Uri
 		$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
 		$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $s2.Uri
 	}
@@ -66,7 +66,7 @@ Describe "Disconnect-CBCServer" {
 		$global:CBC_CONFIG.currentConnections.Add($s2)
 		$global:CBC_CONFIG.currentConnections.Add($s3)
 
-		Disconnect-CBCServer @($s1.Uri,$s2.Uri)
+		Disconnect-CbcServer @($s1.Uri,$s2.Uri)
 		$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
 		$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $s3.Uri
 	}

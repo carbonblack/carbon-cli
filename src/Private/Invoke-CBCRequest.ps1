@@ -4,7 +4,7 @@ function Invoke-CBCRequest {
 	param(
 		[Parameter(Mandatory = $true,Position = 0)]
 		[ValidateNotNullOrEmpty()]
-		[CBCServer]$Server,
+		[CbcServer]$Server,
 
 		[Parameter(Mandatory = $true,Position = 1)]
 		[ValidateNotNullOrEmpty()]
@@ -29,21 +29,25 @@ function Invoke-CBCRequest {
 			"User-Agent" = "PSCarbonBlackCloud"
 		}
 
-		$Params = ,$Server.Org + $Params
+		$Params =,$Server.Org + $Params
 		$FormattedUri = $Endpoint -f $Params
 
 		$FullUri = $Server.Uri + $FormattedUri
 		Write-Debug "[$($MyInvocation.MyCommand.Name)] requesting: ${FullUri}"
+		Write-Debug "[$($MyInvocation.MyCommand.Name)] with request body: ${Body}"
+		Write-Debug "[$($MyInvocation.MyCommand.Name)] with headers body: ${Headers}"
+		Write-Debug "[$($MyInvocation.MyCommand.Name)] with method body: ${Method}"
+		Write-Debug "[$($MyInvocation.MyCommand.Name)] with uri params body: ${Params}"
 		try {
 			$Request = Invoke-WebRequest -Uri $FullUri -Headers $Headers -Method $Method -Body $Body
-			Write-Debug $Request.Content
-			Write-Debug $Request.StatusCode
+			Write-Debug "[$($MyInvocation.MyCommand.Name)] got response with content: ${Request.Content}"
+			Write-Debug "[$($MyInvocation.MyCommand.Name)] got status code: ${Request.StatusCode}"
 			return $Request
 		}
 		catch {
 			Write-Debug $_.Exception
 			$StatusCode = $_.Exception.Response.StatusCode
-			Write-Error "Request to ${FullUri} failed. Status Code: ${StatusCode}"
+			Write-Error "[$($MyInvocation.MyCommand.Name)] request to ${FullUri} failed. Status Code: ${StatusCode}"
 		}
 		return $null
 	}

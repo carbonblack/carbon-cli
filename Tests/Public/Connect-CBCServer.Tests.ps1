@@ -10,12 +10,12 @@ AfterAll {
 	Remove-Module -Name PSCarbonBlackCloud -Force
 }
 
-Describe "Connect-CBCServer" {
+Describe "Connect-CbcServer" {
 
 	BeforeAll {
-		$s1 = [CBCServer]::new("https://t.te/","test","test")
-		$s2 = [CBCServer]::new("https://t2.te/","test2","test2")
-		$s3 = [CBCServer]::new("https://t3.te/","test3","test3")
+		$s1 = [CbcServer]::new("https://t.te/","test","test")
+		$s2 = [CbcServer]::new("https://t2.te/","test2","test2")
+		$s3 = [CbcServer]::new("https://t3.te/","test3","test3")
 
 		Mock Invoke-CBCRequest -ModuleName PSCarbonBlackCloud {
 			return @{
@@ -31,18 +31,18 @@ Describe "Connect-CBCServer" {
 
 	Context "When using the 'default' parameter set" {
 		It 'Should connect to a server successfully' {
-			$server = Connect-CBCServer -Server $s1.Uri -Org $s1.Org -Token $s1.Token
+			$server = Connect-CbcServer -Server $s1.Uri -Org $s1.Org -Token $s1.Token
 
-			$server.GetType() | Should -Be "CBCServer"
+			$server.GetType() | Should -Be "CbcServer"
 			$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
 			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $server.Uri
 			$global:CBC_CONFIG.currentConnections[0].Org | Should -Be $server.Org
 			$global:CBC_CONFIG.defaultServers.Count | Should -Be 0
 		}
 		It 'Should connect to a server successfully and save the credentials' {
-			$server = Connect-CBCServer -Server $s1.Uri -Org $s1.Org -Token $s1.Token -SaveCredential
+			$server = Connect-CbcServer -Server $s1.Uri -Org $s1.Org -Token $s1.Token -SaveCredential
 
-			$server.GetType() | Should -Be "CBCServer"
+			$server.GetType() | Should -Be "CbcServer"
 			$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
 			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $server.Uri
 			$global:CBC_CONFIG.currentConnections[0].Org | Should -Be $server.Org
@@ -56,8 +56,8 @@ Describe "Connect-CBCServer" {
 				return ""
 			};
 
-			$server = Connect-CBCServer -Server $s1.Uri -Org $s1.Org -Token $s1.Token
-			$server2 = Connect-CBCServer -Server $s2.Uri -Org $s2.Org -Token $s2.Token
+			$server = Connect-CbcServer -Server $s1.Uri -Org $s1.Org -Token $s1.Token
+			$server2 = Connect-CbcServer -Server $s2.Uri -Org $s2.Org -Token $s2.Token
 
 			$global:CBC_CONFIG.currentConnections.Count | Should -Be 2
 			$global:CBC_CONFIG.currentConnections[1].Uri | Should -Be $server2.Uri
@@ -71,8 +71,8 @@ Describe "Connect-CBCServer" {
 				return ""
 			};
 
-			$server = Connect-CBCServer -Server $s1.Uri -Org $s1.Org -Token $s1.Token
-			{ Connect-CBCServer -Server $s1.Uri -Org $s1.Org -Token $s1.Token } | Should -Throw
+			$server = Connect-CbcServer -Server $s1.Uri -Org $s1.Org -Token $s1.Token
+			{ Connect-CbcServer -Server $s1.Uri -Org $s1.Org -Token $s1.Token } | Should -Throw
 
 			$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
 			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $server.Uri
@@ -84,9 +84,9 @@ Describe "Connect-CBCServer" {
 				return "Q"
 			};
 
-			$server = Connect-CBCServer -Server $s1.Uri -Org $s1.Org -Token $s1.Token
+			$server = Connect-CbcServer -Server $s1.Uri -Org $s1.Org -Token $s1.Token
 
-			{ Connect-CBCServer -Server $s2.Uri -Org $s2.Org -Token $s2.Token } | Should -Throw
+			{ Connect-CbcServer -Server $s2.Uri -Org $s2.Org -Token $s2.Token } | Should -Throw
 			$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
 			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $server.Uri
 			$global:CBC_CONFIG.currentConnections[0].Org | Should -Be $server.Org
@@ -102,7 +102,7 @@ Describe "Connect-CBCServer" {
 
 			$global:CBC_CONFIG.defaultServers.Add($s1)
 
-			Connect-CBCServer -Menu
+			Connect-CbcServer -Menu
 
 			$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
 			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $s1.Uri
@@ -115,7 +115,7 @@ Describe "Connect-CBCServer" {
 			$global:CBC_CONFIG.defaultServers.Add($s1)
 			$global:CBC_CONFIG.defaultServers.Add($s2)
 
-			Connect-CBCServer -Menu
+			Connect-CbcServer -Menu
 
 			$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
 			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $s2.Uri
@@ -127,7 +127,7 @@ Describe "Connect-CBCServer" {
 
 			$global:CBC_CONFIG.defaultServers.Add($s1)
 
-			{ Connect-CBCServer -Menu } | Should -Throw
+			{ Connect-CbcServer -Menu } | Should -Throw
 
 			$global:CBC_CONFIG.currentConnections.Count | Should -Be 0
 		}

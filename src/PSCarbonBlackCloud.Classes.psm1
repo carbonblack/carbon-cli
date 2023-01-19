@@ -1,4 +1,4 @@
-class CBCServer{
+class CbcServer{
 	[ValidateNotNullOrEmpty()] [string]$Uri
 	[ValidateNotNullOrEmpty()] [string]$Org
 	[ValidateNotNullOrEmpty()] [string]$Token
@@ -7,7 +7,7 @@ class CBCServer{
 		return "[" + $this.Org + "] " + $this.Uri
 	}
 
-	CBCServer ([string]$Uri_,[string]$Org_,[string]$Token_) {
+	CbcServer ([string]$Uri_,[string]$Org_,[string]$Token_) {
 		$this.Uri = $Uri_
 		$this.Org = $Org_
 		$this.Token = $Token_
@@ -25,11 +25,11 @@ class CBCServer{
 	}
 }
 
-class CBCCredentials{
+class CbcCredentials{
 	[string]$FullPath
 	[System.Xml.XmlDocument]$XmlDocument
 
-	CBCCredentials ([string]$FullPath) {
+	CbcCredentials ([string]$FullPath) {
 		$this.FullPath = $FullPath
 		$DirPath = Split-Path $FullPath
 
@@ -89,7 +89,7 @@ class CBCCredentials{
 	}
 }
 
-class CBCDevice{
+class CbcDevice{
 
 	[string]$Id
 	[string]$Status
@@ -100,10 +100,11 @@ class CBCDevice{
 	[string]$Name
 	[string]$Os
 	[string]$LastContactTime
+	[string]$SensorKitType
 
-	[CBCServer]$CBCServer
+	[CbcServer]$CbcServer
 
-	CBCDevice (
+	CbcDevice (
 		[string]$Id_,
 		[string]$Status_,
 		[string]$Group_,
@@ -113,23 +114,50 @@ class CBCDevice{
 		[string]$Name_,
 		[string]$Os_,
 		[string]$LastContactTime_,
-		[CBCServer]$CBCServer_
+		[string]$SensorKitType_,
+		[CbcServer]$CbcServer_
 	) {
-		$this.Id = $Id_
-		$this.Status = $Status_
+		$this.id = $Id_
+		$this.status = $Status_
 		$this.Group = $Group_
 		$this.Policy = $Policy_
 		$this.TargetPriority = $TargetPriority_
 		$this.User = $User_
 		$this.Name = $Name_
-		$this.Os = $Os_
+		$this.os = $Os_
 		$this.LastContactTime = $LastContactTime_
-		$this.CBCServer = $CBCServer_
+		$this.SensorKitType = $SensorKitType_
+		$this.CBCServer = $CbcServer_
 	}
 }
 
-class CBCPolicy {
+class CbcPolicy{
 
+	[string]$Id
+	[string]$Name
+	[string]$Description
+	[string]$PriorityLevel
+	[int]$NumberDevices
+	[int]$Position
+	[bool]$SystemEnabled
+
+	CbcPolicy (
+		[string]$Id_,
+		[string]$Name_,
+		[string]$Description_,
+		[string]$PriorityLevel_,
+		[int]$NumberDevices_,
+		[int]$Position_,
+		[bool]$SystemEnabled_
+	) {
+		$this.id = $Id_
+		$this.Name = $Name_
+		$this.Description = $Description_
+		$this.PriorityLevel = $PriorityLevel_
+		$this.NumberDevices = $NumberDevices_
+		$this.Position = $Position_
+		$this.SystemEnabled = $SystemEnabled_
+	}
 }
 
 # class PolicySummary{
