@@ -149,7 +149,7 @@ function Get-CbcDevice {
 
 					$RequestBody = $RequestBody | ConvertTo-Json
 
-					$Response = Invoke-CBCRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Search"] `
+					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Search"] `
  						-Method POST `
  						-Server $_ `
  						-Body $RequestBody
@@ -178,7 +178,7 @@ function Get-CbcDevice {
 			"id" {
 				$ExecuteServers | ForEach-Object {
 
-					$Response = Invoke-CBCRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["SpecificDeviceInfo"] `
+					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["SpecificDeviceInfo"] `
  						-Method GET `
  						-Server $_ `
  						-Params @($Id)

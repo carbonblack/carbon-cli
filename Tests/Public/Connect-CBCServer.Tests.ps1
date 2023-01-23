@@ -13,10 +13,6 @@ AfterAll {
 Describe "Connect-CbcServer" {
 
 	BeforeAll {
-		$s1 = [CbcServer]::new("https://t.te/","test","test")
-		$s2 = [CbcServer]::new("https://t2.te/","test2","test2")
-		$s3 = [CbcServer]::new("https://t3.te/","test3","test3")
-
 		Mock Invoke-CBCRequest -ModuleName PSCarbonBlackCloud {
 			return @{
 				StatusCode = 200

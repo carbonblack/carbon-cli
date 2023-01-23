@@ -68,7 +68,7 @@ function Set-CBCDevice {
 			Mandatory = $true,
 			Position = 0,
 			ParameterSetName = "Id")]
-		[string]$Id, # TODO: tests, examples
+		[string]$Id,
 
 		[CbcPolicy]$Policy,# TODO: tests, examples
 
@@ -130,10 +130,10 @@ function Set-CBCDevice {
 			}
 
 			$JsonBody = $RequestBody | ConvertTo-Json
-			$Response = Invoke-CBCRequest -Server $_.CBCServer `
-				-Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Actions"] `
-				-Method POST `
-				-Body $JsonBody
+			$Response = Invoke-CbcRequest -Server $_.CBCServer `
+ 				-Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Actions"] `
+ 				-Method POST `
+ 				-Body $JsonBody
 			if ($Response.StatusCode -ne 204) {
 				Write-Error -Message $("Cannot quarantine the device {0}" -f $_.id)
 			} else {
