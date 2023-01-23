@@ -2,7 +2,8 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet is used to update, configure and set the state of a device.
-
+.SYNOPSIS
+This cmdlet is used to update, configure and set the state of a device.
 .PARAMETER Device
 An array of CbcDevice object types.
 .PARAMETER Scan
@@ -56,18 +57,34 @@ API Documentation: https://developer.carbonblack.com/reference/carbon-black-clou
 function Set-CBCDevice {
 	[CmdletBinding(DefaultParameterSetName = "default")]
 	param(
-		[Parameter(ValueFromPipeline = $true,Mandatory = $true,Position = 0)]
+
+		[Parameter(ValueFromPipeline = $true,
+			Mandatory = $true,
+			Position = 0,
+			ParameterSetName = "Device")]
 		[CbcDevice[]]$Device,
+
+		[Parameter(ValueFromPipeline = $true,
+			Mandatory = $true,
+			Position = 0,
+			ParameterSetName = "Id")]
+		[string]$Id, # TODO: tests, examples
+
 		[CbcPolicy]$Policy,# TODO: tests, examples
-		[Parameter(ParameterSetName = "Quarantine")]
+
+		[ValidateNotNullOrEmpty()]
 		[bool]$QuarantineEnabled,
-		[Parameter(ParameterSetName = "UpdateSensor")]
+
+		[ValidateNotNullOrEmpty()]
 		[string]$SensorVersion,
-		[Parameter(ParameterSetName = "UninstallSensor")]
+
+		[ValidateNotNullOrEmpty()]
 		[switch]$UninstallSensor,
-		[Parameter(ParameterSetName = "Scan")]
+
+		[ValidateNotNullOrEmpty()]
 		[bool]$ScanEnabled,
-		[Parameter(ParameterSetName = "Bypass")]
+
+		[ValidateNotNullOrEmpty()]
 		[bool]$BypassEnabled
 	)
 
@@ -78,109 +95,49 @@ function Set-CBCDevice {
 	process {
 
 		switch ($PSCmdlet.ParameterSetName) {
-			"Quarantine" {
-				$Device | ForEach-Object {
-					$RequestBody = @{}
-					$RequestBody.action_type = "QUARANTINE"
-					$RequestBody.options = @{
-						toggle = ($QuarantineEnabled ? "ON" : "OFF")
-					}
-					$RequestBody.device_id = @($_.id)
-					$JsonBody = $RequestBody | ConvertTo-Json
-					$Response = Invoke-CBCRequest -Server $_.CBCServer `
-						 -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Actions"] `
-						 -Method POST `
-						 -Body $JsonBody
+			"Id" {
+				$Device = Get-CbcDevice -Id $Id
+			}
+		}
 
-					if ($Response.StatusCode -ne 204) {
-						Write-Error -Message $("Cannot quarantine the device {0}" -f $_.id)
-					} else {
-						return $_
+		$Device | ForEach-Object {
+			$RequestBody = @{}
+			$RequestBody.device_id = @($_.id)
+			if ($PSBoundParameters.ContainsKey("QuarantineEnabled")) {
+				$RequestBody.action_type = "QUARANTINE"
+				$RequestBody.options = @{
+					toggle = ($QuarantineEnabled ? "ON" : "OFF")
+				}
+			} elseif ($PSBoundParameters.ContainsKey("ScanEnabled")) {
+				$RequestBody.action_type = "BACKGROUND_SCAN"
+				$RequestBody.options = @{
+					toggle = ($ScanEnabled ? "ON" : "OFF")
+				}
+			} elseif ($PSBoundParameters.ContainsKey("SensorVersion")) {
+				$RequestBody.action_type = "UPDATE_SENSOR_VERSION"
+				$RequestBody.options = @{
+					sensor_version = @{
+						$_.SensorKitType = $SensorVersion
 					}
+				}
+			} elseif ($PSBoundParameters.ContainsKey("UninstallSensor")) {
+				$RequestBody.action_type = "UNINSTALL_SENSOR"
+			} elseif ($PSBoundParameters.ContainsKey("BypassEnabled")) {
+				$RequestBody.action_type = "BYPASS"
+				$RequestBody.options = @{
+					toggle = ($BypassEnabled ? "ON" : "OFF")
 				}
 			}
-			"UpdateSensor" {
-				$Device | ForEach-Object {
-					$RequestBody = @{}
-					$RequestBody.action_type = "UPDATE_SENSOR_VERSION"
-					$RequestBody.options = @{
-						sensor_version = @{
-							$_.SensorKitType = $SensorVersion
-						}
-					}
-					$RequestBody.device_id = @($_.id)
-					$JsonBody = $RequestBody | ConvertTo-Json
-					$Response = Invoke-CBCRequest -Server $_.CBCServer `
-						 -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Actions"] `
-						 -Method POST `
-						 -Body $JsonBody
 
-					if ($Response.StatusCode -ne 204) {
-						Write-Error -Message $("Cannot update the sensor of the device {0}" -f $_.id)
-					} else {
-						return $_
-					}
-				}
-			}
-			"UninstallSensor" {
-				$Device | ForEach-Object {
-					$RequestBody = @{}
-					$RequestBody.action_type = "UNINSTALL_SENSOR"
-					$RequestBody.device_id = @($_.id)
-					$JsonBody = $RequestBody | ConvertTo-Json
-					$Response = Invoke-CBCRequest -Server $_.CBCServer `
-							-Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Actions"] `
-							-Method POST `
-							-Body $JsonBody
-
-					if ($Response.StatusCode -ne 204) {
-						Write-Error -Message $("Cannot uninstall the sensor on the device {0}" -f $_.id)
-					} else {
-						return $_
-					}
-				}
-			}
-			"Scan" {
-				$Device | ForEach-Object {
-					$RequestBody = @{}
-					$RequestBody.action_type = "BACKGROUND_SCAN"
-					$RequestBody.options = @{
-						toggle = ($ScanEnabled ? "ON" : "OFF")
-					}
-					$RequestBody.device_id = @($_.id)
-					$JsonBody = $RequestBody | ConvertTo-Json
-					$Response = Invoke-CBCRequest -Server $_.CBCServer `
-							-Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Actions"] `
-							-Method POST `
-							-Body $JsonBody
-					if ($Response.StatusCode -ne 204) {
-						Write-Debug "DGJKDFSGJKFSJGFSGJSF"
-						Write-Error -Message $("Cannot scan the device {0}" -f $_.id)
-					} else {
-						return $_
-					}
-				}
-			}
-			"Bypass" {
-				$Device | ForEach-Object {
-					$RequestBody = @{}
-					$RequestBody.action_type = "BYPASS"
-					$RequestBody.options = @{
-						toggle = ($BypassEnabled ? "ON" : "OFF")
-					}
-					$RequestBody.device_id = @($_.id)
-					$JsonBody = $RequestBody | ConvertTo-Json
-					$Response = Invoke-CBCRequest -Server $_.CBCServer `
-						 -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Actions"] `
-						 -Method POST `
-						 -Body $JsonBody
-
-					if ($Response.StatusCode -ne 204) {
-						Write-Error -Message $("Cannot bypass the device {0}" -f $_.id)
-					} else {
-						return $_
-					}
-				}
+			$JsonBody = $RequestBody | ConvertTo-Json
+			$Response = Invoke-CBCRequest -Server $_.CBCServer `
+				-Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Actions"] `
+				-Method POST `
+				-Body $JsonBody
+			if ($Response.StatusCode -ne 204) {
+				Write-Error -Message $("Cannot quarantine the device {0}" -f $_.id)
+			} else {
+				return $_
 			}
 		}
 	}

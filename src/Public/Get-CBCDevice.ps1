@@ -131,8 +131,6 @@ function Get-CbcDevice {
 		switch ($PSCmdlet.ParameterSetName) {
 			"default" {
 				$ExecuteServers | ForEach-Object {
-					$CurrentServer = $_
-
 					$RequestBody = @{}
 
 					if ($Include) {
@@ -153,12 +151,13 @@ function Get-CbcDevice {
 
 					$Response = Invoke-CBCRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Search"] `
  						-Method POST `
- 						-Server $CurrentServer `
+ 						-Server $_ `
  						-Body $RequestBody
 
 					# Cast to Objects
 					$JsonContent = $Response.Content | ConvertFrom-Json
 
+					$CurrentServer = $_
 					$JsonContent.results | ForEach-Object {
 						return [CbcDevice]::new(
 							$_.id,
@@ -178,11 +177,10 @@ function Get-CbcDevice {
 			}
 			"id" {
 				$ExecuteServers | ForEach-Object {
-					$CurrentServer = $_
 
 					$Response = Invoke-CBCRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["SpecificDeviceInfo"] `
  						-Method GET `
- 						-Server $CurrentServer `
+ 						-Server $_ `
  						-Params @($Id)
 
 					# Cast to Objects
@@ -199,7 +197,7 @@ function Get-CbcDevice {
 						$RawDeviceJson.os,
 						$RawDeviceJson.last_contact_time,
 						$RawDeviceJson.sensor_kit_type,
-						$CurrentServer
+						$_
 					)
 				}
 			}

@@ -1,6 +1,6 @@
 # PSCarbonBlackCloud
 
-A set of powershell cmdlets to interract with Carbon Black Cloud.
+A set of PowerShell Cmdlets to interact with Carbon Black Cloud.
 
 ## Build the Project / Install Dependencies
 
@@ -35,6 +35,10 @@ If you want to enable debug information
 ```powershell
 $DebugPreference = 'Continue'
 ```
+
+### Using VSCode and Pester
+
+Please refer to this documentation: https://pester.dev/docs/usage/vscode
 
 ## Importing the Module
 
