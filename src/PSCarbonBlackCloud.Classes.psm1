@@ -101,9 +101,41 @@ class CbcDevice{
 	[string]$Os
 	[string]$LastContactTime
 	[string]$SensorKitType
-
 	[CbcServer]$CbcServer
-
+	[string]$DeploymentType
+	[string]$LastDevicePolicyChangedTime
+	[string]$LastDevicePolicyRequestedTime
+	[string]$LastExternalIpAddress
+	[string]$LastInternalIpAddress
+	[string]$LastLocation
+	[string]$LastPolicyUpdatedTime
+	[string]$LastReportedTime
+	[string]$LastResetTime
+	[string]$LastShutdownTime
+	[string]$MacAddress
+	[string]$OrganizationId
+	[string]$OrganizationName
+	[string]$OsVersion
+	[switch]$PassiveMode
+	[int]$PolicyId
+	[string]$PolicyName
+	[string]$PolicyOverride
+	[switch]$Quarantined
+	[switch]$SensorOutOfDate
+	[switch]$SensorPendingUpdate
+	[string]$SensorVersion
+	[string]$DeregisteredTime
+	[int]$DeviceOwnerId
+	[string]$RegisteredTime
+	[string]$AvEngine
+	[string]$AvLastScanTime
+	[string]$AvStatus
+	[long]$VulnerabilityScore
+	[string]$VulnerabilitySeverity
+	[string]$HostBasedFirewallReasons
+	[string]$HostBasedFirewallStatus
+	[string]$SensorGatewayUrl
+	[string]$SensorGatewayUuid
 	CbcDevice (
 		[string]$Id_,
 		[string]$Status_,
@@ -114,20 +146,88 @@ class CbcDevice{
 		[string]$Name_,
 		[string]$Os_,
 		[string]$LastContactTime_,
-		[string]$SensorKitType_,
-		[CbcServer]$CbcServer_
-	) {
-		$this.id = $Id_
-		$this.status = $Status_
+		[string]$SensorKitType_,		
+		[CbcServer]$CbcServer_,
+		[string]$DeploymentType_,
+		[string]$LastDevicePolicyChangedTime_,
+		[string]$LastDevicePolicyRequestedTime_,
+		[string]$LastExternalIpAddress_,
+		[string]$LastInternalIpAddress_,
+		[string]$LastLocation_,
+		[string]$LastPolicyUpdatedTime_,
+		[string]$LastReportedTime_,
+		[string]$LastResetTime_,
+		[string]$LastShutdownTime_,
+		[string]$MacAddress_,
+		[string]$OrganizationId_,
+		[string]$OrganizationName_,
+		[string]$OsVersion_,
+		[switch]$PassiveMode_,
+		[int]$PolicyId_,
+		[string]$PolicyName_,
+		[string]$PolicyOverride_,
+		[switch]$Quarantined_,
+		[switch]$SensorOutOfDate_,
+		[switch]$SensorPendingUpdate_,
+		[string]$SensorVersion_,
+		[string]$DeregisteredTime_,
+		[int]$DeviceOwnerId_,
+		[string]$RegisteredTime_,
+		[string]$AvEngine_,
+		[string]$AvLastScanTime_,
+		[string]$AvStatus_,
+		[long]$VulnerabilityScore_,
+		[string]$VulnerabilitySeverity_,
+		[string]$HostBasedFirewallReasons_,
+		[string]$HostBasedFirewallStatus_,
+		[string]$SensorGatewayUrl_,
+		[string]$SensorGatewayUuid_
+		) {
+		$this.Id = $Id_
+		$this.Status = $Status_
 		$this.Group = $Group_
 		$this.Policy = $Policy_
 		$this.TargetPriority = $TargetPriority_
 		$this.User = $User_
 		$this.Name = $Name_
-		$this.os = $Os_
+		$this.Os = $Os_
 		$this.LastContactTime = $LastContactTime_
 		$this.SensorKitType = $SensorKitType_
-		$this.CBCServer = $CbcServer_
+		$this.CbcServer = $CbcServer_
+		$this.DeploymentType = $DeploymentType_
+		$this.LastDevicePolicyChangedTime = $LastDevicePolicyChangedTime_
+		$this.LastDevicePolicyRequestedTime = $LastDevicePolicyRequestedTime_
+		$this.LastExternalIpAddress = $LastExternalIpAddress_
+		$this.LastInternalIpAddress = $LastInternalIpAddress_
+		$this.LastLocation = $LastLocation_
+		$this.LastPolicyUpdatedTime = $LastPolicyUpdatedTime_
+		$this.LastReportedTime = $LastReportedTime_
+		$this.LastResetTime = $LastResetTime_
+		$this.LastShutdownTime = $LastShutdownTime_
+		$this.MacAddress = $MacAddress_
+		$this.OrganizationId = $OrganizationId_
+		$this.OrganizationName = $OrganizationName_
+		$this.OsVersion = $OsVersion_
+		$this.PassiveMode = $PassiveMode_
+		$this.PolicyId = $PolicyId_
+		$this.PolicyName = $PolicyName_
+		$this.PolicyOverride = $PolicyOverride_
+		$this.Quarantined = $Quarantined_
+		$this.SensorOutOfDate = $SensorOutOfDate_
+		$this.SensorPendingUpdate = $SensorPendingUpdate_
+		$this.SensorVersion = $SensorVersion_
+		$this.DeregisteredTime = $DeregisteredTime_
+		$this.DeviceOwnerId = $DeviceOwnerId_
+		$this.RegisteredTime = $RegisteredTime_
+		$this.AvEngine = $AvEngine_
+		$this.AvLastScanTime = $AvLastScanTime_
+		$this.AvStatus = $AvStatus_
+		$this.VulnerabilityScore = $VulnerabilityScore_
+		$this.VulnerabilitySeverity = $VulnerabilitySeverity_
+		$this.HostBasedFirewallReasons = $HostBasedFirewallReasons_
+		$this.HostBasedFirewallStatus = $HostBasedFirewallStatus_
+		$this.SensorGatewayUrl = $SensorGatewayUrl_
+		$this.SensorGatewayUuid = $SensorGatewayUuid_
 	}
 }
 
