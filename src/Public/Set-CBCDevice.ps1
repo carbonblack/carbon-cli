@@ -54,7 +54,7 @@ Uninstalls the sensor of the device
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/
 #>
 
-function Set-CBCDevice {
+function Set-CbcDevice {
 	[CmdletBinding(DefaultParameterSetName = "default")]
 	param(
 
