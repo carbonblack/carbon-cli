@@ -96,6 +96,7 @@ API Documentation: https://developer.carbonblack.com/reference/carbon-black-clou
 #>
 function Get-CbcDevice {
 	[CmdletBinding(DefaultParameterSetName = "default")]
+	[OutputType([CbcDevice[]])]
 	param(
 		[Parameter(ParameterSetName = "id",Position = 0)]
 		[array]$Id,
@@ -131,6 +132,8 @@ function Get-CbcDevice {
 		switch ($PSCmdlet.ParameterSetName) {
 			"default" {
 				$ExecuteServers | ForEach-Object {
+					$CurrentServer = $_
+					
 					$RequestBody = @{}
 
 					if ($Include) {
@@ -157,25 +160,14 @@ function Get-CbcDevice {
 					# Cast to Objects
 					$JsonContent = $Response.Content | ConvertFrom-Json
 
-					$CurrentServer = $_
 					$JsonContent.results | ForEach-Object {
-						return [CbcDevice]::new(
-							$_.id,
-							$_.status,
-							$_.Group,
-							$_.policy_name,
-							$_.target_priority,
-							$_.email,
-							$_.Name,
-							$_.os,
-							$_.last_contact_time,
-							$_.sensor_kit_type,
-							$CurrentServer
-						)
+						return Initialize-CBCDevice $_ $CurrentServer
 					}
 				}
+				
 			}
 			"id" {
+			
 				$ExecuteServers | ForEach-Object {
 
 					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["SpecificDeviceInfo"] `
@@ -184,21 +176,8 @@ function Get-CbcDevice {
  						-Params @($Id)
 
 					# Cast to Objects
-					$RawDeviceJson = $Response.Content | ConvertFrom-Json
-
-					return [CbcDevice]::new(
-						$RawDeviceJson.id,
-						$RawDeviceJson.status,
-						$RawDeviceJson.Group,
-						$RawDeviceJson.policy_name,
-						$RawDeviceJson.target_priority,
-						$RawDeviceJson.email,
-						$RawDeviceJson.Name,
-						$RawDeviceJson.os,
-						$RawDeviceJson.last_contact_time,
-						$RawDeviceJson.sensor_kit_type,
-						$_
-					)
+					$JsonContent = $Response.Content | ConvertFrom-Json
+					return Initialize-CBCDevice $JsonContent $_
 				}
 			}
 		}

@@ -10,7 +10,7 @@
 
     # Script module or binary module file associated with this manifest.
     RootModule        = 'PSCarbonBlackCloud.psm1'
-
+    
     # Version number of this module.
     ModuleVersion     = '0.0.1'
 
@@ -24,7 +24,7 @@
     Author            = 'VMware Carbon Black'
 
     # Company or vendor of this module
-    CompanyName       = 'VMware'
+    CompanyName       = 'VMWare'
 
     # Copyright statement for this module
     Copyright         = '(c) VMware Carbon Black. All rights reserved.'
@@ -63,22 +63,22 @@
     # TypesToProcess = @()
 
     # Format files (.ps1xml) to be loaded when importing this module
-    # FormatsToProcess = @()
+    FormatsToProcess = 'Custom.Format.ps1xml'
 
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
     # NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @()
+    FunctionsToExport = '*'
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-    CmdletsToExport   = '*'
+    #CmdletsToExport   = '*'
 
     # Variables to export from this module
     VariablesToExport = '*'
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport   = '*'
+    #AliasesToExport   = '*'
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()
@@ -129,3 +129,4 @@
     # DefaultCommandPrefix = ''
 
 }
+
