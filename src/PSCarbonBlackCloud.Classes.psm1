@@ -116,16 +116,16 @@ class CbcDevice{
 	[string]$OrganizationId
 	[string]$OrganizationName
 	[string]$OsVersion
-	[switch]$PassiveMode
-	[int]$PolicyId
+	[bool]$PassiveMode
+	[string]$PolicyId
 	[string]$PolicyName
 	[string]$PolicyOverride
-	[switch]$Quarantined
-	[switch]$SensorOutOfDate
-	[switch]$SensorPendingUpdate
+	[bool]$Quarantined
+	[bool]$SensorOutOfDate
+	[bool]$SensorPendingUpdate
 	[string]$SensorVersion
 	[string]$DeregisteredTime
-	[int]$DeviceOwnerId
+	[string]$DeviceOwnerId
 	[string]$RegisteredTime
 	[string]$AvEngine
 	[string]$AvLastScanTime
@@ -146,7 +146,7 @@ class CbcDevice{
 		[string]$Name_,
 		[string]$Os_,
 		[string]$LastContactTime_,
-		[string]$SensorKitType_,		
+		[string]$SensorKitType_,
 		[CbcServer]$CbcServer_,
 		[string]$DeploymentType_,
 		[string]$LastDevicePolicyChangedTime_,
@@ -162,16 +162,16 @@ class CbcDevice{
 		[string]$OrganizationId_,
 		[string]$OrganizationName_,
 		[string]$OsVersion_,
-		[switch]$PassiveMode_,
-		[int]$PolicyId_,
+		[bool]$PassiveMode_,
+		[string]$PolicyId_,
 		[string]$PolicyName_,
 		[string]$PolicyOverride_,
-		[switch]$Quarantined_,
-		[switch]$SensorOutOfDate_,
-		[switch]$SensorPendingUpdate_,
+		[bool]$Quarantined_,
+		[bool]$SensorOutOfDate_,
+		[bool]$SensorPendingUpdate_,
 		[string]$SensorVersion_,
 		[string]$DeregisteredTime_,
-		[int]$DeviceOwnerId_,
+		[string]$DeviceOwnerId_,
 		[string]$RegisteredTime_,
 		[string]$AvEngine_,
 		[string]$AvLastScanTime_,
@@ -262,7 +262,7 @@ class CbcPolicy{
 
 # class PolicySummary{
 # 	[long]$Id
-# 	[switch]$IsSystem
+# 	[bool]$IsSystem
 # 	[string]$Name
 # 	[string]$Description
 # 	[string]$PriorityLevel
@@ -405,21 +405,21 @@ class CbcPolicy{
 # 	[string]$OrganizationName
 # 	[string]$Os
 # 	[string]$OsVersion
-# 	[switch]$PassiveMode
+# 	[bool]$PassiveMode
 # 	[int]$PolicyId
 # 	[string]$PolicyName
-# 	[switch]$Quarantined
+# 	[bool]$Quarantined
 # 	[string]$ScanLastActionTime
 # 	[string]$SensorKitType
-# 	[switch]$SensorOutOfDate
-# 	[switch]$SensorPendingUpdate
+# 	[bool]$SensorOutOfDate
+# 	[bool]$SensorPendingUpdate
 # 	[string]$SensorStates
 # 	[string]$SensorVersion
 # 	[string]$Status
 # 	[string]$TargetPriority
 # 	[string]$VdiBaseDevice
 # 	[int]$AdGroupId
-# 	[switch]$PolicyOverride
+# 	[bool]$PolicyOverride
 # 	[string]$ActivationCode
 # 	[string]$ActivationCodeExpiryTime
 # 	[string]$DeregisteredTime
@@ -434,7 +434,7 @@ class CbcPolicy{
 # 	[string]$AvAveVersion
 # 	[string]$AvEngine
 # 	[string]$AvLastScanTime
-# 	[switch]$AvMaster
+# 	[bool]$AvMaster
 # 	[string]$AvPackVersion
 # 	[string]$AvProductVersion
 # 	[string]$AvStatus
@@ -448,14 +448,14 @@ class CbcPolicy{
 # 	[string]$DatacenterName
 # 	[string]$EsxHostName
 # 	[string]$EsxHostUuid
-# 	[switch]$GoldenDevice
+# 	[bool]$GoldenDevice
 # 	[int]$GoldenDeviceId
 # 	[string]$NsxDistributedFirewallPolicy
-# 	[switch]$NsxEnabled
+# 	[bool]$NsxEnabled
 # 	[string]$VcenterHostUrl
 # 	[string]$VcenterName
 # 	[string]$VcenterUuid
-# 	[switch]$VirtualMachine
+# 	[bool]$VirtualMachine
 # 	[string]$VirtualPrivateCloudId
 # 	[string]$VirtualizationProvider
 # 	[string]$VmIp
@@ -489,7 +489,7 @@ class CbcPolicy{
 # 	[string]$OrgKey
 # 	[string]$PriorityLevel
 # 	[int]$Position
-# 	[switch]$IsSystem
+# 	[bool]$IsSystem
 # 	[string]$Description
 # 	[long]$AutoDeregisterInactiveVdiIntervalMs
 # 	[long]$AutoDeleteKnownBadHashesDelay
@@ -519,7 +519,7 @@ class CbcPolicy{
 # 	[string]$LastEventTime
 # 	[string]$LastUpdateTime
 # 	[string]$LegacyAlertId
-# 	[switch]$NotesPresent
+# 	[bool]$NotesPresent
 # 	[string]$OrgKey
 # 	[string]$PolicyId
 # 	[string]$PolicyName
@@ -573,7 +573,7 @@ class CbcPolicy{
 # 	[string]$LastEventTime
 # 	[string]$LastUpdateTime
 # 	[string]$LegacyAlertId
-# 	[switch]$NotesPresent
+# 	[bool]$NotesPresent
 # 	[string]$OrgKey
 # 	[string]$PolicyId
 # 	[string]$PolicyName
@@ -615,7 +615,7 @@ class CbcPolicy{
 # 	[string]$LastEventTime
 # 	[string]$LastUpdateTime
 # 	[string]$LegacyAlertId
-# 	[switch]$NotesPresent
+# 	[bool]$NotesPresent
 # 	[string]$OrgKey
 # 	[string]$PolicyId
 # 	[string]$PolicyName
@@ -663,7 +663,7 @@ class CbcPolicy{
 # 	[string]$LastEventTime
 # 	[string]$LastUpdateTime
 # 	[string]$LegacyAlertId
-# 	[switch]$NotesPresent
+# 	[bool]$NotesPresent
 # 	[string]$OrgKey
 # 	[string]$PolicyId
 # 	[string]$PolicyName
@@ -683,7 +683,7 @@ class CbcPolicy{
 # 	[string]$Protocol
 # 	[string]$RemoteDomain
 # 	[string]$RemoteIp
-# 	[switch]$RemoteIsPrivate
+# 	[bool]$RemoteIsPrivate
 # 	[string]$RemoteNamespace
 # 	[string]$RemoteReplicaId
 # 	[string]$RemoteWorkloadId
