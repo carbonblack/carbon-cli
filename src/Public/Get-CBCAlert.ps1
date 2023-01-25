@@ -87,6 +87,14 @@ If you have multiple connections and you want alerts from a specific server
 you can add the `-Server` param.
 
 PS > Get-CbcAlert -Include $Criteria -Server $SpecifiedServer
+.EXAMPLE
+PS > Get-CbcAlert -Id "1" | where { Set-CbcDevice -Id $_.DeviceID -QuarantineEnabled $true }
+
+Quarantines a Device based on the alert
+.EXAMPLE
+PS > Get-CbcAlert -Include $Criteria | where { Set-CbcDevice -Id $_.DeviceID -QuarantineEnabled $true }
+
+Quarantines a Device based on the alert
 .LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api/
 #>

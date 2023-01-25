@@ -319,7 +319,6 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be @($device1,$device2)
 		}
 		It "Should update the sensor of the device" {
-			$ExampleJsonBody = '{"device_id": ["1"], "options": { "sensor_version": {"SUSE": "2.4.0.3"}}, "action_type": "UPDATE_SENSOR_VERSION" }' | ConvertFrom-Json | ConvertTo-Json
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
