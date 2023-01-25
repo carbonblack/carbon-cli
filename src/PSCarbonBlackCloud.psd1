@@ -10,7 +10,7 @@
 
     # Script module or binary module file associated with this manifest.
     RootModule        = 'PSCarbonBlackCloud.psm1'
-    
+
     # Version number of this module.
     ModuleVersion     = '0.0.1'
 
@@ -63,7 +63,7 @@
     # TypesToProcess = @()
 
     # Format files (.ps1xml) to be loaded when importing this module
-    FormatsToProcess = 'Custom.Format.ps1xml'
+    FormatsToProcess = 'PSCarbonBlackCloud.Format.ps1xml'
 
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
     # NestedModules = @()
@@ -129,4 +129,3 @@
     # DefaultCommandPrefix = ''
 
 }
-

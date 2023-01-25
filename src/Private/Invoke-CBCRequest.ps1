@@ -35,7 +35,6 @@ function Invoke-CBCRequest {
 		$FullUri = $Server.Uri + $FormattedUri
 		Write-Debug "[$($MyInvocation.MyCommand.Name)] requesting: ${FullUri}"
 		Write-Debug "[$($MyInvocation.MyCommand.Name)] with request body: ${Body}"
-		Write-Debug "[$($MyInvocation.MyCommand.Name)] with headers body: ${Headers}"
 		Write-Debug "[$($MyInvocation.MyCommand.Name)] with method body: ${Method}"
 		Write-Debug "[$($MyInvocation.MyCommand.Name)] with uri params body: ${Params}"
 		try {

@@ -11,13 +11,13 @@ Sets the criteria for the search.
 .PARAMETER Exclude
 Sets the exclusions for the search.
 .PARAMETER MaxResults
-Set the max num of returned rows (default is 50 and max is 10k).
+Set the max number of results (default is 50 and max is 10k).
 .PARAMETER Server
 Sets a specified Cbc Server from the current connections to execute the cmdlet with.
 .OUTPUTS
 CbcDevice[]
 .EXAMPLE
-PS > Get-CbcDevice | ft
+PS > Get-CbcDevice
 
 Returns all devices
 
@@ -82,7 +82,7 @@ $Exclusions = @{
 PS > Get-CbcDevice -Include $Criteria
 PS > Get-CbcDevice -Exclude $Exclusions
 PS > Get-CbcDevice -Include $Criteria -Exclude $Exclusions
-PS > Get-CbcDevice -Include $Criteria -Exclude $Exclusions -MaxResults 50 | ft
+PS > Get-CbcDevice -Include $Criteria -Exclude $Exclusions -MaxResults 50
 PS > Get-CbcDevice -Include @{"os"= @("WINDOWS")}
 
 Returns all devices which correspond to the specified $Crtieria/$Exclusions.
@@ -95,26 +95,24 @@ PS > Get-CbcDevice -Include $Criteria -Server $SpecifiedServer
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/
 #>
 function Get-CbcDevice {
-	[CmdletBinding(DefaultParameterSetName = "default")]
+	[CmdletBinding(DefaultParameterSetName = "Default")]
 	[OutputType([CbcDevice[]])]
 	param(
-		[Parameter(ParameterSetName = "id",Position = 0)]
+		[Parameter(ParameterSetName = "Id",Position = 0)]
 		[array]$Id,
 
-		[Parameter(ParameterSetName = "default")]
+		[Parameter(ParameterSetName = "Default")]
 		[hashtable]$Include,
 
-		[Parameter(ParameterSetName = "default")]
+		[Parameter(ParameterSetName = "Default")]
 		[hashtable]$Exclude,
 
-		[Parameter(ParameterSetName = "query")]
-		[Parameter(ParameterSetName = "default")]
-		[Parameter(ParameterSetName = "id")]
+		[Parameter(ParameterSetName = "Default")]
+		[Parameter(ParameterSetName = "Id")]
 		[CbcServer[]]$Servers,
 
-		[Parameter(ParameterSetName = "query")]
-		[Parameter(ParameterSetName = "default")]
-		[int32]$MaxResults
+		[Parameter(ParameterSetName = "Default")]
+		[int32]$MaxResults = 50
 	)
 
 	begin {
@@ -130,25 +128,18 @@ function Get-CbcDevice {
 		}
 
 		switch ($PSCmdlet.ParameterSetName) {
-			"default" {
+			"Default" {
 				$ExecuteServers | ForEach-Object {
 					$CurrentServer = $_
-					
-					$RequestBody = @{}
 
+					$RequestBody = @{}
 					if ($Include) {
 						$RequestBody.criteria = $Include
 					}
-
 					if ($Exclude) {
 						$RequestBody.exclusions = $Exclude
 					}
-
-					if ($MaxResults) {
-						$RequestBody.rows = $MaxResults
-					} else {
-						$RequestBody.rows = 50
-					}
+					$RequestBody.rows = $MaxResults
 
 					$RequestBody = $RequestBody | ConvertTo-Json
 
@@ -157,25 +148,19 @@ function Get-CbcDevice {
  						-Server $_ `
  						-Body $RequestBody
 
-					# Cast to Objects
 					$JsonContent = $Response.Content | ConvertFrom-Json
 
 					$JsonContent.results | ForEach-Object {
-						return Initialize-CBCDevice $_ $CurrentServer
+						return Initialize-CbcDevice $_ $CurrentServer
 					}
 				}
-				
 			}
-			"id" {
-			
+			"Id" {
 				$ExecuteServers | ForEach-Object {
-
 					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["SpecificDeviceInfo"] `
  						-Method GET `
  						-Server $_ `
  						-Params @($Id)
-
-					# Cast to Objects
 					$JsonContent = $Response.Content | ConvertFrom-Json
 					return Initialize-CBCDevice $JsonContent $_
 				}

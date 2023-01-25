@@ -130,7 +130,7 @@ function Set-CbcDevice {
 			}
 
 			$JsonBody = $RequestBody | ConvertTo-Json
-			$Response = Invoke-CbcRequest -Server $_.CBCServer `
+			$Response = Invoke-CbcRequest -Server $_.Server `
  				-Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Actions"] `
  				-Method POST `
  				-Body $JsonBody

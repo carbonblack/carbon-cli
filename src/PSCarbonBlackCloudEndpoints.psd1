@@ -9,7 +9,7 @@
         "Summary" = "policyservice/v1/orgs/{0}/policies/summary"
         "Details" = "policyservice/v1/orgs/{0}/policies/{1}"
     }
-    "Alert" = @{
+    "Alerts" = @{
         "Search" = "appservices/v6/orgs/{0}/alerts/_search"
         "SpecificAlert" = "appservices/v6/orgs/{0}/alerts/{1}"
     }

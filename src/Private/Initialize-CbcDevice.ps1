@@ -1,7 +1,6 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 
-function Initialize-CBCDevice {
-
+function Initialize-CbcDevice {
     param(
 		[Parameter(Mandatory = $true,Position = 0)]
 		[ValidateNotNullOrEmpty()]
@@ -11,7 +10,7 @@ function Initialize-CBCDevice {
 		[ValidateNotNullOrEmpty()]
 		[CbcServer]$Server
 	)
-    $CbcDevice = [CbcDevice]::new(
+    [CbcDevice]::new(
         $Response.id,
         $Response.status,
         $Response.group,
@@ -58,5 +57,4 @@ function Initialize-CBCDevice {
         $Response.sensor_gateway_url,
         $Response.sensor_gateway_uuid
     )
-    return $CbcDevice
 }

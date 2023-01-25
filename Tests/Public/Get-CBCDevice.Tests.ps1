@@ -34,7 +34,7 @@ Describe "Get-CbcDevice" {
 
 			$devices.Count | Should -Be 3
 			$devices[0].User | Should -Be "test1@carbonblack.com"
-			$devices[0].CBCServer | Should -Be $s1
+			$devices[0].Server | Should -Be $s1
 			$devices[1].User | Should -Be "test2@carbonblack.com"
 			$devices[2].User | Should -Be "test3@carbonblack.com"
 			$devices[0].id | Should -Be 1
@@ -63,7 +63,7 @@ Describe "Get-CbcDevice" {
 					$devices = Get-CbcDevice
 					$devices.Count | Should -Be 3
 					$devices[0].User | Should -Be "test1@carbonblack.com"
-					$devices[0].CBCServer | Should -Be $s1
+					$devices[0].Server | Should -Be $s1
 					$devices[1].User | Should -Be "test2@carbonblack.com"
 					$devices[2].User | Should -Be "test3@carbonblack.com"
 					$devices[0].id | Should -Be 1
@@ -95,7 +95,7 @@ Describe "Get-CbcDevice" {
 					$devices = Get-CbcDevice -Exclude $Exclusions
 
 					$devices.Count | Should -Be 1
-					$devices[0].CBCServer | Should -Be $s1
+					$devices[0].Server | Should -Be $s1
 					$devices[0].User | Should -Be "test3@carbonblack.com"
 					$devices[0].os | Should -Be "LINUX"
 				}
@@ -123,8 +123,8 @@ Describe "Get-CbcDevice" {
 					$devices = Get-CbcDevice -Include $Criteria
 
 					$devices.Count | Should -Be 2
-					$devices[0].CBCServer | Should -Be $s1
-					$devices[1].CBCServer | Should -Be $s1
+					$devices[0].Server | Should -Be $s1
+					$devices[1].Server | Should -Be $s1
 					$devices[0].User | Should -Be "test1@carbonblack.com"
 					$devices[1].User | Should -Be "test2@carbonblack.com"
 					$devices[0].os | Should -Be "WINDOWS"
@@ -193,14 +193,14 @@ Describe "Get-CbcDevice" {
 					$devices[2].User | Should -Be "test3@carbonblack.com"
 					$devices[0].id | Should -Be 1
 					$devices[2].id | Should -Be 3
-					$devices[0].CBCServer | Should -Be $s1
-					$devices[2].CBCServer | Should -Be $s1
+					$devices[0].Server | Should -Be $s1
+					$devices[2].Server | Should -Be $s1
 					$devices[3].User | Should -Be "test1@carbonblack.com"
 					$devices[5].User | Should -Be "test3@carbonblack.com"
 					$devices[3].id | Should -Be 1
 					$devices[5].id | Should -Be 3
-					$devices[3].CBCServer | Should -Be $s2
-					$devices[5].CBCServer | Should -Be $s2
+					$devices[3].Server | Should -Be $s2
+					$devices[5].Server | Should -Be $s2
 				}
 			}
 			Context "When using the -Exclude parameter" {
@@ -226,10 +226,10 @@ Describe "Get-CbcDevice" {
 					$devices = Get-CbcDevice -Exclude $Exclusions
 
 					$devices.Count | Should -Be 2
-					$devices[0].CBCServer | Should -Be $s1
+					$devices[0].Server | Should -Be $s1
 					$devices[0].User | Should -Be "test3@carbonblack.com"
 					$devices[0].os | Should -Be "LINUX"
-					$devices[1].CBCServer | Should -Be $s2
+					$devices[1].Server | Should -Be $s2
 					$devices[1].User | Should -Be "test3@carbonblack.com"
 					$devices[1].os | Should -Be "LINUX"
 				}
@@ -258,15 +258,15 @@ Describe "Get-CbcDevice" {
 					$devices = Get-CbcDevice -Include $Criteria
 
 					$devices.Count | Should -Be 4
-					$devices[0].CBCServer | Should -Be $s1
-					$devices[1].CBCServer | Should -Be $s1
+					$devices[0].Server | Should -Be $s1
+					$devices[1].Server | Should -Be $s1
 					$devices[0].User | Should -Be "test1@carbonblack.com"
 					$devices[1].User | Should -Be "test2@carbonblack.com"
 					$devices[0].os | Should -Be "WINDOWS"
 					$devices[1].os | Should -Be "WINDOWS"
 
-					$devices[2].CBCServer | Should -Be $s2
-					$devices[3].CBCServer | Should -Be $s2
+					$devices[2].Server | Should -Be $s2
+					$devices[3].Server | Should -Be $s2
 					$devices[2].User | Should -Be "test1@carbonblack.com"
 					$devices[3].User | Should -Be "test2@carbonblack.com"
 					$devices[2].os | Should -Be "WINDOWS"
@@ -300,8 +300,8 @@ Describe "Get-CbcDevice" {
 					$devices = Get-CbcDevice -Exclude $Exclusions -Include $Criteria
 
 					$devices.Count | Should -Be 6
-					$devices[0].CBCServer | Should -Be $s1
-					$devices[5].CBCServer | Should -Be $s2
+					$devices[0].Server | Should -Be $s1
+					$devices[5].Server | Should -Be $s2
 					$devices[0].User | Should -Be "test1@carbonblack.com"
 					$devices[1].User | Should -Be "test2@carbonblack.com"
 					$devices[2].User | Should -Be "test3@carbonblack.com"
