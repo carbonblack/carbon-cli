@@ -197,7 +197,7 @@ Describe "Get-CbcAlert" {
 				$alerts[0].Category | Should -Be "THREAT"
 			}
 
-			It "Should return device with the same id without '-Id' param" {
+			It "Should return alerts with the same id without '-Id' param" {
 				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 					return @{
 						StatusCode = 200
@@ -222,7 +222,7 @@ Describe "Get-CbcAlert" {
 				$global:CBC_CONFIG.currentConnections.Add($s2) | Out-Null
 			}
 
-			It "Should return devices with the same id from multiple servers" {
+			It "Should return alerts with the same id from multiple servers" {
 
 				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 					return @{
@@ -240,7 +240,7 @@ Describe "Get-CbcAlert" {
 				$alerts[1].Category | Should -Be "THREAT"
 			}
 
-			It "Should return devices with the same id without '-Id' param from multiple servers" {
+			It "Should return alerts with the same id without '-Id' param from multiple servers" {
 				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 					return @{
 						StatusCode = 200
