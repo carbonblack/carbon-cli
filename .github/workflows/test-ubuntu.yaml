@@ -1,0 +1,24 @@
+name: Test PowerShell on Ubuntu
+on: push
+
+jobs:
+  pester-test:
+    name: Pester test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Build the package
+        shell: pwsh
+        run: |
+          ./Build-PSCarbonBlackCloud.ps1
+      - name: Perform a unit tests
+        shell: pwsh
+        run: |
+          ./Invoke-Tests.ps1
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: ubuntu-Unit-Tests
+          path: testResults.xml
+    if: ${{ always() }}

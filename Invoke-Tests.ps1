@@ -1,1 +1,1 @@
-Invoke-Pester -Path .\Tests\* -Output Detailed -WarningAction Ignore
+Invoke-Pester -Path .\Tests\* -Output Detailed -WarningAction Ignore -CI
