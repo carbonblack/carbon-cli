@@ -240,6 +240,7 @@ class CbcPolicy{
 	[int]$NumberDevices
 	[int]$Position
 	[bool]$SystemEnabled
+	[CbcServer]$Server
 
 	CbcPolicy (
 		[string]$Id_,
@@ -248,7 +249,8 @@ class CbcPolicy{
 		[string]$PriorityLevel_,
 		[int]$NumberDevices_,
 		[int]$Position_,
-		[bool]$SystemEnabled_
+		[bool]$SystemEnabled_,
+		[CbcServer]$Server_
 	) {
 		$this.Id = $Id_
 		$this.Name = $Name_
@@ -257,6 +259,7 @@ class CbcPolicy{
 		$this.NumberDevices = $NumberDevices_
 		$this.Position = $Position_
 		$this.SystemEnabled = $SystemEnabled_
+		$this.Server = $Server_
 	}
 }
 

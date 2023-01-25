@@ -139,5 +139,71 @@
         </TableRowEntries>
       </TableControl>
     </View>
+    <View>
+      <Name>CbcPolicyView</Name>
+      <ViewSelectedBy>
+        <TypeName>CbcPolicy</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Id</Label>
+            <Width>10</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Name</Label>
+            <Width>20</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Description</Label>
+            <Width>50 </Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Priority Level</Label>
+            <Width>10</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Number of Devices</Label>
+            <Width>10</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Position</Label>
+            <Width>8</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>System Enabled</Label>
+            <Width>10</Width>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <Wrap />
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Id</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Description</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>PriorityLevel</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>NumberDevices</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Position</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>SystemEnabled</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
   </ViewDefinitions>
 </Configuration>

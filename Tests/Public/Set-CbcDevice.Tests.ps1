@@ -463,6 +463,55 @@ Describe "Set-CbcDevice" {
 			$d = Set-CbcDevice -Device @($device1,$device2) -BypassEnabled $false
 			$d | Should -Be @($device1,$device2)
 		}
+		It "Should update the policy of the device using PolicyId" {
+			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+				return @{
+					StatusCode = 204
+					Content = ""
+				}
+			} -ParameterFilter {
+				$Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Actions"] -and
+				$Method -eq "POST" -and
+				$Server -eq $s1 -and
+				(
+					($Body | ConvertFrom-Json).device_id[0] -eq 1 -and
+					($Body | ConvertFrom-Json).options.policy_id -eq 1 -and
+					($Body | ConvertFrom-Json).action_type -eq "UPDATE_POLICY"
+				)
+			}
+
+			$d = Set-CbcDevice -Device $device1 -PolicyId "1"
+			$d | Should -Be $device1
+		}
+		It "Should update the policy of the device using Policy object" {
+			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+				return @{
+					StatusCode = 204
+					Content = ""
+				}
+			} -ParameterFilter {
+				$Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Actions"] -and
+				$Method -eq "POST" -and
+				$Server -eq $s1 -and
+				(
+					($Body | ConvertFrom-Json).device_id[0] -eq 1 -and
+					($Body | ConvertFrom-Json).options.policy_id -eq 1 -and
+					($Body | ConvertFrom-Json).action_type -eq "UPDATE_POLICY"
+				)
+			}
+			$Policy = [CbcPolicy]::new(
+				1,
+				"test",
+				"test",
+				1,
+				15,
+				1,
+				$true,
+				$s1
+			)
+			$d = Set-CbcDevice -Device $device1 -Policy $Policy
+			$d | Should -Be $device1
+		}
 	}
 	Context "When using `DeviceId` param" {
 		It "Should quarantine the device" {

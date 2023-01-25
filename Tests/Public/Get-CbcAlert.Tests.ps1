@@ -187,7 +187,7 @@ Describe "Get-CbcAlert" {
                         Content = Get-Content "$ProjectRoot/Tests/resources/alerts_api/specific_alert.json"
                     }
                 } -ParameterFilter {
-                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["SpecificAlert"]
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Details"]
                 }
 
 				$alerts = Get-CbcAlert -Id "1"

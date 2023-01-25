@@ -44,7 +44,6 @@ Describe "Connect-CbcServer" {
 			$global:CBC_CONFIG.currentConnections[0].Org | Should -Be $server.Org
 			$global:CBC_CONFIG.defaultServers.Count | Should -Be 1
 
-			# Cleanup
 			$global:CBC_CONFIG.credentials.RemoveFromFile($server)
 		}
 		It 'Should connect to a second server successfully' {

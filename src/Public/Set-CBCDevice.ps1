@@ -50,6 +50,14 @@ PS > Set-CbcDevice -Device $device -UninstallSensor
 PS > Get-CbcDevice "ID" | Set-CbcDevice -UninstallSensor
 
 Uninstalls the sensor of the device
+.EXAMPLE
+PS > Set-CbcDevice -Device $device -Policy $policy
+PS > Get-CbcDevice "ID" |  Set-CbcDevice -Policy $policy
+
+PS > Set-CbcDevice -Device $device -PolicyId 15
+PS > Get-CbcDevice "ID" |  Set-CbcDevice -PolicyId 15
+
+Updates a policy of a device
 .LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/
 #>
@@ -70,7 +78,13 @@ function Set-CbcDevice {
 			ParameterSetName = "Id")]
 		[string]$Id,
 
-		[CbcPolicy]$Policy,# TODO: tests, examples
+		[ValidateNotNullOrEmpty()]
+		[Parameter(ValueFromPipeline = $true)]
+		[CbcPolicy[]]$Policy,
+
+		[ValidateNotNullOrEmpty()]
+		[Parameter(ValueFromPipeline = $true)]
+		[array]$PolicyId,
 
 		[ValidateNotNullOrEmpty()]
 		[bool]$QuarantineEnabled,
@@ -126,6 +140,16 @@ function Set-CbcDevice {
 				$RequestBody.action_type = "BYPASS"
 				$RequestBody.options = @{
 					toggle = ($BypassEnabled ? "ON" : "OFF")
+				}
+			} elseif ($PSBoundParameters.ContainsKey("Policy")) {
+				$RequestBody.action_type = "UPDATE_POLICY"
+				$RequestBody.options = @{
+					policy_id = ($Policy | ForEach-Object {$_.Id})
+				}
+			} elseif ($PSBoundParameters.ContainsKey("PolicyId")) {
+				$RequestBody.action_type = "UPDATE_POLICY"
+				$RequestBody.options = @{
+					policy_id = $PolicyId
 				}
 			}
 

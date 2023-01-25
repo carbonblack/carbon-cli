@@ -152,10 +152,10 @@ function Get-CbcAlert {
 			}
 			"Id" {
 				$ExecuteServers | ForEach-Object {
-					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["SpecificAlert"] `
+					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Details"] `
  						-Method GET `
  						-Server $_ `
- 						-Params @($Id)
+ 						-Params $Id
 					$JsonContent = $Response.Content | ConvertFrom-Json
 					return Initialize-CbcAlert $JsonContent $_
 				}

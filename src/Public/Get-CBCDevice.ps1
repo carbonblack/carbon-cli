@@ -157,10 +157,10 @@ function Get-CbcDevice {
 			}
 			"Id" {
 				$ExecuteServers | ForEach-Object {
-					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["SpecificDeviceInfo"] `
+					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Details"] `
  						-Method GET `
  						-Server $_ `
- 						-Params @($Id)
+ 						-Params $Id
 					$JsonContent = $Response.Content | ConvertFrom-Json
 					return Initialize-CBCDevice $JsonContent $_
 				}
