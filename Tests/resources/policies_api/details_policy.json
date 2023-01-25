@@ -1,0 +1,89 @@
+{
+    "id": 1,
+    "name": "Standard",
+    "org_key": "ABCD1234",
+    "priority_level": "MEDIUM",
+    "position": -1,
+    "is_system": true,
+    "description": "Prevents known malware and reduces false positives. Used as the default policy for all new sensors, unless sensor group criteria is met.",
+    "auto_deregister_inactive_vdi_interval_ms": 0,
+    "auto_delete_known_bad_hashes_delay": null,
+    "av_settings": {
+        "avira_protection_cloud": {
+            "enabled": false,
+            "max_exe_delay": 45,
+            "max_file_size": 4,
+            "risk_level": 4
+        },
+        "on_access_scan": {
+            "enabled": true,
+            "mode": "NORMAL"
+        },
+        "on_demand_scan": {
+            "enabled": true,
+            "profile": "NORMAL",
+            "schedule": {
+                "days": null,
+                "start_hour": 0,
+                "range_hours": 0,
+                "recovery_scan_if_missed": true
+            },
+            "scan_usb": "AUTOSCAN",
+            "scan_cd_dvd": "AUTOSCAN"
+        },
+        "signature_update": {
+            "enabled": true,
+            "schedule": {
+                "full_interval_hours": 0,
+                "initial_random_delay_hours": 4,
+                "interval_hours": 4
+            }
+        },
+        "update_servers": {
+            "servers_override": [],
+            "servers_for_onsite_devices": [
+                {
+                    "server": "http://updates2.cdc.carbonblack.io/update2",
+                    "preferred": false
+                }
+            ],
+            "servers_for_offsite_devices": [ "http://updates2.cdc.carbonblack.io/update2" ]
+        }
+    },
+    "rules": [
+        {
+            "id": 1,
+            "required": false,
+            "action": "TERMINATE",
+            "application": {
+                "type": "REPUTATION",
+                "value": "KNOWN_MALWARE"
+            },
+            "operation": "RUN"
+        },
+        {
+            "id": 2,
+            "required": false,
+            "action": "TERMINATE",
+            "application": {
+                "type": "REPUTATION",
+                "value": "COMPANY_BLACK_LIST"
+            },
+            "operation": "RUN"
+        }
+    ],
+    "directory_action_rules": [],
+    "sensor_settings": [
+        {
+            "name": "ALLOW_UNINSTALL",
+            "value": "true"
+        }
+    ],
+    "managed_detection_response_permissions": {
+      "policy_modification": true,
+      "quarantine": true
+    },
+    "version": null,
+    "message": null,
+    "rule_configs": []
+}

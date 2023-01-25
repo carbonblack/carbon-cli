@@ -1,0 +1,13 @@
+{
+    "policies": [
+        {
+            "id": 4920125,
+            "is_system": true,
+            "name": "Standard",
+            "description": "Prevents known malware and reduces false positives. Used as the default policy for all new sensors, unless sensor group criteria is met.",
+            "priority_level": "MEDIUM",
+            "position": -1,
+            "num_devices": 0
+        }
+    ]
+}
