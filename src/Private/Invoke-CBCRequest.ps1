@@ -47,6 +47,7 @@ function Invoke-CBCRequest {
 			Write-Debug $_.Exception
 			$StatusCode = $_.Exception.Response.StatusCode
 			Write-Error "[$($MyInvocation.MyCommand.Name)] request to ${FullUri} failed. Status Code: ${StatusCode}"
+			throw $_.Exception
 		}
 		return $null
 	}
