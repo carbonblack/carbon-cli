@@ -1,5 +1,7 @@
 # PSCarbonBlackCloud
 
+[![Codeship Status for carbonblack/PSCarbonBlackCloud](https://app.codeship.com/projects/a2c8442f-fc13-4f81-9980-ad1413074d3d/status?branch=main)](https://app.codeship.com/projects/462505)
+
 A set of PowerShell Cmdlets to interact with Carbon Black Cloud.
 
 ## Build the Project / Install Dependencies
