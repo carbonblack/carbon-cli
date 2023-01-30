@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/windows/servercore:ltsc2019
+FROM mcr.microsoft.com/powershell:latest
 MAINTAINER cb-developer-network@vmware.com
 
 COPY . /app
