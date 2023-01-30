@@ -1,0 +1,3 @@
+- name: Tests
+  service: testingpython38
+  command: docker/bin/run-tests.sh

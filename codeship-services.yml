@@ -1,0 +1,3 @@
+testingubuntu:
+  build:
+    dockerfile: ./docker/ubuntu/Dockerfile
