@@ -76,7 +76,7 @@ function Set-CbcDevice {
 			Mandatory = $true,
 			Position = 0,
 			ParameterSetName = "Id")]
-		[string]$Id,
+		[array]$Id,
 
 		[ValidateNotNullOrEmpty()]
 		[Parameter(ValueFromPipeline = $true)]
@@ -161,7 +161,7 @@ function Set-CbcDevice {
 			if ($Response.StatusCode -ne 204) {
 				Write-Error -Message $("Cannot quarantine the device {0}" -f $_.id)
 			} else {
-				return $_
+				return Get-CbcDevice -Id $_.Id
 			}
 		}
 	}
