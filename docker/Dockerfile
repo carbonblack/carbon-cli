@@ -10,4 +10,7 @@ RUN wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/pac
 RUN dpkg -i packages-microsoft-prod.deb
 RUN apt-get update
 RUN apt-get remove powershell
-RUN pwsh ./Build-PSCarbonBlackCloud.ps1
+
+SHELL ["pwsh", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+RUN ./Build-PSCarbonBlackCloud.ps1
