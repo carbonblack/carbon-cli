@@ -4,5 +4,5 @@ MAINTAINER cb-developer-network@vmware.com
 COPY . /app
 WORKDIR /app
 
-RUN ./Build-PSCarbonBlackCloud.ps1
-RUN Import-Module ./src/PSCarbonBlackCloud.psd1
+RUN powershell -Command ./Build-PSCarbonBlackCloud.ps1
+RUN powershell -Command Import-Module ./src/PSCarbonBlackCloud.psd1
