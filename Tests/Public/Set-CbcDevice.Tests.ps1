@@ -117,6 +117,11 @@ Describe "Set-CbcDevice" {
 
 	Context "When using a `CbcDevice` object" {
 		It "Should quarantine the device" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return $device1
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -136,6 +141,16 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be $device1
 		}
 		It "Should quarantine the devices" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device2)
+			} -ParameterFilter {
+				$Id -eq $device2.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -161,6 +176,11 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be @($device1,$device2)
 		}
 		It "Should unquarantine the device" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -180,6 +200,16 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be $device1
 		}
 		It "Should unquarantine the devices" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device2)
+			} -ParameterFilter {
+				$Id -eq $device2.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -205,6 +235,11 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be @($device1,$device2)
 		}
 		It "Should scan the device" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -225,6 +260,16 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be $device1
 		}
 		It "Should scan the devices" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device2)
+			} -ParameterFilter {
+				$Id -eq $device2.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -250,6 +295,11 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be @($device1,$device2)
 		}
 		It "Should pause the scan on the device" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -270,6 +320,16 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be $device1
 		}
 		It "Should pause the scan on the devices" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device2)
+			} -ParameterFilter {
+				$Id -eq $device2.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -295,6 +355,16 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be @($device1,$device2)
 		}
 		It "Should update the sensor of the devices" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device2)
+			} -ParameterFilter {
+				$Id -eq $device2.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -319,6 +389,11 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be @($device1,$device2)
 		}
 		It "Should update the sensor of the device" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -338,6 +413,11 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be $device1
 		}
 		It "Should uninstall the sensor of the device" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -356,6 +436,16 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be $device1
 		}
 		It "Should uninstall the sensor of the devices" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device2)
+			} -ParameterFilter {
+				$Id -eq $device2.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -378,6 +468,11 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be @($device1,$device2)
 		}
 		It "Should enable bypass the device" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return $device1
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -397,6 +492,16 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be $device1
 		}
 		It "Should enable bypass the devices" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return $device1
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return $device2
+			} -ParameterFilter {
+				$Id -eq $device2.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -421,6 +526,11 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be @($device1,$device2)
 		}
 		It "Should disable bypass the device" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -440,6 +550,16 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be $device1
 		}
 		It "Should disable bypass the devices" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device2)
+			} -ParameterFilter {
+				$Id -eq $device2.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -464,6 +584,11 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be @($device1,$device2)
 		}
 		It "Should update the policy of the device using PolicyId" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204
@@ -484,6 +609,11 @@ Describe "Set-CbcDevice" {
 			$d | Should -Be $device1
 		}
 		It "Should update the policy of the device using Policy object" {
+			Mock Get-CbcDevice -ModuleName PSCarbonBlackCloud {
+				return @($device1)
+			} -ParameterFilter {
+				$Id -eq $device1.Id
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 204

@@ -1,5 +1,5 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
-function Invoke-CBCRequest {
+function Invoke-CbcRequest {
 	[CmdletBinding()]
 	param(
 		[Parameter(Mandatory = $true,Position = 0)]

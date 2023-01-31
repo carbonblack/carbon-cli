@@ -1,0 +1,3 @@
+testing:
+  build:
+    dockerfile: ./docker/Dockerfile
