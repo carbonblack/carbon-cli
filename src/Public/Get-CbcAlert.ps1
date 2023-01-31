@@ -157,7 +157,10 @@ function Get-CbcAlert {
  						-Server $_ `
  						-Params $Id
 					$JsonContent = $Response.Content | ConvertFrom-Json
-					return Initialize-CbcAlert $JsonContent $_
+                    if ($JsonContent) {
+                        return Initialize-CbcAlert $JsonContent $_
+                    }
+					return $null
 				}
 			}
 		}

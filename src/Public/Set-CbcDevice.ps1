@@ -159,7 +159,7 @@ function Set-CbcDevice {
  				-Method POST `
  				-Body $JsonBody
 			if ($Response.StatusCode -ne 204) {
-				Write-Error -Message $("Cannot quarantine the device {0}" -f $_.id)
+				Write-Error -Message $("Cannot {0} the device {1}" -f $RequestBody.action_type, $_.id)
 			} else {
 				return $_
 			}

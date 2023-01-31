@@ -12,5 +12,6 @@
     "Alerts" = @{
         "Search" = "appservices/v6/orgs/{0}/alerts/_search"
         "Details" = "appservices/v6/orgs/{0}/alerts/{1}"
+        "Dismiss" = "appservices/v6/orgs/{0}/alerts/workflow/_criteria"
     }
 }
