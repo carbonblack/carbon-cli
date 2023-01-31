@@ -162,7 +162,10 @@ function Get-CbcDevice {
  						-Server $_ `
  						-Params $Id
 					$JsonContent = $Response.Content | ConvertFrom-Json
-					return Initialize-CBCDevice $JsonContent $_
+					if ($null -ne $JsonContent) {
+						return Initialize-CBCDevice $JsonContent $_
+					}
+					return $null
 				}
 			}
 		}

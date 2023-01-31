@@ -59,6 +59,7 @@ function Set-CbcAlert {
 		} else {
 			$ExecuteServers = $global:CBC_CONFIG.currentConnections
 		}
+
 		$RequestBody = @{
 			"state" = "DISMISSED";
 			"comment" = "Dismiss by CarbonCli";
@@ -77,7 +78,6 @@ function Set-CbcAlert {
 		if ($Alert.Count -gt 0) {
 			$RequestBody = $RequestBody | ConvertTo-Json
 			$ExecuteServers | ForEach-Object {
-				Write-Warning "$($_) $($RequestBody) "
 				$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Dismiss"] `
 					-Method POST `
 					-Server $_ `
