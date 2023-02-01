@@ -113,62 +113,65 @@ function Set-CbcDevice {
 				$Device = Get-CbcDevice -Id $Id
 			}
 		}
-		
-		$device_ids = $Device | ForEach-Object {
-			$_.Id
-		}
+		$DeviceGroups = $Device | Group-Object -Property Server, SensorKitType
 
-		$RequestBody = @{}
-		if ($PSBoundParameters.ContainsKey("QuarantineEnabled")) {
-			$RequestBody.action_type = "QUARANTINE"
-			$RequestBody.options = @{
-				toggle = ($QuarantineEnabled ? "ON" : "OFF")
+		foreach ($Group in $DeviceGroups) {
+			$RequestBody = @{}
+			$RequestBody.device_id = @()
+			foreach ($CurrDevice in $Group.Group) {
+				Write-Warning "$($CurrDevice.Id) $($CurrDevice.Server) $($CurrDevice.SensorKitType)"
+				$RequestBody.device_id += $CurrDevice.Id
+				$CurrentServer = $CurrDevice.Server
+				# get the sensorkittype for random device - they should be of the same sensorkittype
+				$SensorKitType = $CurrDevice.SensorKitType
 			}
-		} elseif ($PSBoundParameters.ContainsKey("ScanEnabled")) {
-			$RequestBody.action_type = "BACKGROUND_SCAN"
-			$RequestBody.options = @{
-				toggle = ($ScanEnabled ? "ON" : "OFF")
-			}
-		} elseif ($PSBoundParameters.ContainsKey("SensorVersion")) {
-			$RequestBody.action_type = "UPDATE_SENSOR_VERSION"
-			$RequestBody.options = @{
-				sensor_version = @{
-					$_.SensorKitType = $SensorVersion
+			if ($PSBoundParameters.ContainsKey("QuarantineEnabled")) {
+				$RequestBody.action_type = "QUARANTINE"
+				$RequestBody.options = @{
+					toggle = ($QuarantineEnabled ? "ON" : "OFF")
+				}
+			} elseif ($PSBoundParameters.ContainsKey("ScanEnabled")) {
+				$RequestBody.action_type = "BACKGROUND_SCAN"
+				$RequestBody.options = @{
+					toggle = ($ScanEnabled ? "ON" : "OFF")
+				}
+			} elseif ($PSBoundParameters.ContainsKey("SensorVersion")) {
+				$RequestBody.action_type = "UPDATE_SENSOR_VERSION"
+				$RequestBody.options = @{
+					sensor_version = @{
+						$SensorKitType = $SensorVersion
+					}
+				}
+			} elseif ($PSBoundParameters.ContainsKey("UninstallSensor")) {
+				$RequestBody.action_type = "UNINSTALL_SENSOR"
+			} elseif ($PSBoundParameters.ContainsKey("BypassEnabled")) {
+				$RequestBody.action_type = "BYPASS"
+				$RequestBody.options = @{
+					toggle = ($BypassEnabled ? "ON" : "OFF")
+				}
+			} elseif ($PSBoundParameters.ContainsKey("Policy")) {
+				$RequestBody.action_type = "UPDATE_POLICY"
+				$RequestBody.options = @{
+					policy_id = ($Policy | ForEach-Object {$_.Id})
+				}
+			} elseif ($PSBoundParameters.ContainsKey("PolicyId")) {
+				$RequestBody.action_type = "UPDATE_POLICY"
+				$RequestBody.options = @{
+					policy_id = $PolicyId
 				}
 			}
-		} elseif ($PSBoundParameters.ContainsKey("UninstallSensor")) {
-			$RequestBody.action_type = "UNINSTALL_SENSOR"
-		} elseif ($PSBoundParameters.ContainsKey("BypassEnabled")) {
-			$RequestBody.action_type = "BYPASS"
-			$RequestBody.options = @{
-				toggle = ($BypassEnabled ? "ON" : "OFF")
-			}
-		} elseif ($PSBoundParameters.ContainsKey("Policy")) {
-			$RequestBody.action_type = "UPDATE_POLICY"
-			$RequestBody.options = @{
-				policy_id = ($Policy | ForEach-Object {$_.Id})
-			}
-		} elseif ($PSBoundParameters.ContainsKey("PolicyId")) {
-			$RequestBody.action_type = "UPDATE_POLICY"
-			$RequestBody.options = @{
-				policy_id = $PolicyId
-			}
-		}
-		$RequestBody.device_id = @($device_ids)
-		$JsonBody = $RequestBody | ConvertTo-Json
-		$global:CBC_CONFIG.currentConnections | ForEach-Object {
-			$Response = Invoke-CbcRequest -Server $_ `
+			$JsonBody = $RequestBody | ConvertTo-Json
+			$Response = Invoke-CbcRequest -Server $CurrentServer `
  				-Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Actions"] `
  				-Method POST `
  				-Body $JsonBody
 			if ($Response.StatusCode -ne 204) {
 				Write-Error -Message $("Cannot complete action $($RequestBody.action_type) for devices $($RequestBody.device_id) for $($_)")
 			} else {
-				return Get-CbcDevice -Include @{"id" = @($device_ids)}
+				return Get-CbcDevice -Id @($RequestBody.device_id)
 			}
 		}
 	}
-
 	end {
 		Write-Debug "[$($MyInvocation.MyCommand.Name)] function finished"
 	}

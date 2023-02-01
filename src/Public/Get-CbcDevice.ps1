@@ -126,7 +126,6 @@ function Get-CbcDevice {
 		} else {
 			$ExecuteServers = $global:CBC_CONFIG.currentConnections
 		}
-
 		switch ($PSCmdlet.ParameterSetName) {
 			"Default" {
 				$ExecuteServers | ForEach-Object {
@@ -157,15 +156,35 @@ function Get-CbcDevice {
 			}
 			"Id" {
 				$ExecuteServers | ForEach-Object {
-					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Details"] `
- 						-Method GET `
- 						-Server $_ `
- 						-Params $Id
-					$JsonContent = $Response.Content | ConvertFrom-Json
-					if ($null -ne $JsonContent) {
-						return Initialize-CBCDevice $JsonContent $_
+					$CurrentServer = $_
+					if ($Id -is [System.Object]) {
+						$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Details"] `
+							-Method GET `
+							-Server $_ `
+							-Params $Id
+						$JsonContent = $Response.Content | ConvertFrom-Json
+						if ($null -ne $JsonContent) {
+							return Initialize-CBCDevice $JsonContent $_
+						}
+						return $null
 					}
-					return $null
+					else {
+						$RequestBody = @{}
+						$RequestBody.rows = 10000
+						$RequestBody.criteria = @{"id" = $Id}
+						$RequestBody = $RequestBody | ConvertTo-Json
+
+						$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Search"] `
+							-Method POST `
+							-Server $_ `
+							-Body $RequestBody
+
+						$JsonContent = $Response.Content | ConvertFrom-Json
+
+						$JsonContent.results | ForEach-Object {
+							return Initialize-CbcDevice $_ $CurrentServer
+						}
+					}
 				}
 			}
 		}
