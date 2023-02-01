@@ -98,7 +98,7 @@ function Get-CbcDevice {
 	[CmdletBinding(DefaultParameterSetName = "Default")]
 	[OutputType([CbcDevice[]])]
 	param(
-		[Parameter(ParameterSetName = "Id",Position = 0)]
+		[Parameter(ParameterSetName = "Id", Position = 0)]
 		[array]$Id,
 
 		[Parameter(ParameterSetName = "Default")]
@@ -123,7 +123,8 @@ function Get-CbcDevice {
 
 		if ($Servers) {
 			$ExecuteServers = $Servers
-		} else {
+		}
+		else {
 			$ExecuteServers = $global:CBC_CONFIG.currentConnections
 		}
 		switch ($PSCmdlet.ParameterSetName) {
@@ -143,9 +144,9 @@ function Get-CbcDevice {
 					$RequestBody = $RequestBody | ConvertTo-Json
 
 					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Search"] `
- 						-Method POST `
- 						-Server $_ `
- 						-Body $RequestBody
+						-Method POST `
+						-Server $_ `
+						-Body $RequestBody
 
 					$JsonContent = $Response.Content | ConvertFrom-Json
 
@@ -171,7 +172,7 @@ function Get-CbcDevice {
 					else {
 						$RequestBody = @{}
 						$RequestBody.rows = 10000
-						$RequestBody.criteria = @{"id" = $Id}
+						$RequestBody.criteria = @{"id" = $Id }
 						$RequestBody = $RequestBody | ConvertTo-Json
 
 						$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Search"] `

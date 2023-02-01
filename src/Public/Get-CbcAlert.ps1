@@ -100,48 +100,49 @@ API Documentation: https://developer.carbonblack.com/reference/carbon-black-clou
 #>
 
 function Get-CbcAlert {
-	[CmdletBinding(DefaultParameterSetName = "Default")]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     [OutputType([CbcAlert[]])]
-	param(
-		[Parameter(ParameterSetName = "Id",Position = 0)]
-		[array]$Id,
+    param(
+        [Parameter(ParameterSetName = "Id", Position = 0)]
+        [array]$Id,
 
-		[Parameter(ParameterSetName = "Default")]
-		[hashtable]$Include,
+        [Parameter(ParameterSetName = "Default")]
+        [hashtable]$Include,
 
-		[Parameter(ParameterSetName = "Default")]
-		[int]$MaxResults = 50,
+        [Parameter(ParameterSetName = "Default")]
+        [int]$MaxResults = 50,
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "Default")]
-		[CbcServer[]]$Servers
-	)
+        [CbcServer[]]$Servers
+    )
 
-	process {
+    process {
 
-		if ($Servers) {
-			$ExecuteServers = $Servers
-		} else {
-			$ExecuteServers = $global:CBC_CONFIG.currentConnections
-		}
+        if ($Servers) {
+            $ExecuteServers = $Servers
+        }
+        else {
+            $ExecuteServers = $global:CBC_CONFIG.currentConnections
+        }
 
-		switch ($PSCmdlet.ParameterSetName) {
-			"Default" {
-				$ExecuteServers | ForEach-Object {
+        switch ($PSCmdlet.ParameterSetName) {
+            "Default" {
+                $ExecuteServers | ForEach-Object {
                     $CurrentServer = $_
 
-					$RequestBody = @{}
-					if ($Include) {
-						$RequestBody.criteria = $Include
-					}
-					$RequestBody.rows = $MaxResults
+                    $RequestBody = @{}
+                    if ($Include) {
+                        $RequestBody.criteria = $Include
+                    }
+                    $RequestBody.rows = $MaxResults
 
                     $RequestBody = $RequestBody | ConvertTo-Json
 
-					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Search"] `
- 						-Method POST `
- 						-Server $_ `
- 						-Body $RequestBody
+                    $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Search"] `
+                        -Method POST `
+                        -Server $_ `
+                        -Body $RequestBody
 
                     $JsonContent = $Response.Content | ConvertFrom-Json
 
@@ -149,20 +150,20 @@ function Get-CbcAlert {
                         return Initialize-CbcAlert $_ $CurrentServer
                     }
                 }
-			}
-			"Id" {
-				$ExecuteServers | ForEach-Object {
-					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Details"] `
- 						-Method GET `
- 						-Server $_ `
- 						-Params $Id
-					$JsonContent = $Response.Content | ConvertFrom-Json
+            }
+            "Id" {
+                $ExecuteServers | ForEach-Object {
+                    $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Details"] `
+                        -Method GET `
+                        -Server $_ `
+                        -Params $Id
+                    $JsonContent = $Response.Content | ConvertFrom-Json
                     if ($JsonContent) {
                         return Initialize-CbcAlert $JsonContent $_
                     }
-					return $null
-				}
-			}
-		}
-	}
+                    return $null
+                }
+            }
+        }
+    }
 }

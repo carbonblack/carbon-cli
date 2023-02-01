@@ -36,7 +36,7 @@ function Set-CbcAlert {
 		[string]$Id,
 
 		[Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "Default")]
+		[Parameter(ParameterSetName = "Default")]
 		[CbcServer[]]$Servers,
 
 		[ValidateNotNullOrEmpty()]
@@ -56,13 +56,14 @@ function Set-CbcAlert {
 
 		if ($Servers) {
 			$ExecuteServers = $Servers
-		} else {
+		}
+		else {
 			$ExecuteServers = $global:CBC_CONFIG.currentConnections
 		}
 
 		$RequestBody = @{
-			"state" = "DISMISSED";
-			"comment" = "Dismiss by CarbonCli";
+			"state"             = "DISMISSED";
+			"comment"           = "Dismiss by CarbonCli";
 			"remediation_state" = "FIXED" 
 		}
 		$ids = $Alert | ForEach-Object {
@@ -71,8 +72,9 @@ function Set-CbcAlert {
 		if ($Include) {
 			$RequestBody.criteria = $Include
 			$Alert = Get-CbcAlert -Include $Include
-		} else {
-			$RequestBody.criteria = @{"id" = @($ids)}
+		}
+		else {
+			$RequestBody.criteria = @{"id" = @($ids) }
 		}
 
 		if ($Alert.Count -gt 0) {
