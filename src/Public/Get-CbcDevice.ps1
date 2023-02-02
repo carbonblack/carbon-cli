@@ -36,47 +36,43 @@ you can add the `-Server` param.
 PS > Get-CbcDevice "{DEVICE_ID}" -Server $SpecifiedServer
 .EXAMPLE
 $Criteria = @{
-    "criteria" = @{
-      "status" = [ "<string>", "<string>" ],
-      "os" = [ "<string>", "<string>" ],
-      "lastContactTime" = {
-        "end" = "<dateTime>",
-        "range" = "<string>",
-        "start" = "<dateTime>"
-      },
-      "adGroupId" = [ "<long>", "<long>" ],
-      "policyId" = [ "<long>", "<long>" ],
-      "id" = [ "<long>", "<long>" ],
-      "targetPriority" = [ "<string>", "<string>" ],
-      "deploymentType" = [ "<string>", "<string>" ],
-      "vmUuid" = [ "<string>", "<string>" ],
-      "vcenterUuid" = [ "<string>", "<string>" ],
-      "osVersion" = [ "<string>", "<string>" ],
-      "sensorVersion" = [ "<string>", "<string>" ],
-      "signatureStatus" = [ "<string>", "<string>" ],
-      "goldenDeviceStatus" = [ "<string>", "<string>" ],
-      "goldenDeviceId" = [ "<string>", "<string>" ],
-      "cloudProviderTags" = [ "<string>", "<string>" ],
-      "virtualPrivateCloudId" = [ "<string>", "<string>" ],
-      "autoScalingGroupName" = [ "<string>", "<string>" ],
-      "cloudProviderAccountId" = [ "<string>", "<string>" ],
-      "cloudProviderResourceId" = [ "<string>", "<string>" ],
-      "virtualizationProvider" = [ "<string>", "<string>" ],
-      "subDeploymentType" = [ "<string>", "<string>" ],
-      "baseDevice" = "<boolean>",
-      "hostBasedFirewallStatus" = [ "<string>", "<string>" ],
-      "hostBasedFirewallReason" = "<string>",
-      "hostBasedFirewallSensorObservedState" = "<string>",
-      "vcenterHostUrl" = [ "<string>", "<string>" ]
-    }
+	"status" = [ "<string>", "<string>" ],
+	"os" = [ "<string>", "<string>" ],
+	"lastContactTime" = {
+	"end" = "<dateTime>",
+	"range" = "<string>",
+	"start" = "<dateTime>"
+	},
+	"adGroupId" = [ "<long>", "<long>" ],
+	"policyId" = [ "<long>", "<long>" ],
+	"id" = [ "<long>", "<long>" ],
+	"targetPriority" = [ "<string>", "<string>" ],
+	"deploymentType" = [ "<string>", "<string>" ],
+	"vmUuid" = [ "<string>", "<string>" ],
+	"vcenterUuid" = [ "<string>", "<string>" ],
+	"osVersion" = [ "<string>", "<string>" ],
+	"sensorVersion" = [ "<string>", "<string>" ],
+	"signatureStatus" = [ "<string>", "<string>" ],
+	"goldenDeviceStatus" = [ "<string>", "<string>" ],
+	"goldenDeviceId" = [ "<string>", "<string>" ],
+	"cloudProviderTags" = [ "<string>", "<string>" ],
+	"virtualPrivateCloudId" = [ "<string>", "<string>" ],
+	"autoScalingGroupName" = [ "<string>", "<string>" ],
+	"cloudProviderAccountId" = [ "<string>", "<string>" ],
+	"cloudProviderResourceId" = [ "<string>", "<string>" ],
+	"virtualizationProvider" = [ "<string>", "<string>" ],
+	"subDeploymentType" = [ "<string>", "<string>" ],
+	"baseDevice" = "<boolean>",
+	"hostBasedFirewallStatus" = [ "<string>", "<string>" ],
+	"hostBasedFirewallReason" = "<string>",
+	"hostBasedFirewallSensorObservedState" = "<string>",
+	"vcenterHostUrl" = [ "<string>", "<string>" ]
 }
 
 Currently only the `sensor_version` is supported as an exclusion field.
 
 $Exclusions = @{
-    "exclusions" = {
-      "sensor_version" = ["<string>"]
-    }
+    "sensor_version" = ["<string>"]
 }
 
 PS > Get-CbcDevice -Include $Criteria

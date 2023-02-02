@@ -161,7 +161,6 @@ function Get-CbcAlert {
                     if ($JsonContent) {
                         return Initialize-CbcAlert $JsonContent $_
                     }
-                    return $null
                 }
             }
         }
