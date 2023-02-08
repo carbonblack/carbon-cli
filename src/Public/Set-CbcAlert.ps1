@@ -11,45 +11,14 @@ To dismiss an alert.
 .OUTPUTS
 
 .EXAMPLE
-PS > Set-CbcAlert -Alert $alert -Dismiss
+PS > Set-CbcAlert -Alert $alert -Dismiss $true
+# This is going to execute Set-CbcAlert for all the alerts one time
+PS > Set-CbcAlert -Alert (Get-CbcAlert -Include {"device_id": ["123"], "type": ["CB_ANALYTICS"]}) -Dismiss $true
+# This is going to execute Set-CbcAlert per Alert
+PS > Get-CbcAlert -Include {"device_id": ["123"], "type": ["CB_ANALYTICS"]} | Set-CbcAlert -Dismiss $true
 
 .EXAMPLE
-PS > Set-CbcAlert -Id "ID" -Dismiss
-
-.EXAMPLE
-$Criteria = @{
-	"category": ["<string>", "<string>"],
-	"create_time": {
-		"end": "<dateTime>",
-		"range": "<string>",
-		"start": "<dateTime>"
-	},
-	"device_id": ["<long>", "<long>"],
-	"device_name": ["<string>", "<string>"],
-	"device_os": ["<string>", "<string>"],
-	"device_os_version": ["<string>", "<string>"],
-	"device_username": ["<string>", "<string>"],
-	"group_results": "<boolean>",
-	"id": ["<string>", "<string>"],
-	"legacy_alert_id": ["<string>", "<string>"],
-	"minimum_severity": "<integer>",
-	"policy_id": ["<long>", "<long>"],
-	"policy_name": ["<string>", "<string>"],
-	"process_name": ["<string>", "<string>"],
-	"process_sha256": ["<string>", "<string>"],
-	"report_id": ["<string>", "<string>"],
-	"report_name": ["<string>", "<string>"],
-	"reputation": ["<string>", "<string>"],
-	"tag": ["<string>", "<string>"],
-	"target_value": ["<string>", "<string>"],
-	"threat_id": ["<string>", "<string>"],
-	"type": ["<string>", "<string>"],
-	"watchlist_id": ["<string>", "<string>"],
-	"watchlist_name": ["<string>", "<string>"],
-	"workflow": ["<string>", "<string>"],
-}
-PS > Set-CbcAlert -Include $Criteria -Dismiss
-PS > Set-CbcAlert -Include @{"id": @("123", "124")} -Dismiss
+PS > Set-CbcAlert -Id "ID" -Dismiss $true
 
 If you have multiple connections and you want devices from a specific server
 you can add the `-Server` param.
@@ -66,9 +35,6 @@ function Set-CbcAlert {
 			Position = 0,
 			ParameterSetName = "Alert")]
 		[CbcAlert[]]$Alert,
-
-		[Parameter(ParameterSetName = "Default")]
-		[hashtable]$Include,
 
 		[Parameter(ValueFromPipeline = $true,
 			Mandatory = $true,
@@ -91,7 +57,12 @@ function Set-CbcAlert {
 	process {
 		switch ($PSCmdlet.ParameterSetName) {
 			"Id" {
-				$Alert = Get-CbcAlert -Id $Id
+				$ids = @($Id)
+			}
+			"Alert" {
+				$ids = $Alert | ForEach-Object {
+					$_.Id
+				}
 			}
 		}
 
@@ -107,17 +78,8 @@ function Set-CbcAlert {
 			"comment"           = "Dismiss by CarbonCli";
 			"remediation_state" = "FIXED" 
 		}
+		$RequestBody.criteria = @{"id" = @($ids) }
 		
-		if ($Include) {
-			$RequestBody.criteria = $Include
-			$Alert = Get-CbcAlert -Include $Include
-		}
-		else {
-			$ids = $Alert | ForEach-Object {
-				$_.Id
-			}
-			$RequestBody.criteria = @{"id" = @($ids) }
-		}
 		$JsonBody = $RequestBody | ConvertTo-Json
 		$ExecuteServers | ForEach-Object {
 			$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Dismiss"] `
@@ -128,7 +90,7 @@ function Set-CbcAlert {
 				Write-Error -Message $("Cannot complete action dismiss alert for alerts $($RequestBody.device_id) for $($_)")
 			}
 			else {
-				return $Alert
+				return Get-CbcAlert -Include @{"id" = @($ids)}
 			}	
 		}
 	}

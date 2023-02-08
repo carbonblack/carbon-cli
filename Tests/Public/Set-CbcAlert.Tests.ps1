@@ -60,6 +60,11 @@ Describe "Set-CbcAlert" {
 	
 	Context "When using a `CbcAlert` object" {
 		It "Should dismiss alert" {
+			Mock Get-CbcAlert -ModuleName PSCarbonBlackCloud {
+				return $alert1
+			} -ParameterFilter {
+				$Include["id"][0] -eq 1
+			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
 					StatusCode = 200
@@ -79,7 +84,7 @@ Describe "Set-CbcAlert" {
 			Mock Get-CbcAlert -ModuleName PSCarbonBlackCloud {
 				return $alert1
 			} -ParameterFilter {
-				$Id -eq 1
+				$Include["id"][0] -eq 1
 			}
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 				return @{
@@ -92,27 +97,6 @@ Describe "Set-CbcAlert" {
 				($Body | ConvertFrom-Json).criteria.id[0] -eq 1
 			}
 			$a = Set-CbcAlert -Id $alert1.Id -Dismiss $true
-			$a | Should -Be ($alert1, $alert1)
-		}
-	}
-	Context "When using `Include` " {
-		It "Should dismiss alert by proving criteria" {
-			Mock Get-CbcAlert -ModuleName PSCarbonBlackCloud {
-				return $alert1
-			} -ParameterFilter {
-				$Include.id[0] -eq $alert1.Id
-			}
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
-				return @{
-					StatusCode = 200
-					Content = ""
-				}
-			} -ParameterFilter {
-				$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Dismiss"] -and
-				$Method -eq "POST" -and
-				($Body | ConvertFrom-Json).criteria.id[0] -eq 1
-			}
-			$a = Set-CbcAlert -Include @{"id" = @($alert1.Id)} -Dismiss $true
 			$a | Should -Be ($alert1, $alert1)
 		}
 	}
