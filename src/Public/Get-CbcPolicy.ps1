@@ -31,52 +31,54 @@ API Documentation: https://developer.carbonblack.com/reference/carbon-black-clou
 #>
 
 function Get-CbcPolicy {
-	[CmdletBinding()]
+    [CmdletBinding()]
     [OutputType([CbcPolicy[]])]
-	param(
-        [Parameter(ParameterSetName = "Id",Position = 0)]
+    param(
+        [Parameter(ParameterSetName = "Id", Position = 0)]
         [ValidateNotNullOrEmpty()]
-		[array]$Id,
+        [array]$Id,
 
-		[CBCServer]$Server
-	)
+        [CBCServer]$Server
+    )
 
     begin {
-		Write-Debug "[$($MyInvocation.MyCommand.Name)] function started"
-	}
+        Write-Debug "[$($MyInvocation.MyCommand.Name)] function started"
+    }
 
-	process {
-		if ($Servers) {
-			$ExecuteServers = $Servers
-		} else {
-			$ExecuteServers = $global:CBC_CONFIG.currentConnections
-		}
+    process {
+        if ($Servers) {
+            $ExecuteServers = $Servers
+        }
+        else {
+            $ExecuteServers = $global:CBC_CONFIG.currentConnections
+        }
 
         if ($PSBoundParameters.ContainsKey("Id")) {
             $ExecuteServers | ForEach-Object {
                 $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Policies"]["Details"] `
-                     -Method GET `
-                     -Server $_ `
-                     -Params @($Id)
+                    -Method GET `
+                    -Server $_ `
+                    -Params @($Id)
                 $JsonContent = $Response.Content | ConvertFrom-Json
                 return Initialize-CbcPolicy $JsonContent $_
             }
-        } else {
+        }
+        else {
             $ExecuteServers | ForEach-Object {
                 $CurrentServer = $_
 
                 $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Policies"]["Search"] `
-                     -Method GET `
-                     -Server $_
+                    -Method GET `
+                    -Server $_
                 $JsonContent = $Response.Content | ConvertFrom-Json
                 $JsonContent.policies | ForEach-Object {
                     return Initialize-CbcPolicy $_ $CurrentServer
                 }
             }
         }
-	}
+    }
 
     end {
-		Write-Debug "[$($MyInvocation.MyCommand.Name)] function finished"
-	}
+        Write-Debug "[$($MyInvocation.MyCommand.Name)] function finished"
+    }
 }

@@ -47,6 +47,8 @@ function Invoke-CbcRequest {
 			Write-Debug $_.Exception
 			$StatusCode = $_.Exception.Response.StatusCode
 			Write-Error "[$($MyInvocation.MyCommand.Name)] request to ${FullUri} failed. Status Code: ${StatusCode}"
+			# return empty result for errors, so that it is not failing if it fails for one connection
+			return @{"Content" = ""}
 		}
 		return $null
 	}

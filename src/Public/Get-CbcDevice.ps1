@@ -36,47 +36,43 @@ you can add the `-Server` param.
 PS > Get-CbcDevice "{DEVICE_ID}" -Server $SpecifiedServer
 .EXAMPLE
 $Criteria = @{
-    "criteria" = @{
-      "status" = [ "<string>", "<string>" ],
-      "os" = [ "<string>", "<string>" ],
-      "lastContactTime" = {
-        "end" = "<dateTime>",
-        "range" = "<string>",
-        "start" = "<dateTime>"
-      },
-      "adGroupId" = [ "<long>", "<long>" ],
-      "policyId" = [ "<long>", "<long>" ],
-      "id" = [ "<long>", "<long>" ],
-      "targetPriority" = [ "<string>", "<string>" ],
-      "deploymentType" = [ "<string>", "<string>" ],
-      "vmUuid" = [ "<string>", "<string>" ],
-      "vcenterUuid" = [ "<string>", "<string>" ],
-      "osVersion" = [ "<string>", "<string>" ],
-      "sensorVersion" = [ "<string>", "<string>" ],
-      "signatureStatus" = [ "<string>", "<string>" ],
-      "goldenDeviceStatus" = [ "<string>", "<string>" ],
-      "goldenDeviceId" = [ "<string>", "<string>" ],
-      "cloudProviderTags" = [ "<string>", "<string>" ],
-      "virtualPrivateCloudId" = [ "<string>", "<string>" ],
-      "autoScalingGroupName" = [ "<string>", "<string>" ],
-      "cloudProviderAccountId" = [ "<string>", "<string>" ],
-      "cloudProviderResourceId" = [ "<string>", "<string>" ],
-      "virtualizationProvider" = [ "<string>", "<string>" ],
-      "subDeploymentType" = [ "<string>", "<string>" ],
-      "baseDevice" = "<boolean>",
-      "hostBasedFirewallStatus" = [ "<string>", "<string>" ],
-      "hostBasedFirewallReason" = "<string>",
-      "hostBasedFirewallSensorObservedState" = "<string>",
-      "vcenterHostUrl" = [ "<string>", "<string>" ]
-    }
+	"status" = [ "<string>", "<string>" ],
+	"os" = [ "<string>", "<string>" ],
+	"lastContactTime" = {
+	"end" = "<dateTime>",
+	"range" = "<string>",
+	"start" = "<dateTime>"
+	},
+	"adGroupId" = [ "<long>", "<long>" ],
+	"policyId" = [ "<long>", "<long>" ],
+	"id" = [ "<long>", "<long>" ],
+	"targetPriority" = [ "<string>", "<string>" ],
+	"deploymentType" = [ "<string>", "<string>" ],
+	"vmUuid" = [ "<string>", "<string>" ],
+	"vcenterUuid" = [ "<string>", "<string>" ],
+	"osVersion" = [ "<string>", "<string>" ],
+	"sensorVersion" = [ "<string>", "<string>" ],
+	"signatureStatus" = [ "<string>", "<string>" ],
+	"goldenDeviceStatus" = [ "<string>", "<string>" ],
+	"goldenDeviceId" = [ "<string>", "<string>" ],
+	"cloudProviderTags" = [ "<string>", "<string>" ],
+	"virtualPrivateCloudId" = [ "<string>", "<string>" ],
+	"autoScalingGroupName" = [ "<string>", "<string>" ],
+	"cloudProviderAccountId" = [ "<string>", "<string>" ],
+	"cloudProviderResourceId" = [ "<string>", "<string>" ],
+	"virtualizationProvider" = [ "<string>", "<string>" ],
+	"subDeploymentType" = [ "<string>", "<string>" ],
+	"baseDevice" = "<boolean>",
+	"hostBasedFirewallStatus" = [ "<string>", "<string>" ],
+	"hostBasedFirewallReason" = "<string>",
+	"hostBasedFirewallSensorObservedState" = "<string>",
+	"vcenterHostUrl" = [ "<string>", "<string>" ]
 }
 
 Currently only the `sensor_version` is supported as an exclusion field.
 
 $Exclusions = @{
-    "exclusions" = {
-      "sensor_version" = ["<string>"]
-    }
+    "sensor_version" = ["<string>"]
 }
 
 PS > Get-CbcDevice -Include $Criteria
@@ -98,7 +94,7 @@ function Get-CbcDevice {
 	[CmdletBinding(DefaultParameterSetName = "Default")]
 	[OutputType([CbcDevice[]])]
 	param(
-		[Parameter(ParameterSetName = "Id",Position = 0)]
+		[Parameter(ParameterSetName = "Id", Position = 0)]
 		[array]$Id,
 
 		[Parameter(ParameterSetName = "Default")]
@@ -123,10 +119,10 @@ function Get-CbcDevice {
 
 		if ($Servers) {
 			$ExecuteServers = $Servers
-		} else {
+		}
+		else {
 			$ExecuteServers = $global:CBC_CONFIG.currentConnections
 		}
-
 		switch ($PSCmdlet.ParameterSetName) {
 			"Default" {
 				$ExecuteServers | ForEach-Object {
@@ -144,9 +140,9 @@ function Get-CbcDevice {
 					$RequestBody = $RequestBody | ConvertTo-Json
 
 					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Search"] `
- 						-Method POST `
- 						-Server $_ `
- 						-Body $RequestBody
+						-Method POST `
+						-Server $_ `
+						-Body $RequestBody
 
 					$JsonContent = $Response.Content | ConvertFrom-Json
 
@@ -157,12 +153,35 @@ function Get-CbcDevice {
 			}
 			"Id" {
 				$ExecuteServers | ForEach-Object {
-					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Details"] `
- 						-Method GET `
- 						-Server $_ `
- 						-Params $Id
-					$JsonContent = $Response.Content | ConvertFrom-Json
-					return Initialize-CBCDevice $JsonContent $_
+					$CurrentServer = $_
+					if ($Id -is [System.Object]) {
+						$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Details"] `
+							-Method GET `
+							-Server $_ `
+							-Params $Id
+						$JsonContent = $Response.Content | ConvertFrom-Json
+						if ($null -ne $JsonContent) {
+							return Initialize-CBCDevice $JsonContent $_
+						}
+						return $null
+					}
+					else {
+						$RequestBody = @{}
+						$RequestBody.rows = 10000
+						$RequestBody.criteria = @{"id" = $Id }
+						$RequestBody = $RequestBody | ConvertTo-Json
+
+						$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Search"] `
+							-Method POST `
+							-Server $_ `
+							-Body $RequestBody
+
+						$JsonContent = $Response.Content | ConvertFrom-Json
+
+						$JsonContent.results | ForEach-Object {
+							return Initialize-CbcDevice $_ $CurrentServer
+						}
+					}
 				}
 			}
 		}
