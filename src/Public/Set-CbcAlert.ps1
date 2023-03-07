@@ -12,10 +12,12 @@ To dismiss an alert.
 
 .EXAMPLE
 PS > Set-CbcAlert -Alert $alert -Dismiss $true
+
 # This is going to execute Set-CbcAlert for all the alerts one time
-PS > Set-CbcAlert -Alert (Get-CbcAlert -Include {"device_id": ["123"], "type": ["CB_ANALYTICS"]}) -Dismiss $true
+PS > Set-CbcAlert -Alert (Get-CbcAlert -Include @{"device_id"= @("123"); "type"= @("CB_ANALYTICS")}) -Dismiss $true
+
 # This is going to execute Set-CbcAlert per Alert
-PS > Get-CbcAlert -Include {"device_id": ["123"], "type": ["CB_ANALYTICS"]} | Set-CbcAlert -Dismiss $true
+PS > Get-CbcAlert -Include @{"device_id"= @("123"); "type"= @("CB_ANALYTICS")} | Set-CbcAlert -Dismiss $true
 
 .EXAMPLE
 PS > Set-CbcAlert -Id "ID" -Dismiss $true
