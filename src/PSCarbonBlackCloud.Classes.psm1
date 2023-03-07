@@ -260,6 +260,48 @@ class CbcPolicy{
 	}
 }
 
+
+class CbcPolicyDetails {
+
+	[string]$Id
+	[string]$Name
+	[string]$Description
+	[string]$PriorityLevel
+	[int]$Position
+	[bool]$SystemEnabled
+	[System.Management.Automation.PSObject[]]$Rules
+	[System.Management.Automation.PSObject[]]$AVSettings
+	[System.Management.Automation.PSObject[]]$SensorSettings
+	[System.Management.Automation.PSObject]$ManagedDetectionResponsePermissions
+	[CbcServer]$Server
+
+	CbcPolicyDetails (
+		[string]$Id_,
+		[string]$Name_,
+		[string]$Description_,
+		[string]$PriorityLevel_,
+		[int]$Position_,
+		[bool]$SystemEnabled_,
+		[System.Management.Automation.PSObject[]]$Rules_,
+		[System.Management.Automation.PSObject[]]$AVSettings_,
+		[System.Management.Automation.PSObject[]]$SensorSettings_,
+		[System.Management.Automation.PSObject]$ManagedDetectionResponsePermissions_,
+		[CbcServer]$Server_
+	) {
+		$this.Id = $Id_
+		$this.Name = $Name_
+		$this.Description = $Description_
+		$this.PriorityLevel = $PriorityLevel_
+		$this.Position = $Position_
+		$this.SystemEnabled = $SystemEnabled_
+		$this.Rules = $Rules_
+		$this.AVSettings = $AVSettings_
+		$this.SensorSettings = $SensorSettings_
+		$this.ManagedDetectionResponsePermissions = $ManagedDetectionResponsePermissions_
+		$this.Server = $Server_
+	}
+}
+
 class CbcAlert{
 
 	[string]$Id
