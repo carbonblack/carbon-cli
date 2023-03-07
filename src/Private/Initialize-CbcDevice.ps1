@@ -14,7 +14,6 @@ function Initialize-CbcDevice {
         $Response.id,
         $Response.status,
         $Response.group,
-        $Response.policy_name,
         $Response.target_priority,
         $Response.email,
         $Response.name,

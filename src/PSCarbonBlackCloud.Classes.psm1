@@ -94,7 +94,6 @@ class CbcDevice{
 	[string]$Id
 	[string]$Status
 	[string]$Group
-	[string]$Policy
 	[string]$TargetPriority
 	[string]$User
 	[string]$Name
@@ -140,7 +139,6 @@ class CbcDevice{
 		[string]$Id_,
 		[string]$Status_,
 		[string]$Group_,
-		[string]$Policy_,
 		[string]$TargetPriority_,
 		[string]$User_,
 		[string]$Name_,
@@ -186,7 +184,6 @@ class CbcDevice{
 		$this.Id = $Id_
 		$this.Status = $Status_
 		$this.Group = $Group_
-		$this.Policy = $Policy_
 		$this.TargetPriority = $TargetPriority_
 		$this.User = $User_
 		$this.Name = $Name_
