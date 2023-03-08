@@ -60,7 +60,7 @@ function Get-CbcPolicy {
                     -Server $_ `
                     -Params @($Id)
                 $JsonContent = $Response.Content | ConvertFrom-Json
-                return Initialize-CbcPolicyDetails $JsonContent $_
+                return Initialize-CbcPolicy $JsonContent $_
             }
         }
         else {
