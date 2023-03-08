@@ -37,46 +37,46 @@ PS > Get-CBCAlert -Id "11a1a1a1-b22b-3333-44cc-dd5555d5d55d" -Server $SpecifiedS
 
 The criteria for
 $criteria = @{
-    "category" = ["<string>", "<string>"],
+    "category" = @("<string>", "<string>"),
     "create_time" = @{
         "end" = "<dateTime>",
         "range" = "<string>",
         "start" = "<dateTime>"
     },
-    "device_id" = ["<long>", "<long>"],
-    "device_name" = ["<string>", "<string>"],
-    "device_os" = ["<string>", "<string>"],
-    "device_os_version" = ["<string>", "<string>"],
-    "device_username" = ["<string>", "<string>"],
+    "device_id" = @("<long>", "<long>"),
+    "device_name" = @("<string>", "<string>"),
+    "device_os" = @("<string>", "<string>"),
+    "device_os_version" = @("<string>", "<string>"),
+    "device_username" = @("<string>", "<string>"),
     "first_event_time" = @{
         "end" = "<dateTime>",
         "range" = "<string>",
         "start" = "<dateTime>"
     },
     "group_results" = "<boolean>",
-    "id" = ["<string>", "<string>"],
+    "id" = @("<string>", "<string>"),
     "last_event_time" = @{
         "end" = "<dateTime>",
         "range" = "<string>",
         "start" = "<dateTime>"
     },
-    "legacy_alert_id" = ["<string>", "<string>"],
+    "legacy_alert_id" = @("<string>", "<string>"),
     "minimum_severity" = "<integer>",
-    "policy_id" = ["<long>", "<long>"],
-    "policy_name" = ["<string>", "<string>"],
-    "process_name" = ["<string>", "<string>"],
-    "process_sha256" = ["<string>", "<string>"],
-    "reputation" = ["<string>", "<string>"],
-    "tag" = ["<string>", "<string>"],
-    "target_value" = ["<string>", "<string>"],
-    "threat_id" = ["<string>", "<string>"],
-    "type" = ["<string>", "<string>"],
+    "policy_id" = @("<long>", "<long>"),
+    "policy_name" = @("<string>", "<string>"),
+    "process_name" = @("<string>", "<string>"),
+    "process_sha256" = @("<string>", "<string>"),
+    "reputation" = @("<string>", "<string>"),
+    "tag" = @("<string>", "<string>"),
+    "target_value" = @("<string>", "<string>"),
+    "threat_id" = @("<string>", "<string>"),
+    "type" = @("<string>", "<string>"),
     "last_update_time" = @{
         "end" = "<dateTime>",
         "range" = "<string>",
         "start" = "<dateTime>"
     },
-    "workflow" = ["<string>", "<string>"],
+    "workflow" = @("<string>", "<string>"),
 }
 
 PS > Get-CBCAlert -Include $Criteria
