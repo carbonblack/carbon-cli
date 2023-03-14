@@ -34,10 +34,6 @@ function Get-CbcPolicy {
     [CmdletBinding()]
     [OutputType([CbcPolicy[]])]
     param(
-        [Parameter(ParameterSetName = "Id", Position = 0)]
-        [ValidateNotNullOrEmpty()]
-        [array]$Id,
-
         [CBCServer]$Server
     )
 
@@ -52,28 +48,15 @@ function Get-CbcPolicy {
         else {
             $ExecuteServers = $global:CBC_CONFIG.currentConnections
         }
+        $ExecuteServers | ForEach-Object {
+            $CurrentServer = $_
 
-        if ($PSBoundParameters.ContainsKey("Id")) {
-            $ExecuteServers | ForEach-Object {
-                $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Policies"]["Details"] `
-                    -Method GET `
-                    -Server $_ `
-                    -Params @($Id)
-                $JsonContent = $Response.Content | ConvertFrom-Json
-                return Initialize-CbcPolicy $JsonContent $_
-            }
-        }
-        else {
-            $ExecuteServers | ForEach-Object {
-                $CurrentServer = $_
-
-                $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Policies"]["Search"] `
-                    -Method GET `
-                    -Server $_
-                $JsonContent = $Response.Content | ConvertFrom-Json
-                $JsonContent.policies | ForEach-Object {
-                    return Initialize-CbcPolicy $_ $CurrentServer
-                }
+            $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Policies"]["Search"] `
+                -Method GET `
+                -Server $_
+            $JsonContent = $Response.Content | ConvertFrom-Json
+            $JsonContent.policies | ForEach-Object {
+                return Initialize-CbcPolicy $_ $CurrentServer
             }
         }
     }
