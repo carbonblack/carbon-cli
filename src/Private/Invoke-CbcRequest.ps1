@@ -28,7 +28,7 @@ function Invoke-CbcRequest {
 			"Content-Type" = "application/json"
 			"User-Agent" = "PSCarbonBlackCloud"
 		}
-
+		
 		$Params =,$Server.Org + $Params
 		$FormattedUri = $Endpoint -f $Params
 
@@ -39,8 +39,8 @@ function Invoke-CbcRequest {
 		Write-Debug "[$($MyInvocation.MyCommand.Name)] with uri params body: ${Params}"
 		try {
 			$Request = Invoke-WebRequest -Uri $FullUri -Headers $Headers -Method $Method -Body $Body
-			Write-Debug "[$($MyInvocation.MyCommand.Name)] got response with content: ${Request.Content}"
-			Write-Debug "[$($MyInvocation.MyCommand.Name)] got status code: ${Request.StatusCode}"
+			Write-Debug "[$($MyInvocation.MyCommand.Name)] got response with content: $($Request.Content)"
+			Write-Debug "[$($MyInvocation.MyCommand.Name)] got status code: $($Request.StatusCode)"
 			return $Request
 		}
 		catch {
