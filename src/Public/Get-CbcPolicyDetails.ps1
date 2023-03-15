@@ -23,6 +23,7 @@ PS > Get-CbcPolicyDetails -Id 234567 -Server $SpecifiedServer
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/policy-service/
 #>
 
+# TODO: Add tests to cover Get-CbcPolicyDetails cmdlet
 function Get-CbcPolicyDetails {
     [CmdletBinding()]
     [OutputType([CbcPolicyDetails])]
