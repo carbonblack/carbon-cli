@@ -1,12 +1,11 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
-This cmdlet returns the detailed information about a single policy specified by its Id.
+This cmdlet returns detailed information about a policy specified by its Id.
 .PARAMETER Id
 Specifies the Id of the policy object for which details to be extracted 
 .PARAMETER Server
-Sets a specified CBC Server from the current connections to execute the cmdlet with. 
-If not specified the cmdlet will be executed against the last established connection.
+Sets a specified CBC Server from the current connections to execute the cmdlet with.
 The Id property is unique within the boundaries of a single CBC Server connection
 .OUTPUTS
 CbcPolicyDetails
