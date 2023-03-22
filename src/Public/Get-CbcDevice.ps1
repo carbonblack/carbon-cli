@@ -133,9 +133,10 @@ function Get-CbcDevice {
 		[Parameter(ParameterSetName = "IncludeExclude")]
 		[hashtable]$Exclude,
 
+		[Parameter(ParameterSetName = "Default")]
 		[Parameter(ParameterSetName = "IncludeExclude")]
 		[Parameter(ParameterSetName = "Id")]
-		[CbcServer[]]$Servers,
+		[CbcServer[]]$Server,
 
 		[Parameter(ParameterSetName = "Default")]
 		[Parameter(ParameterSetName = "IncludeExclude")]
@@ -148,8 +149,8 @@ function Get-CbcDevice {
 
 	process {
 
-		if ($Servers) {
-			$ExecuteServers = $Servers
+		if ($Server) {
+			$ExecuteServers = $Server
 		}
 		else {
 			$ExecuteServers = $global:CBC_CONFIG.currentConnections
@@ -212,9 +213,9 @@ function Get-CbcDevice {
 						-Method POST `
 						-Server $_ `
 						-Body $RequestBody
-
+								
 					$JsonContent = $Response.Content | ConvertFrom-Json
-
+					
 					$JsonContent.results | ForEach-Object {
 						return Initialize-CbcDevice $_ $CurrentServer
 					}
@@ -232,9 +233,7 @@ function Get-CbcDevice {
 						-Method POST `
 						-Server $_ `
 						-Body $RequestBody
-
 					$JsonContent = $Response.Content | ConvertFrom-Json
-
 					$JsonContent.results | ForEach-Object {
 						return Initialize-CbcDevice $_ $CurrentServer
 					}

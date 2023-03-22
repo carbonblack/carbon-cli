@@ -35,14 +35,21 @@ Describe "Get-CbcDevice" {
 			$devices.Count | Should -Be 3
 			$devices[0].User | Should -Be "test1@carbonblack.com"
 			$devices[0].Server | Should -Be $s1
-			$devices[1].User | Should -Be "test2@carbonblack.com"
-			$devices[2].User | Should -Be "test3@carbonblack.com"
 			$devices[0].id | Should -Be 1
+			
+			$devices[1].User | Should -Be "test2@carbonblack.com"
 			$devices[1].id | Should -Be 2
+			$devices[1].Server | Should -Be $s1
+			
+			$devices[2].User | Should -Be "test3@carbonblack.com"
 			$devices[2].id | Should -Be 3
+			$devices[2].Server | Should -Be $s1
+			
+			
 		}
 	}
 	Context "When using the 'default' parameter set" {
+		#TODO: Add tests to cover Os, OsVersion, Status and Priority params
 		Context "When using one connection" {
 
 			BeforeAll {
@@ -64,12 +71,67 @@ Describe "Get-CbcDevice" {
 					$devices.Count | Should -Be 3
 					$devices[0].User | Should -Be "test1@carbonblack.com"
 					$devices[0].Server | Should -Be $s1
-					$devices[1].User | Should -Be "test2@carbonblack.com"
-					$devices[2].User | Should -Be "test3@carbonblack.com"
 					$devices[0].id | Should -Be 1
+					
+					$devices[1].User | Should -Be "test2@carbonblack.com"
 					$devices[1].id | Should -Be 2
+					
+					$devices[2].User | Should -Be "test3@carbonblack.com"
 					$devices[2].id | Should -Be 3
 				}
+			}
+
+		}
+		Context "When using multiple connection" {
+
+			BeforeAll {
+				$s1 = [CbcServer]::new("https://t.te/","test","test")
+				$s2 = [CbcServer]::new("https://t.te2/","test2","test2")
+				$global:CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
+				$global:CBC_CONFIG.currentConnections.Add($s1) | Out-Null
+				$global:CBC_CONFIG.currentConnections.Add($s2) | Out-Null
+			}
+
+			Context "When not using any params" {
+				It "Should return all the devices from multiple servers" {
+					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+						return @{
+							StatusCode = 200
+							Content = Get-Content "$ProjectRoot/Tests/resources/device_api/all_devices.json"
+						}
+					}
+
+					$devices = Get-CbcDevice
+
+					$devices.Count | Should -Be 6
+					$devices[0].User | Should -Be "test1@carbonblack.com"
+					$devices[0].id | Should -Be 1
+					$devices[0].Server | Should -Be $s1
+					
+					$devices[2].User | Should -Be "test3@carbonblack.com"
+					$devices[2].id | Should -Be 3
+					$devices[2].Server | Should -Be $s1
+					
+					$devices[3].User | Should -Be "test1@carbonblack.com"
+					$devices[3].id | Should -Be 1
+					$devices[3].Server | Should -Be $s2
+
+					$devices[5].id | Should -Be 3
+					$devices[5].User | Should -Be "test3@carbonblack.com"
+					$devices[5].Server | Should -Be $s2
+				}
+			}
+
+		}
+	}
+
+	Context "When using the 'IncludeExclude' parameter set" {
+		Context "When using one connection" {
+
+			BeforeAll {
+				$s1 = [CbcServer]::new("https://t.te/","test","test")
+				$global:CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
+				$global:CBC_CONFIG.currentConnections.Add($s1) | Out-Null
 			}
 
 			Context "When using the -Exclude parameter" {
@@ -124,10 +186,11 @@ Describe "Get-CbcDevice" {
 
 					$devices.Count | Should -Be 2
 					$devices[0].Server | Should -Be $s1
-					$devices[1].Server | Should -Be $s1
 					$devices[0].User | Should -Be "test1@carbonblack.com"
-					$devices[1].User | Should -Be "test2@carbonblack.com"
 					$devices[0].os | Should -Be "WINDOWS"
+					
+					$devices[1].User | Should -Be "test2@carbonblack.com"
+					$devices[1].Server | Should -Be $s1
 					$devices[1].os | Should -Be "WINDOWS"
 				}
 			}
@@ -159,10 +222,12 @@ Describe "Get-CbcDevice" {
 
 					$devices.Count | Should -Be 3
 					$devices[0].User | Should -Be "test1@carbonblack.com"
-					$devices[1].User | Should -Be "test2@carbonblack.com"
-					$devices[2].User | Should -Be "test3@carbonblack.com"
 					$devices[0].id | Should -Be 1
+					
+					$devices[1].User | Should -Be "test2@carbonblack.com"
 					$devices[1].id | Should -Be 2
+					
+					$devices[2].User | Should -Be "test3@carbonblack.com"
 					$devices[2].id | Should -Be 3
 				}
 			}
@@ -177,32 +242,6 @@ Describe "Get-CbcDevice" {
 				$global:CBC_CONFIG.currentConnections.Add($s2) | Out-Null
 			}
 
-			Context "When not using any params" {
-				It "Should return all the devices from multiple servers" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
-						return @{
-							StatusCode = 200
-							Content = Get-Content "$ProjectRoot/Tests/resources/device_api/all_devices.json"
-						}
-					}
-
-					$devices = Get-CbcDevice
-
-					$devices.Count | Should -Be 6
-					$devices[0].User | Should -Be "test1@carbonblack.com"
-					$devices[2].User | Should -Be "test3@carbonblack.com"
-					$devices[0].id | Should -Be 1
-					$devices[2].id | Should -Be 3
-					$devices[0].Server | Should -Be $s1
-					$devices[2].Server | Should -Be $s1
-					$devices[3].User | Should -Be "test1@carbonblack.com"
-					$devices[5].User | Should -Be "test3@carbonblack.com"
-					$devices[3].id | Should -Be 1
-					$devices[5].id | Should -Be 3
-					$devices[3].Server | Should -Be $s2
-					$devices[5].Server | Should -Be $s2
-				}
-			}
 			Context "When using the -Exclude parameter" {
 				It "Should return the devices according to the exclusion from multiple servers" {
 					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
@@ -229,6 +268,7 @@ Describe "Get-CbcDevice" {
 					$devices[0].Server | Should -Be $s1
 					$devices[0].User | Should -Be "test3@carbonblack.com"
 					$devices[0].os | Should -Be "LINUX"
+					
 					$devices[1].Server | Should -Be $s2
 					$devices[1].User | Should -Be "test3@carbonblack.com"
 					$devices[1].os | Should -Be "LINUX"
@@ -258,18 +298,21 @@ Describe "Get-CbcDevice" {
 					$devices = Get-CbcDevice -Include $Criteria
 
 					$devices.Count | Should -Be 4
+					
 					$devices[0].Server | Should -Be $s1
-					$devices[1].Server | Should -Be $s1
 					$devices[0].User | Should -Be "test1@carbonblack.com"
-					$devices[1].User | Should -Be "test2@carbonblack.com"
 					$devices[0].os | Should -Be "WINDOWS"
+					
+					$devices[1].Server | Should -Be $s1
+					$devices[1].User | Should -Be "test2@carbonblack.com"
 					$devices[1].os | Should -Be "WINDOWS"
 
 					$devices[2].Server | Should -Be $s2
-					$devices[3].Server | Should -Be $s2
 					$devices[2].User | Should -Be "test1@carbonblack.com"
-					$devices[3].User | Should -Be "test2@carbonblack.com"
 					$devices[2].os | Should -Be "WINDOWS"
+
+					$devices[3].User | Should -Be "test2@carbonblack.com"
+					$devices[3].Server | Should -Be $s2
 					$devices[3].os | Should -Be "WINDOWS"
 				}
 			}
@@ -301,23 +344,28 @@ Describe "Get-CbcDevice" {
 
 					$devices.Count | Should -Be 6
 					$devices[0].Server | Should -Be $s1
-					$devices[5].Server | Should -Be $s2
 					$devices[0].User | Should -Be "test1@carbonblack.com"
-					$devices[1].User | Should -Be "test2@carbonblack.com"
-					$devices[2].User | Should -Be "test3@carbonblack.com"
 					$devices[0].id | Should -Be 1
+					
+					$devices[1].User | Should -Be "test2@carbonblack.com"
 					$devices[1].id | Should -Be 2
+					
+					$devices[2].User | Should -Be "test3@carbonblack.com"
 					$devices[2].id | Should -Be 3
+					
 					$devices[3].User | Should -Be "test1@carbonblack.com"
-					$devices[4].User | Should -Be "test2@carbonblack.com"
-					$devices[5].User | Should -Be "test3@carbonblack.com"
 					$devices[3].id | Should -Be 1
+					
+					$devices[4].User | Should -Be "test2@carbonblack.com"
 					$devices[4].id | Should -Be 2
+					
+					$devices[5].User | Should -Be "test3@carbonblack.com"
 					$devices[5].id | Should -Be 3
 				}
 			}
 		}
 	}
+
 	Context "When using the 'id' parameter set" {
 		Context "When using one connection" {
 
