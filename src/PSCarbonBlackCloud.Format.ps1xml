@@ -24,8 +24,13 @@
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
-            <Label>OS</Label>
+            <Label>Os</Label>
             <Width>10</Width>
+            <Alignment>Left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>OsVersion</Label>
+            <Width>20</Width>
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
@@ -53,7 +58,10 @@
                 <PropertyName>User</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>OS</PropertyName>
+                <PropertyName>Os</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>OsVersion</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>TargetPriority</PropertyName>
