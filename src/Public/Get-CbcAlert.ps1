@@ -118,7 +118,7 @@ function Get-CbcAlert {
     )
 
     process {
-
+        
         if ($Servers) {
             $ExecuteServers = $Servers
         }
@@ -130,23 +130,29 @@ function Get-CbcAlert {
             "Default" {
                 $ExecuteServers | ForEach-Object {
                     $CurrentServer = $_
-
                     $RequestBody = @{}
                     if ($Include) {
                         $RequestBody.criteria = $Include
-                    }
-                    $RequestBody.rows = $MaxResults
-
-                    $RequestBody = $RequestBody | ConvertTo-Json
-
-                    $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Search"] `
+                    }                        
+                    
+                    #Add a default sorting criteria
+                    $SortCriteria = @{"field"="create_time";"order"="ASC"}
+                    $RequestBody.sort = @($SortCriteria)
+                    
+                    $ResponseList = Invoke-PagedCbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Search"] `
                         -Method POST `
-                        -Server $_ `
-                        -Body $RequestBody
-
-                    $JsonContent = $Response.Content | ConvertFrom-Json
-
-                    $JsonContent.results | ForEach-Object {
+                        -Server $CurrentServer `
+                        -Body $RequestBody `
+                        -MaxResults $MaxResults
+                    
+                    Write-Debug "REsponselist.count $($ResponseList.Count)"
+                    $JsonContentList = $ResponseList | ForEach-Object { $_.Content | ConvertFrom-Json }
+                    
+                    Write-Debug "JsonContentList.count $($JsonContentList.Count)"
+                    $JsonContentResultList = $JsonContentList | ForEach-Object { $_.results }
+                    
+                    Write-Debug "JsonContentResultList.count $($JsonContenResultList.Count)"
+                    $JsonContentResultList | ForEach-Object {
                         return Initialize-CbcAlert $_ $CurrentServer
                     }
                 }

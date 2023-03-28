@@ -99,13 +99,13 @@
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
-            <Label>First Event</Label>
-            <Width>15</Width>
+            <Label>First Event Time </Label>
+            <Width>20</Width>
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
-            <Label>Last Event</Label>
-            <Width>15</Width>
+            <Label>Last Event Time</Label>
+            <Width>20</Width>
             <Alignment>Left</Alignment>
           </TableColumnHeader>
         </TableHeaders>
@@ -129,10 +129,10 @@
                 <PropertyName>DeviceId</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>FirstEvent</PropertyName>
+                <PropertyName>FirstEventTime</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>LastEvent</PropertyName>
+                <PropertyName>LastEventTime</PropertyName>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>

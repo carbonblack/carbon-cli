@@ -1,6 +1,7 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 function Invoke-CbcRequest {
 	[CmdletBinding()]
+	#[OutputType([BasicHtmlWebResponseObject])]
 	param(
 		[Parameter(Mandatory = $true,Position = 0)]
 		[ValidateNotNullOrEmpty()]
@@ -33,10 +34,10 @@ function Invoke-CbcRequest {
 		$FormattedUri = $Endpoint -f $Params
 
 		$FullUri = $Server.Uri + $FormattedUri
-		Write-Debug "[$($MyInvocation.MyCommand.Name)] requesting: ${FullUri}"
-		Write-Debug "[$($MyInvocation.MyCommand.Name)] with request body: ${Body}"
-		Write-Debug "[$($MyInvocation.MyCommand.Name)] with method body: ${Method}"
-		Write-Debug "[$($MyInvocation.MyCommand.Name)] with uri params body: ${Params}"
+		Write-Debug "[$($MyInvocation.MyCommand.Name)] requesting: $(FullUri)"
+		Write-Debug "[$($MyInvocation.MyCommand.Name)] with request body: $($Body)"
+		Write-Debug "[$($MyInvocation.MyCommand.Name)] with method body: $(Method)"
+		Write-Debug "[$($MyInvocation.MyCommand.Name)] with uri params body: $(Params)"
 		try {
 			$Request = Invoke-WebRequest -Uri $FullUri -Headers $Headers -Method $Method -Body $Body
 			Write-Debug "[$($MyInvocation.MyCommand.Name)] got response with content: $($Request.Content)"
