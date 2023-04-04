@@ -28,7 +28,6 @@ function Invoke-CbcRequest {
 			"Content-Type" = "application/json"
 			"User-Agent" = "PSCarbonBlackCloud"
 		}
-		
 		$Params =,$Server.Org + $Params
 		$FormattedUri = $Endpoint -f $Params
 

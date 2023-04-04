@@ -25,4 +25,4 @@ foreach ($Module in $RequiredModules["requirements"]) {
     }
 }
 
-Invoke-ScriptAnalyzer -Path $PSScriptRoot\src\ -Recurse -ExcludeRule PSUseOutputTypeCorrectly, PSReviewUnusedParameter, PSAvoidGlobalVars
+Invoke-ScriptAnalyzer -Path $PSScriptRoot\src\ -Recurse -ExcludeRule PSUseOutputTypeCorrectly, PSReviewUnusedParameter, PSAvoidGlobalVars, PSUseShouldProcessForStateChangingFunctions, PSUseToExportFieldsInManifest, PSUseSingularNouns

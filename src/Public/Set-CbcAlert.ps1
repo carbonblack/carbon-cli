@@ -76,12 +76,12 @@ function Set-CbcAlert {
 		}
 
 		$RequestBody = @{
-			"state"             = "DISMISSED";
-			"comment"           = "Dismiss by CarbonCli";
-			"remediation_state" = "FIXED" 
+			"state"             = "DISMISSED"
+			"comment"           = "Dismiss by CarbonCli"
+			"remediation_state" = "FIXED"
 		}
 		$RequestBody.criteria = @{"id" = @($ids) }
-		
+
 		$JsonBody = $RequestBody | ConvertTo-Json
 		$ExecuteServers | ForEach-Object {
 			$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Dismiss"] `
@@ -93,7 +93,7 @@ function Set-CbcAlert {
 			}
 			else {
 				return Get-CbcAlert -Include @{"id" = @($ids)}
-			}	
+			}
 		}
 	}
 	end {

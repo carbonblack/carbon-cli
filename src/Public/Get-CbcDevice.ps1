@@ -15,7 +15,7 @@ Specifies the Operating system to match
 .PARAMETER MaxResults
 Set the max number of results (default is 50 and max is 10k).
 .PARAMETER Server
-Sets a specified Cbc Server from the current connections to execute the cmdletagainst. 
+Sets a specified Cbc Server from the current connections to execute the cmdletagainst.
 .OUTPUTS
 CbcDevice[]
 .EXAMPLE
@@ -31,10 +31,10 @@ PS > Get-CbcDevice -Server $SpecifiedServer
 .EXAMPLE
 PS > Get-CbcDevice -Id 2345,7368
 
-Return devices with the specified Ids. 
+Return devices with the specified Ids
 
 .EXAMPLE
-PS > Get-CbcDevice -Os Windows,Linux 
+PS > Get-CbcDevice -Os Windows,Linux
 
 Return the devices with either Windows or Linux operating systems. Supported Os values: WINDOWS, LINUX, CENTOS, RHEL, ORACLE, SLES AMAZON_LINUX, SUSE, UBUNTU
 
@@ -53,16 +53,16 @@ $IncludeCriteria = @{
       "ad_group_id"= @( <long>, <long>)
       "auto_scaling_group_name"= @( "<string>", "<string>")
       "base_device": <boolean>
-      "cloud_provider_account_id"= @( "<string>", "<string>") 
-      "cloud_provider_resource_id"= @( "<string>", "<string>") 
-      "cloud_provider_tags"= @( "<string>", "<string>") 
-      "deployment_type"= @( "<string>", "<string>") 
-      "golden_device_id"= @( "<string>", "<string>") 
-      "golden_device_status"= @( "<string>", "<string>") 
-      "host_based_firewall_status"= @( "<string>", "<string>") 
+      "cloud_provider_account_id"= @( "<string>", "<string>")
+      "cloud_provider_resource_id"= @( "<string>", "<string>")
+      "cloud_provider_tags"= @( "<string>", "<string>")
+      "deployment_type"= @( "<string>", "<string>")
+      "golden_device_id"= @( "<string>", "<string>")
+      "golden_device_status"= @( "<string>", "<string>")
+      "host_based_firewall_status"= @( "<string>", "<string>")
       "host_based_firewall_reason": "<string>"
       "id"= @( <long>, <long>)
-      "infrastructure_provider"= @( "<string>", "<string>") 
+      "infrastructure_provider"= @( "<string>", "<string>")
       "last_contact_time": {
         "end": "<dateTime>",
         "range": "<string>",
@@ -96,7 +96,7 @@ PS > Get-CbcDevice -Include @{"os"= @("Linux")
 >>  "target_priority" = @("Low")}
 
 PS > $IncludeCriteria = @{}
-PS > $IncludeCriteria.os = @("Linux") 
+PS > $IncludeCriteria.os = @("Linux")
 PS > $IncludeCriteria.target_priority = @("Low")
 Get-CbcDevice -Include $IncludeCriteria
 
@@ -111,7 +111,7 @@ function Get-CbcDevice {
 	[CmdletBinding(DefaultParameterSetName = "Default")]
 	[OutputType([CbcDevice[]])]
 	param(
-		
+
 		[Parameter(ParameterSetName = "Id", Position = 0)]
 		[long[]]$Id,
 
@@ -161,7 +161,7 @@ function Get-CbcDevice {
 					$CurrentServer = $_
 					$RequestBody = @{}
 					$RequestBody.criteria = @{}
-					
+
 					if ($PSBoundParameters.ContainsKey("Os")) {
 						$RequestBody.criteria.os = $Os
 					}
@@ -173,11 +173,11 @@ function Get-CbcDevice {
 					if ($PSBoundParameters.ContainsKey("Status")) {
 						$RequestBody.criteria.status = $Status
 					}
-					
+
 					if ($PSBoundParameters.ContainsKey("Priority")) {
 						$RequestBody.criteria.target_priority = $TargetPriority
 					}
-					
+
 					$RequestBody.rows = $MaxResults
 
 					$RequestBody = $RequestBody | ConvertTo-Json
@@ -213,9 +213,9 @@ function Get-CbcDevice {
 						-Method POST `
 						-Server $_ `
 						-Body $RequestBody
-								
+
 					$JsonContent = $Response.Content | ConvertFrom-Json
-					
+
 					$JsonContent.results | ForEach-Object {
 						return Initialize-CbcDevice $_ $CurrentServer
 					}

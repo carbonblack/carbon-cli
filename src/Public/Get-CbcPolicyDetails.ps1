@@ -1,9 +1,9 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
-This cmdlet returns detailed information about a policy specified by its Id.
+This cmdlet returns detailed information about a policy specified by its Id
 .PARAMETER Id
-Specifies the Id of the policy object for which details to be extracted 
+Specifies the Id of the policy object for which details to be extracted
 .PARAMETER Server
 Sets a specified CBC Server from the current connections to execute the cmdlet with.
 The Id property is unique within the boundaries of a single CBC Server connection
@@ -15,7 +15,7 @@ PS > Get-CbcPolicyDetails -Id 234567, 12345
 Returns detailed information about a policies with corresponding ids: 234567 and 12345
 
 If you have multiple connections and you want to retrieve policies from a specific server,
-you can add the `-Server` param.
+you can add the `-Server` param
 
 PS > Get-CbcPolicyDetails -Id 234567 -Server $SpecifiedServer
 .LINK
@@ -51,17 +51,17 @@ function Get-CbcPolicyDetails {
             $CurrentServer = $_
             $Id | ForEach-Object {
                 Write-Debug "Retrieving policy details for policy with id: $_ "
-                
+
                 $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Policies"]["Details"] `
                 -Method GET `
                 -Server $CurrentServer `
                 -Params $_
-                
+
                 $JsonContent = $Response.Content | ConvertFrom-Json
-                
+
                 return Initialize-CbcPolicyDetails $JsonContent $CurrentServer
             }
-            
+
         }
     }
 
