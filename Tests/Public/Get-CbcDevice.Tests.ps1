@@ -279,7 +279,8 @@ Describe "Get-CbcDevice" {
 								StatusCode = 200
 								Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/exclusions_devices.json"
 							}
-						} else {
+						}
+						else {
 							@{
 								StatusCode = 200
 								Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
@@ -318,7 +319,8 @@ Describe "Get-CbcDevice" {
 								StatusCode = 200
 								Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/criteria_devices.json"
 							}
-						} else {
+						}
+						else {
 							@{
 								StatusCode = 200
 								Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
@@ -360,7 +362,8 @@ Describe "Get-CbcDevice" {
 								StatusCode = 200
 								Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/exclusions_criteria_devices.json"
 							}
-						} else {
+						}
+						else {
 							@{
 								StatusCode = 200
 								Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
@@ -498,12 +501,13 @@ Describe "Get-CbcDevice" {
 					if ($Server -eq $s1) {
 						@{
 							StatusCode = 200
-							Content = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
+							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
 						}
-					} else {
+					}
+					else {
 						@{
 							StatusCode = 403
-							Content = Get-Content "$ProjectRoot/Tests/resources/device_api/no_devices.json"
+							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/no_devices.json"
 						}
 					}
 				} -ParameterFilter {
@@ -528,12 +532,13 @@ Describe "Get-CbcDevice" {
 					if ($Server -eq $s1) {
 						@{
 							StatusCode = 200
-							Content = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
+							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
 						}
-					} else {
+					}
+					else {
 						@{
 							StatusCode = 403
-							Content = Get-Content "$ProjectRoot/Tests/resources/device_api/no_devices.json"
+							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/no_devices.json"
 						}
 					}
 				} -ParameterFilter {
