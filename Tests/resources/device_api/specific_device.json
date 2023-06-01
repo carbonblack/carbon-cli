@@ -90,7 +90,7 @@
             "LIVE_RESPONSE_NOT_KILLED",
             "LIVE_RESPONSE_ENABLED"
         ],
-        "sensor_version": "3.8.0.627",
+        "sensor_version": "windows:1.0.0",
         "status": "REGISTERED",
         "target_priority": "MEDIUM",
         "uninstall_code": "R6VERVN2",

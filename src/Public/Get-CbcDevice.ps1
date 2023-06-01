@@ -174,7 +174,7 @@ function Get-CbcDevice {
 						$RequestBody.criteria.status = $Status
 					}
 
-					if ($PSBoundParameters.ContainsKey("Priority")) {
+					if ($PSBoundParameters.ContainsKey("TargetPriority")) {
 						$RequestBody.criteria.target_priority = $TargetPriority
 					}
 
