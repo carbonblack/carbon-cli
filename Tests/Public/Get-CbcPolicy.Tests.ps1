@@ -34,7 +34,8 @@ Describe "Get-CbcPolicy" {
                 $Policy = Get-CbcPolicy
 
                 $Policy.Count | Should -Be 1
-                $Policy.Name | Should -Be "Standard"
+                $Policy[0].Name | Should -Be "Standard"
+                $Policy[0].Server | Should -Be $s1
             }
         }
 
@@ -65,6 +66,7 @@ Describe "Get-CbcPolicy" {
 
                 $Policy.Count | Should -Be 1
                 $Policy[0].Name | Should -Be "Standard"
+                $Policy[0].Server | Should -Be $s1
             }
 
             It "Should return all policies" {
@@ -91,7 +93,9 @@ Describe "Get-CbcPolicy" {
 
                 $Policy.Count | Should -Be 2
                 $Policy[0].Name | Should -Be "Standard"
+                $Policy[0].Server | Should -Be $s1
                 $Policy[1].Name | Should -Be "Monitored"
+                $Policy[1].Server | Should -Be $s2
             }
         }
     }

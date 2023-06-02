@@ -114,13 +114,13 @@ function Get-CbcAlert {
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "Default")]
-        [CbcServer[]]$Servers
+        [CbcServer[]]$Server
     )
 
     process {
 
-        if ($Servers) {
-            $ExecuteServers = $Servers
+        if ($Server) {
+            $ExecuteServers = $Server
         }
         else {
             $ExecuteServers = $global:CBC_CONFIG.currentConnections
