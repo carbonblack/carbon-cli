@@ -36,16 +36,16 @@ one to connect.
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud
 #>
 function Connect-CbcServer {
-	[CmdletBinding(DefaultParameterSetName = "default",HelpUri = "http://devnetworketc/")]
+	[CmdletBinding(DefaultParameterSetName = "default", HelpUri = "http://devnetworketc/")]
 	param(
-		[Parameter(ParameterSetName = "default",Mandatory = $true,Position = 0)]
+		[Parameter(ParameterSetName = "default", Mandatory = $true, Position = 0)]
 		[Alias("Server")]
 		[string]${Uri},
 
-		[Parameter(ParameterSetName = "default",Mandatory = $true,Position = 1)]
+		[Parameter(ParameterSetName = "default", Mandatory = $true, Position = 1)]
 		[string]${Org},
 
-		[Parameter(ParameterSetName = "default",Mandatory = $true,Position = 2)]
+		[Parameter(ParameterSetName = "default", Mandatory = $true, Position = 2)]
 		[string]${Token},
 
 		[Parameter(ParameterSetName = "default")]
@@ -89,11 +89,12 @@ function Connect-CbcServer {
 			"default" {
 				Write-Verbose "[$($MyInvocation.MyCommand.Name)] Processing (default) [$Uri, $Org, $Token]"
 
-				$CbcServerObject = [CbcServer]::new($Uri,$Org,$Token)
+				$CbcServerObject = [CbcServer]::new($Uri, $Org, $Token)
 				if ($SaveCredentials.IsPresent) {
 					if ($global:CBC_CONFIG.credentials.IsInFile($CbcServerObject)) {
 						Write-Error "The credentials are already saved!" -ErrorAction "Stop"
-					} else {
+					}
+					else {
 						$global:CBC_CONFIG.defaultServers.Add($CbcServerObject) | Out-Null
 						$global:CBC_CONFIG.credentials.SaveToFile($CbcServerObject)
 					}
@@ -134,9 +135,8 @@ function Connect-CbcServer {
 
 		$global:CBC_CONFIG.currentConnections.Add($CbcServerObject) | Out-Null
 		return $CbcServerObject
-
-		end {
-			Write-Debug "[$($MyInvocation.MyCommand.Name)] function finished"
-		}
+	}
+	end {
+		Write-Debug "[$($MyInvocation.MyCommand.Name)] function finished"
 	}
 }
