@@ -14,15 +14,14 @@ PS > Get-CbcPolicyDetails -Id 234567, 12345
 
 Returns detailed information about a policies with corresponding ids: 234567 and 12345
 
+.EXAMPLE
+PS > Get-CbcPolicyDetails -Id 234567 -Server $SpecifiedServer
+
 If you have multiple connections and you want to retrieve policies from a specific server,
 you can add the `-Server` param
-
-PS > Get-CbcPolicyDetails -Id 234567 -Server $SpecifiedServer
 .LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/policy-service/
 #>
-
-# TODO: Add tests to cover Get-CbcPolicyDetails cmdlet
 function Get-CbcPolicyDetails {
     [CmdletBinding()]
     [OutputType([CbcPolicyDetails])]
