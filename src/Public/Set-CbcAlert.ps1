@@ -46,7 +46,7 @@ function Set-CbcAlert {
 
 		[Parameter(ParameterSetName = "Id")]
 		[Parameter(ParameterSetName = "Default")]
-		[CbcServer[]]$Servers,
+		[CbcServer[]]$Server,
 
 		[ValidateNotNullOrEmpty()]
 		[bool]$Dismiss
@@ -68,8 +68,8 @@ function Set-CbcAlert {
 			}
 		}
 
-		if ($Servers) {
-			$ExecuteServers = $Servers
+		if ($Server) {
+			$ExecuteServers = $Server
 		}
 		else {
 			$ExecuteServers = $global:CBC_CONFIG.currentConnections
@@ -92,7 +92,7 @@ function Set-CbcAlert {
 				Write-Error -Message $("Cannot complete action dismiss alert for alerts $($RequestBody.device_id) for $($_)")
 			}
 			else {
-				return Get-CbcAlert -Include @{"id" = @($ids)}
+				return Get-CbcAlert -Include @{"id" = @($ids)} -Server $_
 			}
 		}
 	}
