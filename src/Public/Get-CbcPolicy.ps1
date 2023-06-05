@@ -32,8 +32,8 @@ function Get-CbcPolicy {
     }
 
     process {
-        if ($Servers) {
-            $ExecuteServers = $Servers
+        if ($Server) {
+            $ExecuteServers = $Server
         }
         else {
             $ExecuteServers = $global:CBC_CONFIG.currentConnections

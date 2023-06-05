@@ -5,7 +5,7 @@
     {
       "id": "1",
       "legacy_alert_id": "1DDU8H9N",
-      "type": "CB_ANALYTICS",
+      "type": "WATCHLIST",
       "org_key": "ABCD1234",
       "create_time": "2019-09-13T14:17:21.668Z",
       "last_update_time": "2019-09-13T14:17:21.668Z",

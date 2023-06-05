@@ -114,7 +114,7 @@ function Set-CbcDevice {
 			}
 		}
 		$DeviceGroups = $Device | Group-Object -Property Server, SensorKitType
-
+		$UpdatedDevices = @()
 		foreach ($Group in $DeviceGroups) {
 			$RequestBody = @{}
 			$RequestBody.device_id = @()
@@ -172,12 +172,13 @@ function Set-CbcDevice {
 				-Method POST `
 				-Body $JsonBody
 			if ($Response.StatusCode -ne 204) {
-				Write-Error -Message $("Cannot complete action $($RequestBody.action_type) for devices $($RequestBody.device_id) for $($_)")
+				Write-Error -Message $("Cannot complete action $($RequestBody.action_type) for devices $($RequestBody.device_id) for $($CurrentServer)")
 			}
 			else {
-				return Get-CbcDevice -Id @($RequestBody.device_id)
+				$UpdatedDevices += Get-CbcDevice -Id @($RequestBody.device_id) -Server $CurrentServer
 			}
 		}
+		return $UpdatedDevices
 	}
 	end {
 		Write-Debug "[$($MyInvocation.MyCommand.Name)] function finished"
