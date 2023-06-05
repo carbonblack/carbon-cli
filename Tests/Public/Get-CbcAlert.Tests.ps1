@@ -244,12 +244,13 @@ Describe "Get-CbcAlert" {
 				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 					@{
 						StatusCode = 200
-						Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/specific_alert.json"
+						Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
 					}
 				} -ParameterFilter {
-					$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Details"] -and
-					$Method -eq "GET" -and
-					$Server -eq $s1 
+					$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Search"] -and
+					$Method -eq "POST" -and
+					$Server -eq $s1
+					($Body | ConvertFrom-Json).criteria.id -eq 1
 				}
 
 				$alerts = Get-CbcAlert -Id "1"
@@ -263,12 +264,13 @@ Describe "Get-CbcAlert" {
 				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 					@{
 						StatusCode = 200
-						Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/specific_alert.json"
+						Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
 					}
 				} -ParameterFilter {
-					$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Details"] -and
-					$Method -eq "GET" -and
-					$Server -eq $s1 
+					$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Search"] -and
+					$Method -eq "POST" -and
+					$Server -eq $s1
+					($Body | ConvertFrom-Json).criteria.id -eq 1
 				}
 
 				$alerts = Get-CbcAlert "1"
@@ -293,18 +295,18 @@ Describe "Get-CbcAlert" {
 					if ($Server -eq $s1) {
 						@{
 							StatusCode = 200
-							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/specific_alert.json"
+							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
 						}
 					}
 					else {
 						@{
 							StatusCode = 200
-							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/specific_alert_2.json"
+							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts_2.json"
 						}
 					}
 				} -ParameterFilter {
-					$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Details"] -and
-					$Method -eq "GET" -and
+					$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Search"] -and
+					$Method -eq "POST" -and
 					($Server -eq $s1 -or $Server -eq $s2)
 				}
 
@@ -324,22 +326,22 @@ Describe "Get-CbcAlert" {
 					if ($Server -eq $s1) {
 						@{
 							StatusCode = 200
-							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/specific_alert.json"
+							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
 						}
 					}
 					else {
 						@{
-							StatusCode = 404
-							Content    = @()
+							StatusCode = 200
+							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/no_alerts.json"
 						}
 					}
 				} -ParameterFilter {
-					$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Details"] -and
-					$Method -eq "GET" -and
+					$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Search"] -and
+					$Method -eq "POST" -and
 					($Server -eq $s1 -or $Server -eq $s2)
 				}
 
-				$alerts = Get-CbcAlert -Id "1"
+				$alerts = Get-CbcAlert -Id 1
 
 				$alerts.Count | Should -Be 1
 				$alerts[0].Id | Should -Be "1"
@@ -351,19 +353,20 @@ Describe "Get-CbcAlert" {
 					if ($Server -eq $s1) {
 						@{
 							StatusCode = 200
-							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/specific_alert.json"
+							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
 						}
 					}
 					else {
 						@{
 							StatusCode = 200
-							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/specific_alert_2.json"
+							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts_2.json"
 						}
 					}
 				} -ParameterFilter {
-					$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Details"] -and
-					$Method -eq "GET" -and
+					$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Search"] -and
+					$Method -eq "POST" -and
 					($Server -eq $s1 -or $Server -eq $s2)
+
 				}
 
 				$alerts = Get-CbcAlert "1"
