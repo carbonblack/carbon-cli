@@ -200,10 +200,6 @@ function Get-CbcAlert {
 						$RequestBody.criteria.policy_name = $PolicyName
 					}
 
-                    if ($PSBoundParameters.ContainsKey("ProcessName")) {
-						$RequestBody.criteria.process_name = $ProcessName
-					}
-
                     if ($PSBoundParameters.ContainsKey("ThreatId")) {
 						$RequestBody.criteria.threat_id = $ThreatId
 					}

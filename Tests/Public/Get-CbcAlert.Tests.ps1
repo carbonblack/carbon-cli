@@ -40,6 +40,58 @@ Describe "Get-CbcAlert" {
 				}
 			}
 
+			Context "When using the -DeviceId parameter" {
+				It "Should return the alerts according to the deviceid" {
+					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+						@{
+							StatusCode = 200
+							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
+						}
+					} -ParameterFilter {
+						$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Search"] -and
+						$Method -eq "POST" -and
+						$Server -eq $s1 -and
+						(
+							($Body | ConvertFrom-Json).rows -eq 50 -and
+							($Body | ConvertFrom-Json).criteria.device_id -eq 388948
+						)
+					}
+
+					$alerts = Get-CbcAlert -DeviceId 388948
+
+					$alerts[0].category | Should -Be "MONITORED"
+					$alerts[0].Server | Should -Be $s1
+				}
+			}
+
+			Context "When using the -Category, -PolicyName, -ThreatId, -Type, -MinSeverity parameter" {
+				It "Should return the alerts according to the params" {
+					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+						@{
+							StatusCode = 200
+							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
+						}
+					} -ParameterFilter {
+						$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Search"] -and
+						$Method -eq "POST" -and
+						$Server -eq $s1 -and
+						(
+							($Body | ConvertFrom-Json).rows -eq 50 -and
+							($Body | ConvertFrom-Json).criteria.category -eq "MONITORED" -and
+							($Body | ConvertFrom-Json).criteria.policy_name -eq "Standard" -and
+							($Body | ConvertFrom-Json).criteria.threat_id -eq "xxx" -and
+							($Body | ConvertFrom-Json).criteria.type -eq "CB_ANALYTICS" -and
+							($Body | ConvertFrom-Json).criteria.minimum_severity -eq 3
+						)
+					}
+
+					$alerts = Get-CbcAlert -Category "MONITORED" -PolicyName "Standard" -ThreatId "xxx" -Type "CB_ANALYTICS" -MinSeverity 3
+
+					$alerts[0].category | Should -Be "MONITORED"
+					$alerts[0].Server | Should -Be $s1
+				}
+			}
+
 			Context "When using the -Include parameter" {
 				It "Should return the alerts according to the inclusion" {
 					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
