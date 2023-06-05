@@ -1,11 +1,35 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
-This cmdlet returns all alerts or a specific alert with every current connection.
-.SYNOPSIS
-This cmdlet returns all alerts or a specific alert with every current connection.
+This cmdlet returns all alerts from all valid connections. The returned CbcAlert object is a "base" alert object, 
+common for the different alert types such as CbAnalytics, Device Control, Watchlist, Container Runtime, Host-Based Firewall 
+and is complient with the corrsponding base alert object API schema: 
+.LINK  
+https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api/#fields
 .PARAMETER Id
-Returns a device with specified ID.
+https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api/#fields
+.SYNOPSIS
+This cmdlet returns all alerts from all valid connections. The returned CbcAlert object is a "base" alert object, 
+common for the different alert types such as CbAnalytics, Device Control, Watchlist and is complient with the corrsponding
+base alert object API schema: 
+.LINK  
+https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api/#fields
+.PARAMETER Id
+Foilter param: Specify the Id of the alert to retrieve
+.PARAMETER DeviceId
+Filter param: Specify the Id of the device for which to retrieve alerts
+.PARAMETER Category
+Filter param: Specify the category of the alerts to retrieve. Available values: THREAT, MONITORED
+.PARAMETER PolicyName
+Filter param: Specify the name of the policy associated with the device at the time of the alert
+.PARAMETER ThreatId
+Filter param: Specify the id of the threat belonging to the alerts to retrieve. 
+Threats are comprised of a combination of factors that can be repeated across devices.
+.PARAMETER Type
+Filter param: Specify the Type оf the alerts to retrieve.
+Available values: CB_ANALYTICS, CONTAINER_RUNTIME, DEVICE_CONTROL, HOST_BASED_FIREWALL, WATCHLIST
+.PARAMETER MinSeverity
+Filter param: Specify the minimal severity оf the alerts to retrieve.
 .PARAMETER Include
 Sets the criteria for the search.
 .PARAMETER MaxResults
@@ -18,21 +42,16 @@ CbcAlert[]
 .EXAMPLE
 PS > Get-CbcAlert
 
-Returns all alerts
-
+Returns all alerts from all connected servers. 
 If you have multiple connections and you want alerts from a specific server
 you can add the `-Server` param.
 
 PS > Get-CbcAlert -Server $SpecifiedServer
 .EXAMPLE
-PS > Get-CBCAlert -Id "11a1a1a1-b22b-3333-44cc-dd5555d5d55d"
+PS > Get-CBCAlert -Id "11a1a1a1-b22b-3333-44cc-dd5555d5d55d", "924a237d-443c-4965-b5b2-6fffcdff1d5b"
 
-Returns the alert with specified id.
+Returns the alerts with specified Ids.
 
-If you have multiple connections and you want alerts from a specific server
-you can add the `-Server` param.
-
-PS > Get-CBCAlert -Id "11a1a1a1-b22b-3333-44cc-dd5555d5d55d" -Server $SpecifiedServer
 .EXAMPLE
 
 The criteria for
@@ -79,22 +98,38 @@ $criteria = @{
     "workflow" = @("<string>", "<string>"),
 }
 
+Include parameters expect a hash table object
+
 PS > Get-CBCAlert -Include $Criteria
 
 Returns all alerts which correspond to the specified criteria.
 
-If you have multiple connections and you want alerts from a specific server
-you can add the `-Server` param.
+PS > Get-CbcDevice -Include @{"type"= @("CB_ANALYTICS")
+>>  "minimum_severity" = 3 }
 
-PS > Get-CbcAlert -Include $Criteria -Server $SpecifiedServer
+PS > $IncludeCriteria = @{}
+PS > $IncludeCriteria.type = @("CB_ANALYTICS")
+PS > $IncludeCriteria.minimum_severity = 3
+Get-CbcAlert -Include $IncludeCriteria
+
+Returns all devices which correspond to the specified include criteria
+
 .EXAMPLE
-PS > Get-CbcAlert -Id "1" | where { Set-CbcDevice -Id $_.DeviceID -QuarantineEnabled $true }
+PS > Get-CbcAlert -Id "cfdb1201-fd5d-90db-81bb-b66ac9348f14" | foreach { Set-CbcDevice -Id $_.DeviceID -QuarantineEnabled $true }
+Quarantines all devices that contain alert with id = "cfdb1201-fd5d-90db-81bb-b66ac9348f14"
 
-Quarantines a Device based on the alert
 .EXAMPLE
-PS > Get-CbcAlert -Include $Criteria | where { Set-CbcDevice -Id $_.DeviceID -QuarantineEnabled $true }
+PS > $IncludeCriteria = @{}
+PS > $IncludeCriteria.type = @("CB_ANALYTICS")
+PS > $IncludeCriteria.minimum_severity = 3
+PS > Get-CbcAlert -Include $IncludeCriteria | foreach { Set-CbcDevice -Id $_.DeviceID -QuarantineEnabled $true }
 
-Quarantines a Device based on the alert
+Quarantines all devices that contain analytics alerts with severity 3 or higher
+.EXAMPLE
+PS > Get-CBCAlert -Category THREAT -MinSeverity
+
+Returns all THREAT alerts with severity equal or higher than 4
+
 .LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api/
 #>
@@ -104,23 +139,43 @@ function Get-CbcAlert {
     [OutputType([CbcAlert[]])]
     param(
         [Parameter(ParameterSetName = "Id", Position = 0)]
-        [array]$Id,
+        [string[]]$Id,
 
         [Parameter(ParameterSetName = "Default")]
+        [string[]]$DeviceId,
+
+        [Parameter(ParameterSetName = "Default")]
+        [string[]]$Category,
+
+        [Parameter(ParameterSetName = "Default")]
+        [string[]]$PolicyName,
+
+        [Parameter(ParameterSetName = "Default")]
+        [string[]]$ThreatId,
+
+        [Parameter(ParameterSetName = "Default")]
+        [string[]]$Type,
+
+        [Parameter(ParameterSetName = "Default")]
+        [int]$MinSeverity,
+
+        [Parameter(ParameterSetName = "IncludeExclude")]
         [hashtable]$Include,
-
-        [Parameter(ParameterSetName = "Default")]
-        [int]$MaxResults = 50,
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "Default")]
-        [CbcServer[]]$Servers
+        [Parameter(ParameterSetName = "IncludeExclude")]
+        [CbcServer[]]$Server,
+
+        [Parameter(ParameterSetName = "Default")]
+		[Parameter(ParameterSetName = "IncludeExclude")]
+		[int32]$MaxResults = 50
     )
 
     process {
 
-        if ($Servers) {
-            $ExecuteServers = $Servers
+        if ($Server) {
+            $ExecuteServers = $Server
         }
         else {
             $ExecuteServers = $global:CBC_CONFIG.currentConnections
@@ -128,6 +183,56 @@ function Get-CbcAlert {
 
         switch ($PSCmdlet.ParameterSetName) {
             "Default" {
+				$ExecuteServers | ForEach-Object {
+					$CurrentServer = $_
+					$RequestBody = @{}
+					$RequestBody.criteria = @{}
+
+					if ($PSBoundParameters.ContainsKey("DeviceId")) {
+						$RequestBody.criteria.device_id = $DeviceId
+					}
+
+					if ($PSBoundParameters.ContainsKey("Category")) {
+						$RequestBody.criteria.category = $Category
+					}
+
+					if ($PSBoundParameters.ContainsKey("PolicyName")) {
+						$RequestBody.criteria.policy_name = $PolicyName
+					}
+
+                    if ($PSBoundParameters.ContainsKey("ProcessName")) {
+						$RequestBody.criteria.process_name = $ProcessName
+					}
+
+                    if ($PSBoundParameters.ContainsKey("ThreatId")) {
+						$RequestBody.criteria.threat_id = $ThreatId
+					}
+
+                    if ($PSBoundParameters.ContainsKey("Type")) {
+						$RequestBody.criteria.type = $Type
+					}
+
+                    if ($PSBoundParameters.ContainsKey("MinSeverity")) {
+						$RequestBody.criteria.minimum_severity = $MinSeverity
+					}
+
+					$RequestBody.rows = $MaxResults
+
+					$RequestBody = $RequestBody | ConvertTo-Json
+
+					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Search"] `
+						-Method POST `
+						-Server $_ `
+						-Body $RequestBody
+
+					$JsonContent = $Response.Content | ConvertFrom-Json
+
+					$JsonContent.results | ForEach-Object {
+						return Initialize-CbcAlert $_ $CurrentServer
+					}
+				}
+			}
+            "IncludeExclude" {
                 $ExecuteServers | ForEach-Object {
                     $CurrentServer = $_
 
@@ -153,15 +258,21 @@ function Get-CbcAlert {
             }
             "Id" {
                 $ExecuteServers | ForEach-Object {
-                    $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Details"] `
-                        -Method GET `
-                        -Server $_ `
-                        -Params $Id
-                    $JsonContent = $Response.Content | ConvertFrom-Json
-                    if ($JsonContent) {
-                        return Initialize-CbcAlert $JsonContent $_
-                    }
-                }
+					$CurrentServer = $_
+					$RequestBody = @{}
+					$RequestBody.rows = $MaxResults
+					$RequestBody.criteria = @{"id" = $Id}
+					$RequestBody = $RequestBody | ConvertTo-Json
+
+					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Search"] `
+						-Method POST `
+						-Server $CurrentServer `
+						-Body $RequestBody
+					$JsonContent = $Response.Content | ConvertFrom-Json
+					$JsonContent.results | ForEach-Object {
+						return Initialize-CbcAlert $_ $CurrentServer
+					}
+				} 
             }
         }
     }

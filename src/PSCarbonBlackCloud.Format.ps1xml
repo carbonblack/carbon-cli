@@ -92,6 +92,11 @@
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
+            <Label>Type</Label>
+            <Width>12</Width>
+            <Alignment>Left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
             <Label>Severity</Label>
             <Width>8</Width>
             <Alignment>Left</Alignment>
@@ -128,6 +133,9 @@
                 <PropertyName>Category</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
+                <PropertyName>Type</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
                 <PropertyName>Severity</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
@@ -137,10 +145,10 @@
                 <PropertyName>DeviceId</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>FirstEvent</PropertyName>
+                <PropertyName>FirstEventTime</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>LastEvent</PropertyName>
+                <PropertyName>LastEventTime</PropertyName>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>
