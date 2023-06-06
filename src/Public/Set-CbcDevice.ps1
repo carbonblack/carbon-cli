@@ -21,41 +21,35 @@ To uninstall the sensor of the device
 .OUTPUTS
 CbcDevice[]
 .EXAMPLE
-PS > Set-CbcDevice -Device $device -Scan
-PS > Get-CbcDevice "ID" | Set-CbcDevice -Scan
+PS > Get-CBCDevice -Id 9187873 | Set-CbcDevice -Scan
 
 Issuing a background scan on the device
 .EXAMPLE
+PS > $device = Get-CBCDevice -Id 9187873
 PS > Set-CbcDevice -Device $device -PauseScan
-PS > Get-CbcDevice "ID" | Set-CbcDevice -PauseScan
 
 Pausing a background scan on the device
 .EXAMPLE
-PS > Set-CbcDevice -Device $device -BypassEnabled $true
-PS > Get-CbcDevice "ID" | Set-CbcDevice -BypassEnabled $false
-
+PS > Set-CbcDevice -Id 9187873 -BypassEnabled $true
 Bypassing the device
+
 .EXAMPLE
-PS > Set-CbcDevice -Device $device -QuarantineEnabled $true
-PS > Get-CbcDevice "ID" | Set-CbcDevice -QuarantineEnabled $false
+PS > Get-CBCDevice 9187873 | Set-CbcDevice -Device $device -QuarantineEnabled $true
 
 Quarantine/Unquarantine the device
+
 .EXAMPLE
 PS > Set-CbcDevice -Device $device -SensorVersion "1.2.3"
-PS > Get-CbcDevice "ID" | Set-CbcDevice -SensorVersion "1.2.3"
 
 Updates the sensor of the device
 .EXAMPLE
 PS > Set-CbcDevice -Device $device -UninstallSensor
-PS > Get-CbcDevice "ID" | Set-CbcDevice -UninstallSensor
 
 Uninstalls the sensor of the device
 .EXAMPLE
-PS > Set-CbcDevice -Device $device -Policy $policy
-PS > Get-CbcDevice "ID" |  Set-CbcDevice -Policy $policy
+PS > Set-CbcDevice -Device $device -Policy (Get-CbcPolicy -Name CompanyStandardPolicy) 
 
 PS > Set-CbcDevice -Device $device -PolicyId 15
-PS > Get-CbcDevice "ID" |  Set-CbcDevice -PolicyId 15
 
 Updates a policy of a device
 .LINK
@@ -63,7 +57,7 @@ API Documentation: https://developer.carbonblack.com/reference/carbon-black-clou
 #>
 
 function Set-CbcDevice {
-	[CmdletBinding(DefaultParameterSetName = "default")]
+	[CmdletBinding(DefaultParameterSetName = "Device")]
 	param(
 
 		[Parameter(ValueFromPipeline = $true,
@@ -72,33 +66,46 @@ function Set-CbcDevice {
 			ParameterSetName = "Device")]
 		[CbcDevice[]]$Device,
 
-		[Parameter(ValueFromPipeline = $true,
+		[Parameter(
+			ValueFromPipeline = $true,
 			Mandatory = $true,
 			Position = 0,
 			ParameterSetName = "Id")]
-		[array]$Id,
+		[int32[]]$Id,
 
 		[ValidateNotNullOrEmpty()]
-		[Parameter(ValueFromPipeline = $true)]
+		[Parameter(ParameterSetName = "Device")]
+		[Parameter(ParameterSetName = "Id")]
 		[CbcPolicy[]]$Policy,
 
 		[ValidateNotNullOrEmpty()]
-		[Parameter(ValueFromPipeline = $true)]
+		[Parameter(ParameterSetName = "Device")]
+		[Parameter(ParameterSetName = "Id")]
 		[array]$PolicyId,
 
 		[ValidateNotNullOrEmpty()]
+		[Parameter(ParameterSetName = "Device")]
+		[Parameter(ParameterSetName = "Id")]
 		[bool]$QuarantineEnabled,
 
 		[ValidateNotNullOrEmpty()]
+		[Parameter(ParameterSetName = "Device")]
+		[Parameter(ParameterSetName = "Id")]
 		[string]$SensorVersion,
 
 		[ValidateNotNullOrEmpty()]
+		[Parameter(ParameterSetName = "Device")]
+		[Parameter(ParameterSetName = "Id")]
 		[switch]$UninstallSensor,
 
 		[ValidateNotNullOrEmpty()]
+		[Parameter(ParameterSetName = "Device")]
+		[Parameter(ParameterSetName = "Id")]
 		[bool]$ScanEnabled,
 
 		[ValidateNotNullOrEmpty()]
+		[Parameter(ParameterSetName = "Device")]
+		[Parameter(ParameterSetName = "Id")]
 		[bool]$BypassEnabled
 	)
 
