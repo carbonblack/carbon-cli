@@ -6,24 +6,24 @@ This cmdlet establishes a connection to the Cbc Server
 .DESCRIPTION
 This cmdlet establishes a connection to the Cbc Server
 Takes `-Server, -Org, -Token` parameters.
-.PARAMETER CbcServer
-Specifies the IP or HTTP addresses of the Cbc Server you want to connect to.
-.PARAMETER Token
-Specifies the Token that is going to be used in the authentication process.
+.PARAMETER Menu
+Connects to a Cbc Server from the list of recently connected servers.
 .PARAMETER Org
 Specifies the Organization that is going to be used in the authentication process.
 .PARAMETER SaveCredentials
 Indicates that you want to save the specified credentials in the local credential store.
-.PARAMETER Menu
-Connects to a Cbc Server from the list of recently connected servers.
+.PARAMETER Server
+Specifies the IP or HTTP addresses of the Cbc Server you want to connect to.
+.PARAMETER Token
+Specifies the Token that is going to be used in the authentication process.
 .OUTPUTS
 CbcServer
 .EXAMPLE
-PS > Connect-CbcServer -CbcServer "http://cbcserver.cbc" -Org "MyOrg" -Token "MyToken"
+PS > Connect-CbcServer -Server "http://cbcserver.cbc" -Org "MyOrg" -Token "MyToken"
 
 Connects with the specified Server, Org, Token and returns a CbcServer Object.
 .EXAMPLE
-PS > Connect-CbcServer -CbcServer "http://cbcserver1.cbc" -Org "MyOrg1" -Token "MyToken1" -SaveCredential
+PS > Connect-CbcServer -Server "http://cbcserver1.cbc" -Org "MyOrg1" -Token "MyToken1" -SaveCredential
 
 Connect with the specified Server, Org, Token, returns a CbcServer Object and saves
 the credentials in the Credential file.
@@ -38,21 +38,21 @@ API Documentation: https://developer.carbonblack.com/reference/carbon-black-clou
 function Connect-CbcServer {
 	[CmdletBinding(DefaultParameterSetName = "default", HelpUri = "http://devnetworketc/")]
 	param(
-		[Parameter(ParameterSetName = "default", Mandatory = $true, Position = 0)]
-		[Alias("Server")]
-		[string]${Uri},
+		[Parameter(ParameterSetName = "menu")]
+		[switch]$Menu,
 
 		[Parameter(ParameterSetName = "default", Mandatory = $true, Position = 1)]
 		[string]${Org},
 
-		[Parameter(ParameterSetName = "default", Mandatory = $true, Position = 2)]
-		[string]${Token},
-
 		[Parameter(ParameterSetName = "default")]
 		[switch]${SaveCredentials},
+		
+		[Parameter(ParameterSetName = "default", Mandatory = $true, Position = 0)]
+		[Alias("Server")]
+		[string]${Uri},
 
-		[Parameter(ParameterSetName = "menu")]
-		[switch]$Menu
+		[Parameter(ParameterSetName = "default", Mandatory = $true, Position = 2)]
+		[string]${Token}
 	)
 
 	begin {
@@ -63,7 +63,6 @@ function Connect-CbcServer {
 
 		# Show the currently connected Cbc servers warning
 		if ($global:CBC_CONFIG.currentConnections.Count -ge 1) {
-
 			# Check if you are already connected to this server
 			$global:CBC_CONFIG.currentConnections | ForEach-Object {
 				if (($_.Uri -eq $Uri) -and ($_.Org -eq $Org)) {

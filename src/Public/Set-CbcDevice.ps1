@@ -4,54 +4,60 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 This cmdlet is used to update, configure and set the state of a device.
 .SYNOPSIS
 This cmdlet is used to update, configure and set the state of a device.
+.PARAMETER BypassEnabled
+Flag whether to bypass the device or disable bypass.
 .PARAMETER Device
 An array of CbcDevice object types.
-.PARAMETER Scan
-To execute a background scan on the device.
-.PARAMETER PauseScan
-To pause a background scan on the device.
-.PARAMETER BypassEnabled
-To bypass the device.
+.PARAMETER Id
+The Id of a specific device on which to perform action.
+.PARAMETER Policy
+To change the policy of device by providing CbcPolicy object.
+.PARAMETER PolicyId
+To change the policy of device by providing Id of policy.
 .PARAMETER QuarantineEnabled
-To quarantine/unquarantine the device.
-.PARAMETER UpdateSensor
+Flag whether to quarantine/unquarantine the device.
+.PARAMETER SensorVersion
 To update the sensor of the device to a specific version.
+.PARAMETER ScanEnabled
+Flag whether to execute a background scan on the device or to disble the scan.
 .PARAMETER UninstallSensor
-To uninstall the sensor of the device
+To uninstall the sensor of the device.
+
 .OUTPUTS
 CbcDevice[]
 .EXAMPLE
-PS > Get-CBCDevice -Id 9187873 | Set-CbcDevice -Scan
+PS > Get-CBCDevice -Id 9187873 | Set-CbcDevice -ScanEnabled $true
 
-Issuing a background scan on the device
+Issuing a background scan on the device.
 .EXAMPLE
 PS > $device = Get-CBCDevice -Id 9187873
-PS > Set-CbcDevice -Device $device -PauseScan
+PS > Set-CbcDevice -Device $device -ScanEnabled $false
 
-Pausing a background scan on the device
+Pausing a background scan on the device.
 .EXAMPLE
 PS > Set-CbcDevice -Id 9187873 -BypassEnabled $true
-Bypassing the device
+
+Bypassing/Disabling bypass of the device.
 
 .EXAMPLE
 PS > Get-CBCDevice 9187873 | Set-CbcDevice -Device $device -QuarantineEnabled $true
 
-Quarantine/Unquarantine the device
+Quarantine/Unquarantine the device.
 
 .EXAMPLE
 PS > Set-CbcDevice -Device $device -SensorVersion "1.2.3"
 
-Updates the sensor of the device
+Updates the sensor of the device to the provided.
 .EXAMPLE
 PS > Set-CbcDevice -Device $device -UninstallSensor
 
-Uninstalls the sensor of the device
+Uninstalls the sensor of the device.
 .EXAMPLE
-PS > Set-CbcDevice -Device $device -Policy (Get-CbcPolicy -Name CompanyStandardPolicy) 
+PS > Set-CbcDevice -Device $device -Policy (Get-CbcPolicy -Id 15)
 
 PS > Set-CbcDevice -Device $device -PolicyId 15
 
-Updates a policy of a device
+Updates a policy of a device either by providing CbcPolicy or directly the Id.
 .LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/
 #>
@@ -59,6 +65,10 @@ API Documentation: https://developer.carbonblack.com/reference/carbon-black-clou
 function Set-CbcDevice {
 	[CmdletBinding(DefaultParameterSetName = "Device")]
 	param(
+		[ValidateNotNullOrEmpty()]
+		[Parameter(ParameterSetName = "Device")]
+		[Parameter(ParameterSetName = "Id")]
+		[bool]$BypassEnabled,
 
 		[Parameter(ValueFromPipeline = $true,
 			Mandatory = $true,
@@ -96,17 +106,12 @@ function Set-CbcDevice {
 		[ValidateNotNullOrEmpty()]
 		[Parameter(ParameterSetName = "Device")]
 		[Parameter(ParameterSetName = "Id")]
-		[switch]$UninstallSensor,
-
-		[ValidateNotNullOrEmpty()]
-		[Parameter(ParameterSetName = "Device")]
-		[Parameter(ParameterSetName = "Id")]
 		[bool]$ScanEnabled,
 
 		[ValidateNotNullOrEmpty()]
 		[Parameter(ParameterSetName = "Device")]
 		[Parameter(ParameterSetName = "Id")]
-		[bool]$BypassEnabled
+		[switch]$UninstallSensor
 	)
 
 	begin {

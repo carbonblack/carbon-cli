@@ -11,8 +11,8 @@ PS > Disconnect-CbcServer *
 
 It disconnects all current connections.
 .EXAMPLE
-PS > $ServerObj = Connect-CbcServer -CbcServer "http://cbcserver.cbc" -Org "1234" -Token "5678"
-PS > $ServerObj1 = Connect-CbcServer -CbcServer "http://cbcserver2.cbc" -Org "1234" -Token "5678"
+PS > $ServerObj = Connect-CbcServer -Server "http://cbcserver.cbc" -Org "1234" -Token "5678"
+PS > $ServerObj1 = Connect-CbcServer -Server "http://cbcserver2.cbc" -Org "1234" -Token "5678"
 PS > Disconnect-CbcServer $ServerObj, $ServerObj1
 
 It disconnects the specified Server Objects from the current connections.
