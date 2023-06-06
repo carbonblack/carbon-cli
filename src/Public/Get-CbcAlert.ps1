@@ -6,44 +6,42 @@ common for the different alert types such as CbAnalytics, Device Control, Watchl
 and is complient with the corrsponding base alert object API schema: 
 .LINK  
 https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api/#fields
-.PARAMETER Id
-https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api/#fields
 .SYNOPSIS
 This cmdlet returns all alerts from all valid connections. The returned CbcAlert object is a "base" alert object, 
 common for the different alert types such as CbAnalytics, Device Control, Watchlist and is complient with the corrsponding
 base alert object API schema: 
 .LINK  
 https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api/#fields
-.PARAMETER Id
-Foilter param: Specify the Id of the alert to retrieve
-.PARAMETER DeviceId
-Filter param: Specify the Id of the device for which to retrieve alerts
 .PARAMETER Category
-Filter param: Specify the category of the alerts to retrieve. Available values: THREAT, MONITORED
+Filter param: Specify the category of the alerts to retrieve. Available values: THREAT, MONITORED.
+.PARAMETER DeviceId
+Filter param: Specify the Id of the device for which to retrieve alerts.
+.PARAMETER Id
+Filter param: Specify the Id of the alert to retrieve.
+.PARAMETER Include
+Sets the criteria for the search.
+.PARAMETER MaxResults
+Set the max number of results (default is 50 and max is 10k).
+.PARAMETER MinSeverity
+Filter param: Specify the minimal severity оf the alerts to retrieve.
 .PARAMETER PolicyName
-Filter param: Specify the name of the policy associated with the device at the time of the alert
+Filter param: Specify the name of the policy associated with the device at the time of the alert.
+.PARAMETER Server
+Sets a specified Cbc Server from the current connections to execute the cmdlet with.
 .PARAMETER ThreatId
 Filter param: Specify the id of the threat belonging to the alerts to retrieve. 
 Threats are comprised of a combination of factors that can be repeated across devices.
 .PARAMETER Type
 Filter param: Specify the Type оf the alerts to retrieve.
-Available values: CB_ANALYTICS, CONTAINER_RUNTIME, DEVICE_CONTROL, HOST_BASED_FIREWALL, WATCHLIST
-.PARAMETER MinSeverity
-Filter param: Specify the minimal severity оf the alerts to retrieve.
-.PARAMETER Include
-Sets the criteria for the search.
-.PARAMETER MaxResults
-Set the max number of results (default is 50 and max is 10k).
-.PARAMETER Server
-Sets a specified Cbc Server from the current connections to execute the cmdlet with.
+Available values: CB_ANALYTICS, CONTAINER_RUNTIME, DEVICE_CONTROL, HOST_BASED_FIREWALL, WATCHLIST.
 .OUTPUTS
 CbcAlert[]
 .NOTES
 .EXAMPLE
 PS > Get-CbcAlert
 
-Returns all alerts from all connected servers. 
-If you have multiple connections and you want alerts from a specific server
+Returns all alerts from all connections. 
+If you have multiple connections and you want alerts from a specific connection
 you can add the `-Server` param.
 
 PS > Get-CbcAlert -Server $SpecifiedServer
@@ -116,7 +114,8 @@ Returns all devices which correspond to the specified include criteria
 
 .EXAMPLE
 PS > Get-CbcAlert -Id "cfdb1201-fd5d-90db-81bb-b66ac9348f14" | foreach { Set-CbcDevice -Id $_.DeviceID -QuarantineEnabled $true }
-Quarantines all devices that contain alert with id = "cfdb1201-fd5d-90db-81bb-b66ac9348f14"
+
+Quarantines all devices that contain alert with id = "cfdb1201-fd5d-90db-81bb-b66ac9348f14".
 
 .EXAMPLE
 PS > $IncludeCriteria = @{}
@@ -126,7 +125,7 @@ PS > Get-CbcAlert -Include $IncludeCriteria | foreach { Set-CbcDevice -Id $_.Dev
 
 Quarantines all devices that contain analytics alerts with severity 3 or higher
 .EXAMPLE
-PS > Get-CBCAlert -Category THREAT -MinSeverity
+PS > Get-CBCAlert -Category THREAT -MinSeverity 4
 
 Returns all THREAT alerts with severity equal or higher than 4
 
@@ -138,29 +137,27 @@ function Get-CbcAlert {
     [CmdletBinding(DefaultParameterSetName = "Default")]
     [OutputType([CbcAlert[]])]
     param(
-        [Parameter(ParameterSetName = "Id", Position = 0)]
-        [string[]]$Id,
-
-        [Parameter(ParameterSetName = "Default")]
-        [string[]]$DeviceId,
-
         [Parameter(ParameterSetName = "Default")]
         [string[]]$Category,
 
         [Parameter(ParameterSetName = "Default")]
-        [string[]]$PolicyName,
+        [string[]]$DeviceId,
+
+        [Parameter(ParameterSetName = "Id", Position = 0)]
+        [string[]]$Id,
+
+        [Parameter(ParameterSetName = "IncludeExclude")]
+        [hashtable]$Include,
 
         [Parameter(ParameterSetName = "Default")]
-        [string[]]$ThreatId,
-
-        [Parameter(ParameterSetName = "Default")]
-        [string[]]$Type,
+		[Parameter(ParameterSetName = "IncludeExclude")]
+		[int32]$MaxResults = 50,
 
         [Parameter(ParameterSetName = "Default")]
         [int]$MinSeverity,
 
-        [Parameter(ParameterSetName = "IncludeExclude")]
-        [hashtable]$Include,
+        [Parameter(ParameterSetName = "Default")]
+        [string[]]$PolicyName,
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "Default")]
@@ -168,8 +165,10 @@ function Get-CbcAlert {
         [CbcServer[]]$Server,
 
         [Parameter(ParameterSetName = "Default")]
-		[Parameter(ParameterSetName = "IncludeExclude")]
-		[int32]$MaxResults = 50
+        [string[]]$ThreatId,
+
+        [Parameter(ParameterSetName = "Default")]
+        [string[]]$Type
     )
 
     process {
