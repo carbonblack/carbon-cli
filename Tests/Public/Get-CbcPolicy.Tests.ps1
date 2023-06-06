@@ -37,6 +37,21 @@ Describe "Get-CbcPolicy" {
                 $Policy[0].Name | Should -Be "Standard"
                 $Policy[0].Server | Should -Be $s1
             }
+
+            It "Should not return policies, but exception" {
+                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                    @{
+                        StatusCode = 500
+                        Content    = ""
+                    }
+                } -ParameterFilter {
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Policies"]["Search"] -and
+                    $Method -eq "GET" -and
+                    $Server -eq $s1
+                }
+
+                {Get-CbcPolicy -ErrorAction Stop} | Should -Throw
+            }
         }
 
         Context "When using multiple connections" {

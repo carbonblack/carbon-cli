@@ -3,7 +3,7 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 .DESCRIPTION
 This cmdlet returns an overview of the available policies.
 .PARAMETER Server
-Sets a specified CBC Server from the current connections to execute the cmdlet with.
+Sets a specified Cbc Server from the current connections to execute the cmdlet against.
 .OUTPUTS
 CbcPolicy[]
 .EXAMPLE
@@ -11,7 +11,7 @@ PS > Get-CbcPolicy
 
 Returns all policies from every connection.
 
-If you have multiple connections and you want policies from a specific server
+If you have multiple connections and you want policies from a specific connection
 you can add the `-Server` param.
 
 PS > Get-CbcPolicy -Server $SpecifiedServer
@@ -44,9 +44,15 @@ function Get-CbcPolicy {
             $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Policies"]["Search"] `
                 -Method GET `
                 -Server $_
-            $JsonContent = $Response.Content | ConvertFrom-Json
-            $JsonContent.policies | ForEach-Object {
-                return Initialize-CbcPolicy $_ $CurrentServer
+
+            if ($Response.StatusCode -ne 200) {
+                Write-Error -Message $("Cannot get policies for $($_)")
+            }
+            else {
+                $JsonContent = $Response.Content | ConvertFrom-Json
+                $JsonContent.policies | ForEach-Object {
+                    return Initialize-CbcPolicy $_ $CurrentServer
+                }
             }
         }
     }
