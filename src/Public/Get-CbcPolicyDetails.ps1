@@ -28,9 +28,9 @@ function Get-CbcPolicyDetails {
     param(
         [Parameter(
             ValueFromPipeline = $true,
-			Mandatory = $true,
-			Position = 0)]
-		[long[]]$Id,
+            Mandatory = $true,
+            Position = 0)]
+        [long[]]$Id,
         [CbcServer[]]$Server
     )
 
@@ -52,9 +52,9 @@ function Get-CbcPolicyDetails {
                 Write-Debug "Retrieving policy details for policy with id: $_ "
 
                 $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Policies"]["Details"] `
-                -Method GET `
-                -Server $CurrentServer `
-                -Params $_
+                    -Method GET `
+                    -Server $CurrentServer `
+                    -Params $_
 
                 if ($Response.StatusCode -ne 200) {
                     Write-Error -Message $("Cannot get policies for $($CurrentServer)")

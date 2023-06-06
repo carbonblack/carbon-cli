@@ -198,9 +198,9 @@ function Get-CbcDevice {
 						-Body $RequestBody
 
 					if ($Response.StatusCode -ne 200) {
-				        Write-Error -Message $("Cannot get devices for $($_)")
-			        }
-			        else {
+						Write-Error -Message $("Cannot get devices for $($_)")
+					}
+					else {
 						$JsonContent = $Response.Content | ConvertFrom-Json
 
 						$JsonContent.results | ForEach-Object {
@@ -230,9 +230,9 @@ function Get-CbcDevice {
 						-Body $RequestBody
 
 					if ($Response.StatusCode -ne 200) {
-				        Write-Error -Message $("Cannot get devices for $($_)")
-			        }
-			        else {
+						Write-Error -Message $("Cannot get devices for $($_)")
+					}
+					else {
 						$JsonContent = $Response.Content | ConvertFrom-Json
 
 						$JsonContent.results | ForEach-Object {
@@ -246,7 +246,7 @@ function Get-CbcDevice {
 					$CurrentServer = $_
 					$RequestBody = @{}
 					$RequestBody.rows = $MaxResults
-					$RequestBody.criteria = @{"id" = $Id}
+					$RequestBody.criteria = @{"id" = $Id }
 					$RequestBody = $RequestBody | ConvertTo-Json
 
 					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Devices"]["Search"] `
@@ -255,9 +255,9 @@ function Get-CbcDevice {
 						-Body $RequestBody
 					
 					if ($Response.StatusCode -ne 200) {
-				        Write-Error -Message $("Cannot get devices for $($_)")
-			        }
-			        else {
+						Write-Error -Message $("Cannot get devices for $($_)")
+					}
+					else {
 						$JsonContent = $Response.Content | ConvertFrom-Json
 						$JsonContent.results | ForEach-Object {
 							return Initialize-CbcDevice $_ $CurrentServer

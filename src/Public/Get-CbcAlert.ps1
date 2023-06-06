@@ -150,8 +150,8 @@ function Get-CbcAlert {
         [hashtable]$Include,
 
         [Parameter(ParameterSetName = "Default")]
-		[Parameter(ParameterSetName = "IncludeExclude")]
-		[int32]$MaxResults = 50,
+        [Parameter(ParameterSetName = "IncludeExclude")]
+        [int32]$MaxResults = 50,
 
         [Parameter(ParameterSetName = "Default")]
         [int]$MinSeverity,
@@ -182,56 +182,56 @@ function Get-CbcAlert {
 
         switch ($PSCmdlet.ParameterSetName) {
             "Default" {
-				$ExecuteServers | ForEach-Object {
-					$CurrentServer = $_
-					$RequestBody = @{}
-					$RequestBody.criteria = @{}
+                $ExecuteServers | ForEach-Object {
+                    $CurrentServer = $_
+                    $RequestBody = @{}
+                    $RequestBody.criteria = @{}
 
-					if ($PSBoundParameters.ContainsKey("DeviceId")) {
-						$RequestBody.criteria.device_id = $DeviceId
-					}
+                    if ($PSBoundParameters.ContainsKey("DeviceId")) {
+                        $RequestBody.criteria.device_id = $DeviceId
+                    }
 
-					if ($PSBoundParameters.ContainsKey("Category")) {
-						$RequestBody.criteria.category = $Category
-					}
+                    if ($PSBoundParameters.ContainsKey("Category")) {
+                        $RequestBody.criteria.category = $Category
+                    }
 
-					if ($PSBoundParameters.ContainsKey("PolicyName")) {
-						$RequestBody.criteria.policy_name = $PolicyName
-					}
+                    if ($PSBoundParameters.ContainsKey("PolicyName")) {
+                        $RequestBody.criteria.policy_name = $PolicyName
+                    }
 
                     if ($PSBoundParameters.ContainsKey("ThreatId")) {
-						$RequestBody.criteria.threat_id = $ThreatId
-					}
+                        $RequestBody.criteria.threat_id = $ThreatId
+                    }
 
                     if ($PSBoundParameters.ContainsKey("Type")) {
-						$RequestBody.criteria.type = $Type
-					}
+                        $RequestBody.criteria.type = $Type
+                    }
 
                     if ($PSBoundParameters.ContainsKey("MinSeverity")) {
-						$RequestBody.criteria.minimum_severity = $MinSeverity
-					}
+                        $RequestBody.criteria.minimum_severity = $MinSeverity
+                    }
 
-					$RequestBody.rows = $MaxResults
+                    $RequestBody.rows = $MaxResults
 
-					$RequestBody = $RequestBody | ConvertTo-Json
+                    $RequestBody = $RequestBody | ConvertTo-Json
 
-					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Search"] `
-						-Method POST `
-						-Server $_ `
-						-Body $RequestBody
+                    $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Search"] `
+                        -Method POST `
+                        -Server $_ `
+                        -Body $RequestBody
 
                     if ($Response.StatusCode -ne 200) {
-				        Write-Error -Message $("Cannot get alerts for $($_)")
-			        }
-			        else {
+                        Write-Error -Message $("Cannot get alerts for $($_)")
+                    }
+                    else {
                         $JsonContent = $Response.Content | ConvertFrom-Json
 
                         $JsonContent.results | ForEach-Object {
                             return Initialize-CbcAlert $_ $CurrentServer
                         }
                     }
-				}
-			}
+                }
+            }
             "IncludeExclude" {
                 $ExecuteServers | ForEach-Object {
                     $CurrentServer = $_
@@ -250,9 +250,9 @@ function Get-CbcAlert {
                         -Body $RequestBody
 
                     if ($Response.StatusCode -ne 200) {
-				        Write-Error -Message $("Cannot get alerts for $($_)")
-			        }
-			        else {
+                        Write-Error -Message $("Cannot get alerts for $($_)")
+                    }
+                    else {
                         $JsonContent = $Response.Content | ConvertFrom-Json
 
                         $JsonContent.results | ForEach-Object {
@@ -263,27 +263,27 @@ function Get-CbcAlert {
             }
             "Id" {
                 $ExecuteServers | ForEach-Object {
-					$CurrentServer = $_
-					$RequestBody = @{}
-					$RequestBody.rows = $MaxResults
-					$RequestBody.criteria = @{"id" = $Id}
-					$RequestBody = $RequestBody | ConvertTo-Json
+                    $CurrentServer = $_
+                    $RequestBody = @{}
+                    $RequestBody.rows = $MaxResults
+                    $RequestBody.criteria = @{"id" = $Id }
+                    $RequestBody = $RequestBody | ConvertTo-Json
 
-					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Search"] `
-						-Method POST `
-						-Server $CurrentServer `
-						-Body $RequestBody
+                    $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Search"] `
+                        -Method POST `
+                        -Server $CurrentServer `
+                        -Body $RequestBody
                     
                     if ($Response.StatusCode -ne 200) {
-				        Write-Error -Message $("Cannot get alerts for $($_)")
-			        }
-			        else {
+                        Write-Error -Message $("Cannot get alerts for $($_)")
+                    }
+                    else {
                         $JsonContent = $Response.Content | ConvertFrom-Json
                         $JsonContent.results | ForEach-Object {
                             return Initialize-CbcAlert $_ $CurrentServer
                         }
                     }
-				} 
+                } 
             }
         }
     }
