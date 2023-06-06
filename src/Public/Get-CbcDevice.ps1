@@ -4,26 +4,34 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 This cmdlet returns all devices or a specific device.
 .SYNOPSIS
 This cmdlet returns all devices or a specific device.
+.PARAMETER Exclude
+Sets the exclusions for the search.
 .PARAMETER Id
 Returns the devices with the specified Ids.
 .PARAMETER Include
 Sets the criteria for the search.
-.PARAMETER Exclude
-Sets the exclusions for the search.
-.PARAMETER Os
-Specifies the Operating system to match
 .PARAMETER MaxResults
 Set the max number of results (default is 50 and max is 10k).
+.PARAMETER Os
+Specifies the Operating system to match.
+Supported Os values: WINDOWS, LINUX, CENTOS, RHEL, ORACLE, SLES AMAZON_LINUX, SUSE, UBUNTU.
 .PARAMETER Server
-Sets a specified Cbc Server from the current connections to execute the cmdletagainst.
+Sets a specified Cbc Server from the current connections to execute the cmdlet against.
+.PARAMETER Status
+Specifies the status to match.
+Supported Status values: PENDING, REGISTERED, UNINSTALLED, DEREGISTERED, ACTIVE, INACTIVE, ERROR, ALL, BYPASS_ON,
+BYPASS, QUARANTINE, SENSOR_OUTOFDATE, DELETED, LIVE.
+.PARAMETER TargetPriority
+Specifies the Target priority to match.
+Supported Target priority values: LOW, MEDIUM, HIGH, MISSION_CRITICAL.
 .OUTPUTS
 CbcDevice[]
 .EXAMPLE
 PS > Get-CbcDevice
 
-Returns all devices
+Returns all devices.
 
-If you have multiple connections and you want devices from a specific server
+If you have multiple connections and you want devices from a specific connection
 you can add the `-Server` param.
 
 PS > Get-CbcDevice -Server $SpecifiedServer
@@ -31,22 +39,22 @@ PS > Get-CbcDevice -Server $SpecifiedServer
 .EXAMPLE
 PS > Get-CbcDevice -Id 2345,7368
 
-Return devices with the specified Ids
+Returns devices with the specified Ids
 
 .EXAMPLE
 PS > Get-CbcDevice -Os Windows,Linux
 
-Return the devices with either Windows or Linux operating systems. Supported Os values: WINDOWS, LINUX, CENTOS, RHEL, ORACLE, SLES AMAZON_LINUX, SUSE, UBUNTU
+Returns the devices with either Windows or Linux operating systems.
 
 .EXAMPLE
 PS > Get-CbcDevice -Os Windows -Status REGISTERED
 
-Return all Windows devices that are in status: REGISTERED. Supported Status values: PENDING, REGISTERED, UNINSTALLED, DEREGISTERED, ACTIVE, INACTIVE, ERROR, ALL, BYPASS_ON, BYPASS, QUARANTINE, SENSOR_OUTOFDATE, DELETED, LIVE
+Returns all Windows devices that are in status: REGISTERED.
 
 .EXAMPLE
 PS > Get-CbcDevice -Os Linux -Priority HIGH -Status ERROR
 
-Return all Linux devices devices that are in status ERROR and have HIGH priority. Supported Priority values: LOW, MEDIUM, HIGH, MISSION_CRITICAL
+Returns all Linux devices devices that are in status ERROR and have HIGH priority.
 
 .EXAMPLE
 $IncludeCriteria = @{
@@ -88,19 +96,22 @@ Currently only the `sensor_version` is supported as an exclusion field.
 $ExcludeCriteria = @{
     "sensor_version" = @("<string>")
 }
-Both Include and Exclude parameters expect a hash table object
 
+Both Include and Exclude parameters expect a hash table object.
+
+PS > $ExcludeCriteria = @{"sensor_version" = @("windows:3.9.2.2637")}
+PS > $IncludeCriteria = @{"os" = @("WINDOWS")}
 PS > Get-CbcDevice -Include $IncludeCriteria -Exclude $ExcludeCriteria -MaxResults 50
 
-PS > Get-CbcDevice -Include @{"os"= @("Linux")
->>  "target_priority" = @("Low")}
+Get all windows devices that are not on sensor version 3.9.2.2637. The sensor version should be passed in the format:
+<os>:#.#.#.#.
 
 PS > $IncludeCriteria = @{}
 PS > $IncludeCriteria.os = @("Linux")
 PS > $IncludeCriteria.target_priority = @("Low")
-Get-CbcDevice -Include $IncludeCriteria
+PS > Get-CbcDevice -Include $IncludeCriteria
 
-Returns all devices which correspond to the specified include criteria
+Returns all devices which correspond to the specified include criteria.
 
 .LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/
@@ -111,9 +122,18 @@ function Get-CbcDevice {
 	[CmdletBinding(DefaultParameterSetName = "Default")]
 	[OutputType([CbcDevice[]])]
 	param(
+		[Parameter(ParameterSetName = "IncludeExclude")]
+		[hashtable]$Exclude,
 
 		[Parameter(ParameterSetName = "Id", Position = 0)]
 		[long[]]$Id,
+
+		[Parameter(ParameterSetName = "IncludeExclude")]
+		[hashtable]$Include,
+
+		[Parameter(ParameterSetName = "Default")]
+		[Parameter(ParameterSetName = "IncludeExclude")]
+		[int32]$MaxResults = 50,
 
 		[Parameter(ParameterSetName = "Default")]
 		[string[]]$Os,
@@ -122,25 +142,15 @@ function Get-CbcDevice {
 		[string[]]$OsVersion,
 
 		[Parameter(ParameterSetName = "Default")]
-		[string[]]$Status,
-
-		[Parameter(ParameterSetName = "Default")]
-		[string[]]$TargetPriority,
-
-		[Parameter(ParameterSetName = "IncludeExclude")]
-		[hashtable]$Include,
-
-		[Parameter(ParameterSetName = "IncludeExclude")]
-		[hashtable]$Exclude,
-
-		[Parameter(ParameterSetName = "Default")]
 		[Parameter(ParameterSetName = "IncludeExclude")]
 		[Parameter(ParameterSetName = "Id")]
 		[CbcServer[]]$Server,
 
 		[Parameter(ParameterSetName = "Default")]
-		[Parameter(ParameterSetName = "IncludeExclude")]
-		[int32]$MaxResults = 50
+		[string[]]$Status,
+
+		[Parameter(ParameterSetName = "Default")]
+		[string[]]$TargetPriority
 	)
 
 	begin {
@@ -187,10 +197,15 @@ function Get-CbcDevice {
 						-Server $_ `
 						-Body $RequestBody
 
-					$JsonContent = $Response.Content | ConvertFrom-Json
+					if ($Response.StatusCode -ne 200) {
+				        Write-Error -Message $("Cannot get devices for $($_)")
+			        }
+			        else {
+						$JsonContent = $Response.Content | ConvertFrom-Json
 
-					$JsonContent.results | ForEach-Object {
-						return Initialize-CbcDevice $_ $CurrentServer
+						$JsonContent.results | ForEach-Object {
+							return Initialize-CbcDevice $_ $CurrentServer
+						}
 					}
 				}
 			}
@@ -214,10 +229,15 @@ function Get-CbcDevice {
 						-Server $_ `
 						-Body $RequestBody
 
-					$JsonContent = $Response.Content | ConvertFrom-Json
+					if ($Response.StatusCode -ne 200) {
+				        Write-Error -Message $("Cannot get devices for $($_)")
+			        }
+			        else {
+						$JsonContent = $Response.Content | ConvertFrom-Json
 
-					$JsonContent.results | ForEach-Object {
-						return Initialize-CbcDevice $_ $CurrentServer
+						$JsonContent.results | ForEach-Object {
+							return Initialize-CbcDevice $_ $CurrentServer
+						}
 					}
 				}
 			}
@@ -233,9 +253,15 @@ function Get-CbcDevice {
 						-Method POST `
 						-Server $_ `
 						-Body $RequestBody
-					$JsonContent = $Response.Content | ConvertFrom-Json
-					$JsonContent.results | ForEach-Object {
-						return Initialize-CbcDevice $_ $CurrentServer
+					
+					if ($Response.StatusCode -ne 200) {
+				        Write-Error -Message $("Cannot get devices for $($_)")
+			        }
+			        else {
+						$JsonContent = $Response.Content | ConvertFrom-Json
+						$JsonContent.results | ForEach-Object {
+							return Initialize-CbcDevice $_ $CurrentServer
+						}
 					}
 				}
 			}

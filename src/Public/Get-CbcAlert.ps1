@@ -220,11 +220,16 @@ function Get-CbcAlert {
 						-Server $_ `
 						-Body $RequestBody
 
-					$JsonContent = $Response.Content | ConvertFrom-Json
+                    if ($Response.StatusCode -ne 200) {
+				        Write-Error -Message $("Cannot get alerts for $($_)")
+			        }
+			        else {
+                        $JsonContent = $Response.Content | ConvertFrom-Json
 
-					$JsonContent.results | ForEach-Object {
-						return Initialize-CbcAlert $_ $CurrentServer
-					}
+                        $JsonContent.results | ForEach-Object {
+                            return Initialize-CbcAlert $_ $CurrentServer
+                        }
+                    }
 				}
 			}
             "IncludeExclude" {
@@ -244,10 +249,15 @@ function Get-CbcAlert {
                         -Server $_ `
                         -Body $RequestBody
 
-                    $JsonContent = $Response.Content | ConvertFrom-Json
+                    if ($Response.StatusCode -ne 200) {
+				        Write-Error -Message $("Cannot get alerts for $($_)")
+			        }
+			        else {
+                        $JsonContent = $Response.Content | ConvertFrom-Json
 
-                    $JsonContent.results | ForEach-Object {
-                        return Initialize-CbcAlert $_ $CurrentServer
+                        $JsonContent.results | ForEach-Object {
+                            return Initialize-CbcAlert $_ $CurrentServer
+                        }
                     }
                 }
             }
@@ -263,10 +273,16 @@ function Get-CbcAlert {
 						-Method POST `
 						-Server $CurrentServer `
 						-Body $RequestBody
-					$JsonContent = $Response.Content | ConvertFrom-Json
-					$JsonContent.results | ForEach-Object {
-						return Initialize-CbcAlert $_ $CurrentServer
-					}
+                    
+                    if ($Response.StatusCode -ne 200) {
+				        Write-Error -Message $("Cannot get alerts for $($_)")
+			        }
+			        else {
+                        $JsonContent = $Response.Content | ConvertFrom-Json
+                        $JsonContent.results | ForEach-Object {
+                            return Initialize-CbcAlert $_ $CurrentServer
+                        }
+                    }
 				} 
             }
         }

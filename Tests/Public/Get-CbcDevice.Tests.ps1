@@ -78,6 +78,24 @@ Describe "Get-CbcDevice" {
 					$devices[2].id | Should -Be 3
 				}
 			}
+
+			Context "When returning error from the API" {
+				It "Should not return any devices but an error" {
+					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+						@{
+							StatusCode = 500
+							Content    = ""
+						}
+					} -ParameterFilter {
+						$Server -eq $s1 -and
+						$Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Search"] -and
+						$Method -eq "POST" -and
+						($Body | ConvertFrom-Json).rows -eq 50
+					}
+
+					{Get-CbcDevice -ErrorAction Stop} | Should -Throw
+				}
+			}
 		}
 
 		Context "When using multiple connection" {
@@ -159,6 +177,30 @@ Describe "Get-CbcDevice" {
 					$devices.Count | Should -Be 1
 					$devices[0].Server | Should -Be $s1
 					$devices[0].os | Should -Be "WINDOWS"
+				}
+			}
+
+			Context "When using the -Exclude parameter - exception" {
+				It "Should return the devices according to the exclusion - exception" {
+					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+						@{
+							StatusCode = 500
+							Content    = ""
+						}
+					} -ParameterFilter {
+						$Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Search"] -and
+						$Method -eq "POST" -and
+						$Server -eq $s1 -and
+						(
+							($Body | ConvertFrom-Json).rows -eq 50 -and
+							($Body | ConvertFrom-Json).exclusions.sensor_version[0] -eq "windows:1.0.0"
+						)
+					}
+
+					$Exclusions = @{
+						"sensor_version" = @("windows:1.0.0")
+					}
+					{Get-CbcDevice -Exclude $Exclusions -ErrorAction Stop} | Should -Throw
 				}
 			}
 
