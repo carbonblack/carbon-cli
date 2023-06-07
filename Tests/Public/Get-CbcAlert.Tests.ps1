@@ -20,6 +20,24 @@ Describe "Get-CbcAlert" {
 				$global:CBC_CONFIG.currentConnections.Add($s1) | Out-Null
 			}
 
+			Context "When raising exception from get alerts" {
+				It "Should write an error based on the exception that is returned" {
+					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+						@{
+							StatusCode = 500
+							Content    = ""
+						}
+					} -ParameterFilter {
+						$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Search"] -and
+						$Server -eq $s1 -and
+						$Method -eq "POST" -and
+						($Body | ConvertFrom-Json).rows -eq 50
+					}
+
+					{ Get-CbcAlert -ErrorAction Stop } | Should -Throw
+				}
+			}
+
 			Context "When not using any params" {
 				It "Should return all the alerts within the current connection" {
 					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
@@ -116,6 +134,28 @@ Describe "Get-CbcAlert" {
 
 					$alerts[0].category | Should -Be "MONITORED"
 					$alerts[0].Server | Should -Be $s1
+				}
+
+				It "Should not return alerts, but exception" {
+					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+						@{
+							StatusCode = 500
+							Content    = ""
+						}
+					} -ParameterFilter {
+						$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Search"] -and
+						$Method -eq "POST" -and
+						$Server -eq $s1 -and
+						(
+							($Body | ConvertFrom-Json).rows -eq 50 -and
+							($Body | ConvertFrom-Json).criteria.category -eq "MONITORED"
+						)
+					}
+
+					$Criteria = @{
+						"category" = "MONITORED"
+					}
+					{Get-CbcAlert -Include $Criteria -ErrorAction Stop} | Should -Throw
 				}
 			}
 
@@ -310,6 +350,22 @@ Describe "Get-CbcAlert" {
 				$alerts.Count | Should -Be 1
 				$alerts[0].Id | Should -Be "1"
 				$alerts[0].Server | Should -Be $s1
+			}
+
+			It "Should not return alerts but exception" {
+				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					@{
+						StatusCode = 500
+						Content    = ""
+					}
+				} -ParameterFilter {
+					$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Search"] -and
+					$Method -eq "POST" -and
+					$Server -eq $s1
+					($Body | ConvertFrom-Json).criteria.id -eq 1
+				}
+
+				{Get-CbcAlert -Id "1" -ErrorAction Stop} | Should -Throw
 			}
 
 			It "Should return alerts with the same id without '-Id' param" {
