@@ -46,7 +46,7 @@ you can add the `-Server` param.
 
 PS > Get-CbcAlert -Server $SpecifiedServer
 .EXAMPLE
-PS > Get-CBCAlert -Id "11a1a1a1-b22b-3333-44cc-dd5555d5d55d", "924a237d-443c-4965-b5b2-6fffcdff1d5b"
+PS > Get-CbcAlert -Id "11a1a1a1-b22b-3333-44cc-dd5555d5d55d", "924a237d-443c-4965-b5b2-6fffcdff1d5b"
 
 Returns the alerts with specified Ids.
 
@@ -98,7 +98,7 @@ $criteria = @{
 
 Include parameters expect a hash table object
 
-PS > Get-CBCAlert -Include $Criteria
+PS > Get-CbcAlert -Include $Criteria
 
 Returns all alerts which correspond to the specified criteria.
 
@@ -125,7 +125,7 @@ PS > Get-CbcAlert -Include $IncludeCriteria | foreach { Set-CbcDevice -Id $_.Dev
 
 Quarantines all devices that contain analytics alerts with severity 3 or higher
 .EXAMPLE
-PS > Get-CBCAlert -Category THREAT -MinSeverity 4
+PS > Get-CbcAlert -Category THREAT -MinSeverity 4
 
 Returns all THREAT alerts with severity equal or higher than 4
 

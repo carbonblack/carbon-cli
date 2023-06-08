@@ -24,7 +24,7 @@ function Get-CbcPolicy {
     [CmdletBinding()]
     [OutputType([CbcPolicy[]])]
     param(
-        [CBCServer]$Server
+        [CbcServer]$Server
     )
 
     begin {
