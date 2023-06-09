@@ -360,3 +360,25 @@ class CbcAlert{
 		$this.Server = $Server_
 	}
 }
+
+class CbcObservation{
+	# TODO - add more fields
+	[string]$AlertCategory
+	[array]$AlertId
+	[string]$ObservationId
+	[CbcServer]$Server
+
+	CbcObservation (
+		# TODO
+		[string]$AlertCategory_,
+		[array]$AlertId_,
+		[string]$ObservationId_,
+		[CbcServer]$Server_
+	) {
+		# TODO
+		$this.AlertCategory = $AlertCategory_
+		$this.AlertId = $AlertId_
+		$this.ObservationId = $ObservationId_
+		$this.Server = $Server_
+	}
+}
