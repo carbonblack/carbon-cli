@@ -129,10 +129,10 @@ function Get-CbcObservation {
                         # if contacted and completed are equal, this means we could get the results
                         while ($Contacted -ne $Completed) {
                             # sleep 0.5 to give it time to retrieve the results - it might still not be enough,
-                            # so keep checking for 5 seconds before timeout
+                            # so keep checking for 3 mins before timeout
                             $TimeOut += 0.5
                             Start-Sleep -Seconds 0.5
-                            if ($TimeOut -gt 5) {
+                            if ($TimeOut -gt 180) {
                                 $TimeOutFlag = true
                                 Write-Error -Message $("Cannot retrieve observations due to timeout for $($_)")
                                 break
@@ -197,10 +197,10 @@ function Get-CbcObservation {
                         # if contacted and completed are equal, this means we could get the results
                         while ($Contacted -ne $Completed) {
                             # sleep 0.5 to give it time to retrieve the results - it might still not be enough,
-                            # so keep checking for 5 seconds before timeout
+                            # so keep checking for 180 before timeout
                             $TimeOut += 0.5
                             Start-Sleep -Seconds 0.5
-                            if ($TimeOut -gt 5) {
+                            if ($TimeOut -gt 180) {
                                 $TimeOutFlag = true
                                 Write-Error -Message $("Cannot retrieve observations due to timeout for $($_)")
                                 break
@@ -261,10 +261,10 @@ function Get-CbcObservation {
                         # if contacted and completed are equal, this means we could get the results
                         while ($Contacted -ne $Completed) {
                             # sleep 0.5 to give it time to retrieve the results - it might still not be enough,
-                            # so keep checking for 5 seconds before timeout
+                            # so keep checking for 3 mins before timeout
                             $TimeOut += 0.5
                             Start-Sleep -Seconds 0.5
-                            if ($TimeOut -gt 5) {
+                            if ($TimeOut -gt 180) {
                                 $TimeOutFlag = true
                                 Write-Error -Message $("Cannot retrieve observations due to timeout for $($_)")
                                 break
