@@ -15,6 +15,7 @@ function Initialize-CbcObservation {
         $Response.alert_category,
         $Response.alert_id,
         $Response.observation_id,
+        $Response.device_id,
         $Server
     )
 }

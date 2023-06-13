@@ -366,6 +366,7 @@ class CbcObservation{
 	[string]$AlertCategory
 	[array]$AlertId
 	[string]$ObservationId
+	[string]$DeviceId
 	[CbcServer]$Server
 
 	CbcObservation (
@@ -373,12 +374,14 @@ class CbcObservation{
 		[string]$AlertCategory_,
 		[array]$AlertId_,
 		[string]$ObservationId_,
+		[string]$DeviceId_,
 		[CbcServer]$Server_
 	) {
 		# TODO
 		$this.AlertCategory = $AlertCategory_
 		$this.AlertId = $AlertId_
 		$this.ObservationId = $ObservationId_
+		$this.DeviceId = $DeviceId_
 		$this.Server = $Server_
 	}
 }
