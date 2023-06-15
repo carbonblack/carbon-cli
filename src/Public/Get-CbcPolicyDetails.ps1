@@ -43,7 +43,7 @@ function Get-CbcPolicyDetails {
             $ExecuteServers = $Server
         }
         else {
-            $ExecuteServers = $global:CBC_CONFIG.currentConnections
+            $ExecuteServers = $global:DefaultCbcServers
         }
         $ExecuteServers | ForEach-Object {
             Write-Debug "Retrieving policies from $_ server"
