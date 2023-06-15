@@ -37,7 +37,7 @@ function Disconnect-CbcServer {
 	process {
 		# Use case: PS > Disconnect-CbcServer *
 		if ($CbcServer -eq '*') {
-			$CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
+			$global:DefaultCbcServers = [System.Collections.ArrayList]@()
 		}
 		# Use case: PS > Disconnect-CbcServer array<CbcServer | string>
 		elseif ($CbcServer -is [array]) {
@@ -49,7 +49,7 @@ function Disconnect-CbcServer {
 			# Use case: PS > Disconnect-CbcServer $Server1, $Server2
 			if ($CbcServer[0] -is [CbcServer]) {
 				$CbcServer | ForEach-Object {
-					$CBC_CONFIG.currentConnections.Remove($_)
+					$global:DefaultCbcServers.Remove($_)
 				}
 			}
 
@@ -57,23 +57,23 @@ function Disconnect-CbcServer {
 			# # Use case: PS > Disconnect-CbcServer "http://cbcserver.cbc", "http://cbcserver2.cbc"
 			if ($CbcServer[0] -is [string]) {
 				foreach ($Server in $CbcServer) {
-					$TempCurrentConnections = $CBC_CONFIG.currentConnections | Where-Object { $_.Uri -eq $Server }
+					$TempCurrentConnections = $global:DefaultCbcServers | Where-Object { $_.Uri -eq $Server }
 					foreach ($c in $TempCurrentConnections) {
-						$CBC_CONFIG.currentConnections.Remove($c)
+						$global:DefaultCbcServers.Remove($c)
 					}
 				}
 			}
 		}
 		# Use case: PS > Disconnect-CbcServer $Server
 		elseif ($CbcServer -is [CbcServer]) {
-			$CBC_CONFIG.currentConnections.Remove($CbcServer)
+			$global:DefaultCbcServers.Remove($CbcServer)
 		}
 		# Use case: PS > Disconnect-CbcServer <string>
 		elseif ($CbcServer -is [string]) {
 
-			$Temp = $CBC_CONFIG.currentConnections | Where-Object { $_.Uri -eq $CbcServer }
+			$Temp = $global:DefaultCbcServers | Where-Object { $_.Uri -eq $CbcServer }
 			foreach ($c in $Temp) {
-				$CBC_CONFIG.currentConnections.Remove($c)
+				$global:DefaultCbcServers.Remove($c)
 			}
 		}
 	}

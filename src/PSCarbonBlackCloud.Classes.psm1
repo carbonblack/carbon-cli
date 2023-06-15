@@ -1,23 +1,34 @@
 class CbcServer{
 	[ValidateNotNullOrEmpty()] [string]$Uri
 	[ValidateNotNullOrEmpty()] [string]$Org
-	[ValidateNotNullOrEmpty()] [string]$Token
+	[ValidateNotNullOrEmpty()] [SecureString]$Token
+	[string]$Notes
 
 	[string] ToString () {
 		return "[" + $this.Org + "] " + $this.Uri
 	}
 
-	CbcServer ([string]$Uri_,[string]$Org_,[string]$Token_) {
+	CbcServer ([string]$Uri_,[string]$Org_,[SecureString]$Token_, [string]$Notes_) {
 		$this.Uri = $Uri_
 		$this.Org = $Org_
 		$this.Token = $Token_
+		$this.Notes = $Notes_
+
 	}
 
-	[bool] IsConnected () {
-		$global:CBC_CONFIG.currentConnections | ForEach-Object {
-			if (($this.Uri -eq $_.Uri) -and
-				($this.Org -eq $_.Org) -and
-				($this.Token -eq $_.Token)) {
+	CbcServer ([string]$Uri_,[string]$Org_,[SecureString]$Token_) {
+		$this.Uri = $Uri_
+		$this.Org = $Org_
+		$this.Token = $Token_
+		$this.Notes = ""
+
+	}
+
+	
+	[bool] IsConnected ($defaultServers) {
+		foreach ($defaultServer in $defaultServers) {
+			if (($this.Uri -eq $defaultServer.Uri) -and
+				($this.Org -eq $defaultServer.Org)) {
 				return $true
 			}
 		}
@@ -25,11 +36,11 @@ class CbcServer{
 	}
 }
 
-class CbcCredentials{
+class CbcConnections{
 	[string]$FullPath
 	[System.Xml.XmlDocument]$XmlDocument
 
-	CbcCredentials ([string]$FullPath) {
+	CbcConnections ([string]$FullPath) {
 		$this.FullPath = $FullPath
 		$DirPath = Split-Path $FullPath
 
@@ -60,10 +71,15 @@ class CbcCredentials{
 
 	SaveToFile ($Server) {
 		try {
+			# Convert the token to a secure string. On Win machines this will use Windows Data Encryption API to encrypt/decrypt the string
+			#$secureToken = ConvertTo-SecureString $Server.Token -AsPlainText
+			# Convert the secure string to a regular encrypted string so it can be stored in a file
+			$secureTokenAsEncryptedString = $Server.Token | ConvertFrom-SecureString
 			$ServerElement = $this.XmlDocument.CreateElement("CBCServer")
 			$ServerElement.SetAttribute("Uri",$Server.Uri)
 			$ServerElement.SetAttribute("Org",$Server.Org)
-			$ServerElement.SetAttribute("Token",$Server.Token)
+			$ServerElement.SetAttribute("Token",$secureTokenAsEncryptedString)
+			$ServerElement.SetAttribute("Notes",$Server.Notes)
 
 			$ServersNode = $this.XmlDocument.SelectSingleNode("CBCServers")
 			$ServersNode.AppendChild($ServerElement)

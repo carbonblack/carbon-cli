@@ -62,7 +62,7 @@ function Set-CbcAlert {
 			$ExecuteServers = $Server
 		}
 		else {
-			$ExecuteServers = $global:CBC_CONFIG.currentConnections
+			$ExecuteServers = $global:DefaultCbcServers
 		}
 
 		switch ($PSCmdlet.ParameterSetName) {

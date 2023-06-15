@@ -12,8 +12,8 @@ AfterAll {
 
 Describe "Connect-CbcServer" {
 	BeforeEach {
-		$global:CBC_CONFIG.defaultServers = [System.Collections.ArrayList]@()
-		$global:CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
+		$global:defaultCbcServers = [System.Collections.ArrayList]@()
+		$global:CBC_CONFIG.sessionConnections = [System.Collections.ArrayList]@()
 	}
 
 	Context "When using the 'default' parameter set - exception" {
@@ -40,25 +40,36 @@ Describe "Connect-CbcServer" {
 		}
 
 		It 'Should connect to a server successfully' {
-			$server = Connect-CbcServer -Server "https://t.te/" -Org "test" -Token "test"
+			$Uri = "https://t.te/"
+			$Org = "test"
+			$Token = "test"
+			$Notes = " Test server"
+			$server = Connect-CbcServer -Server $Uri -Org $Org -Token $Token -Notes $Notes
 
 			$server.GetType() | Should -Be "CbcServer"
-			$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
-			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $server.Uri
-			$global:CBC_CONFIG.currentConnections[0].Org | Should -Be $server.Org
-			$global:CBC_CONFIG.defaultServers.Count | Should -Be 0
+			$server.Uri | Should -Be $Uri
+			$server.Org | Should -Be $Org
+			$server.Notes | Should -Be $Notes
+
+			$global:CBC_CONFIG.sessionConnections.Count | Should -Be 0
+			$global:defaultCbcServers.Count | Should -Be 1
+			$global:defaultCbcServers.Uri | Should -Be $server.Uri
+			$global:defaultCbcServers.Org | Should -Be $server.Org
+			$global:defaultCbcServers.Notes | Should -Be $server.Notes
 		}
 
-		It 'Should connect to a server successfully and save the credentials' {
-			$server = Connect-CbcServer -Server "https://t.te/" -Org "test" -Token "test" -SaveCredential
+		It 'Should connect to a server successfully and save the connection' {
+			$server = Connect-CbcServer -Server "https://t.te/" -Org "test" -Token "test" -SaveConnection
 
 			$server.GetType() | Should -Be "CbcServer"
-			$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
-			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $server.Uri
-			$global:CBC_CONFIG.currentConnections[0].Org | Should -Be $server.Org
-			$global:CBC_CONFIG.defaultServers.Count | Should -Be 1
+			$global:CBC_CONFIG.sessionConnections.Count | Should -Be 1
+			$global:CBC_CONFIG.sessionConnections[0].Uri | Should -Be $server.Uri
+			$global:CBC_CONFIG.sessionConnections[0].Org | Should -Be $server.Org
+			$global:defaultCbcServers.Count | Should -Be 1
+			$global:defaultCbcServers.Uri | Should -Be $server.Uri
+			$global:defaultCbcServers.Org | Should -Be $server.Org
 
-			$global:CBC_CONFIG.credentials.RemoveFromFile($server)
+			$global:CBC_CONFIG.savedConnections.RemoveFromFile($server)
 		}
 
 		It 'Should connect to a second server successfully' {
@@ -69,15 +80,15 @@ Describe "Connect-CbcServer" {
 			$server = Connect-CbcServer -Server "https://t.te/" -Org "test" -Token "test"
 			$server2 = Connect-CbcServer -Server "https://t2.te/" -Org "test2" -Token "test2"
 
-			$global:CBC_CONFIG.currentConnections.Count | Should -Be 2
-			$global:CBC_CONFIG.currentConnections[1].Uri | Should -Be $server2.Uri
-			$global:CBC_CONFIG.currentConnections[1].Org | Should -Be $server2.Org
-			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $server.Uri
-			$global:CBC_CONFIG.currentConnections[0].Org | Should -Be $server.Org
-			$global:CBC_CONFIG.defaultServers.Count | Should -Be 0
+			$global:defaultCbcServers.Count | Should -Be 2
+			$global:defaultCbcServers[1].Uri | Should -Be $server2.Uri
+			$global:defaultCbcServers[1].Org | Should -Be $server2.Org
+			$global:defaultCbcServers[0].Uri | Should -Be $server.Uri
+			$global:defaultCbcServers[0].Org | Should -Be $server.Org
+			$global:CBC_CONFIG.sessionConnections.Count | Should -Be 0
 		}
 
-		It 'Should not connect to a second server if you try to connect to the same server' {
+		It 'Should not connect to a second server if you try to connect to the same server and no -Notes provided' {
 			Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
 				""
 			}
@@ -85,10 +96,26 @@ Describe "Connect-CbcServer" {
 			$server = Connect-CbcServer -Server "https://t.te/" -Org "test" -Token "test"
 			{ Connect-CbcServer -Server "https://t.te/" -Org "test" -Token "test" } | Should -Throw
 
-			$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
-			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $server.Uri
-			$global:CBC_CONFIG.currentConnections[0].Org | Should -Be $server.Org
-			$global:CBC_CONFIG.defaultServers.Count | Should -Be 0
+			
+			$server.GetType() | Should -Be "CbcServer"
+			$global:CBC_CONFIG.sessionConnections.Count | Should -Be 0
+			$global:defaultCbcServers.Count | Should -Be 1
+			$global:defaultCbcServers.Uri | Should -Be $server.Uri
+			$global:defaultCbcServers.Org | Should -Be $server.Org
+		}
+
+		It 'Should update the notes if you try to connect to the same server and -Notes param provided' {
+			Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
+				""
+			}
+
+			$server = Connect-CbcServer -Server "https://t.te/" -Org "test" -Token "test" -Notes "Test notes "
+			$server = Connect-CbcServer -Server "https://t.te/" -Org "test" -Token "test" -Notes  "Updated Notes"
+
+			
+			$server.Notes | Should -Be "Updated Notes"
+			$global:defaultCbcServers.Notes | Should -Be "Updated Notes"
+			
 		}
 
 		It 'Should exit (on the warning) when connecting to a second server' {
@@ -99,10 +126,8 @@ Describe "Connect-CbcServer" {
 			$server = Connect-CbcServer -Server "https://t.te/" -Org "test" -Token "test"
 			{ Connect-CbcServer -Server "https://t2.te/" -Org "test2" -Token "test2" } | Should -Throw
 
-			$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
-			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $server.Uri
-			$global:CBC_CONFIG.currentConnections[0].Org | Should -Be $server.Org
-			$global:CBC_CONFIG.defaultServers.Count | Should -Be 0
+			$global:CBC_CONFIG.sessionConnections.Count | Should -Be 0
+			$global:defaultCbcServers.Count | Should -Be 1
 		}
 	}
 
@@ -120,12 +145,15 @@ Describe "Connect-CbcServer" {
 				"1"
 			}
 
-			$global:CBC_CONFIG.defaultServers.Add([CbcServer]::new("https://t.te/","test","test"))
+			$Uri = "https://t.te/"
+			$Org = "test"
+			$secureToken = "test" | ConvertTo-SecureString -AsPlainText
+			$global:CBC_CONFIG.sessionConnections.Add([CbcServer]::new($Uri,$Org,$secureToken))
 
 			Connect-CbcServer -Menu
 
-			$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
-			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be "https://t.te/"
+			$global:defaultCbcServers.Count | Should -Be 1
+			$global:defaultCbcServers.Uri | Should -Be "https://t.te/"
 		}
 
 		It 'Should choose the second server and connect to it successfully' {
@@ -133,13 +161,19 @@ Describe "Connect-CbcServer" {
 				"2"
 			}
 
-			$global:CBC_CONFIG.defaultServers.Add([CbcServer]::new("https://t.te/","test","test"))
-			$global:CBC_CONFIG.defaultServers.Add([CbcServer]::new("https://t2.te/","test2","test2"))
+			$Uri = "https://t.te/"
+			$Org = "test"
+			$secureToken = "test" | ConvertTo-SecureString -AsPlainText
+			$Uri2 = "https://t2.te/"
+			$Org2 = "test2"
+			$secureToken2 = "test2" | ConvertTo-SecureString -AsPlainText
+			$global:CBC_CONFIG.sessionConnections.Add([CbcServer]::new($Uri,$Org,$secureToken))
+			$global:CBC_CONFIG.sessionConnections.Add([CbcServer]::new($Uri2,$Org2,$secureToken2))
 
 			Connect-CbcServer -Menu
 
-			$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
-			$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be "https://t2.te/"
+			$global:defaultCbcServers.Count | Should -Be 1
+			$global:defaultCbcServers[0].Uri | Should -Be $Uri2
 		}
 
 		It 'Should not choose any server and throw error' {
@@ -147,11 +181,14 @@ Describe "Connect-CbcServer" {
 				"q"
 			}
 
-			$global:CBC_CONFIG.defaultServers.Add([CbcServer]::new("https://t.te/","test","test"))
-
+			$Uri = "https://t.te/"
+			$Org = "test"
+			$secureToken = "test" | ConvertTo-SecureString -AsPlainText
+			$global:CBC_CONFIG.sessionConnections.Add([CbcServer]::new($Uri,$Org,$secureToken))
+			
 			{ Connect-CbcServer -Menu } | Should -Throw
 
-			$global:CBC_CONFIG.currentConnections.Count | Should -Be 0
+			$global:defaultCbcServers.Count | Should -Be 0
 		}
 
 		It 'Should throw error as no default servers' {

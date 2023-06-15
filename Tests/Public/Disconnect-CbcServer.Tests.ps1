@@ -12,63 +12,74 @@ AfterAll {
 
 Describe "Disconnect-CbcServer" {
 	BeforeAll {
-		$s1 = [CbcServer]::new("https://t.te/", "test", "test")
-		$s2 = [CbcServer]::new("https://t2.te/", "test2", "test2")
-		$s3 = [CbcServer]::new("https://t3.te/", "test3", "test3")
+		
+		$Uri1 = "https://t.te1/"
+		$Org1 = "test1"
+		$secureToken1 = "test1" | ConvertTo-SecureString -AsPlainText
+		$Uri2 = "https://t.te2/"
+		$Org2 = "test2"
+		$secureToken2 = "test2" | ConvertTo-SecureString -AsPlainText
+		$Uri3 = "https://t.te3/"
+		$Org3 = "test3"
+		$secureToken3 = "test3" | ConvertTo-SecureString -AsPlainText
+
+		$s1 = [CbcServer]::new($Uri1, $Org1, $secureToken1)
+		$s2 = [CbcServer]::new($Uri2, $Org2, $secureToken2)
+		$s3 = [CbcServer]::new($Uri3, $Org3, $secureToken3)
 	}
 
 	BeforeEach {
-		$global:CBC_CONFIG.defaultServers = [System.Collections.ArrayList]@()
-		$global:CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
+		$global:CBC_CONFIG.sessionConnections = [System.Collections.ArrayList]@()
+		$global:DefaultCbcServers = [System.Collections.ArrayList]@()
 	}
 
 	It 'Should disconnect all servers' {
-		$global:CBC_CONFIG.currentConnections.Add($s1) | Out-Null
-		$global:CBC_CONFIG.currentConnections.Add($s2) | Out-Null
+		$global:DefaultCbcServers.Add($s1) | Out-Null
+		$global:DefaultCbcServers.Add($s2) | Out-Null
 
 		Disconnect-CbcServer *
-		$global:CBC_CONFIG.currentConnections.Count | Should -Be 0
+		$global:DefaultCbcServers.Count | Should -Be 0
 	}
 
 	It 'Should disconnect an object connection' {
-		$global:CBC_CONFIG.currentConnections.Add($s1)
-		$global:CBC_CONFIG.currentConnections.Add($s2)
+		$global:DefaultCbcServers.Add($s1)
+		$global:DefaultCbcServers.Add($s2)
 
 		Disconnect-CbcServer $s1
-		$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
-		$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $s2.Uri
+		$global:DefaultCbcServers.Count | Should -Be 1
+		$global:DefaultCbcServers[0].Uri | Should -Be $s2.Uri
 	}
 
 	It 'Should disconnect array of objects' {
-		$global:CBC_CONFIG.currentConnections.Add($s1)
-		$global:CBC_CONFIG.currentConnections.Add($s2)
+		$global:DefaultCbcServers.Add($s1)
+		$global:DefaultCbcServers.Add($s2)
 
 		Disconnect-CbcServer @($s1, $s2)
-		$global:CBC_CONFIG.currentConnections.Count | Should -Be 0
+		$global:DefaultCbcServers.Count | Should -Be 0
 	}
 
 	It 'Should disconnect a string connection' {
-		$global:CBC_CONFIG.currentConnections.Add($s1)
-		$global:CBC_CONFIG.currentConnections.Add($s2)
+		$global:DefaultCbcServers.Add($s1)
+		$global:DefaultCbcServers.Add($s2)
 
 		Disconnect-CbcServer $s1.Uri
-		$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
-		$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $s2.Uri
+		$global:DefaultCbcServers.Count | Should -Be 1
+		$global:DefaultCbcServers[0].Uri | Should -Be $s2.Uri
 	}
 
 	It 'Should disconnect an array of strings' {
-		$global:CBC_CONFIG.currentConnections.Add($s1)
-		$global:CBC_CONFIG.currentConnections.Add($s2)
-		$global:CBC_CONFIG.currentConnections.Add($s3)
+		$global:DefaultCbcServers.Add($s1)
+		$global:DefaultCbcServers.Add($s2)
+		$global:DefaultCbcServers.Add($s3)
 
 		Disconnect-CbcServer @($s1.Uri, $s2.Uri)
-		$global:CBC_CONFIG.currentConnections.Count | Should -Be 1
-		$global:CBC_CONFIG.currentConnections[0].Uri | Should -Be $s3.Uri
+		$global:DefaultCbcServers.Count | Should -Be 1
+		$global:DefaultCbcServers[0].Uri | Should -Be $s3.Uri
 	}
 
 	It 'Should disconnect empty array of objects' {
-		$global:CBC_CONFIG.currentConnections.Add($s1)
-		$global:CBC_CONFIG.currentConnections.Add($s2)
+		$global:DefaultCbcServers.Add($s1)
+		$global:DefaultCbcServers.Add($s2)
 		{Disconnect-CbcServer @() -ErrorAction Stop} | Should -Throw
 	}
 }

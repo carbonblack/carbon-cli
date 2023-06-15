@@ -20,27 +20,31 @@ Export-ModuleMember -Function $Public.BaseName
 $Endpoints = Import-PowerShellDataFile -Path $PSScriptRoot/PSCarbonBlackCloudEndpoints.psd1
 
 # Setting the Configuration Variables
-$CredentialsPath = "${Home}/.carbonblack/PSCredentials.xml"
-$Credentials = [CBCCredentials]::new($CredentialsPath)
+$ConnectionsPath = "${Home}/.carbonblack/PSConnections.xml"
+$Connections = [CbcConnections]::new($ConnectionsPath)
+
+$DefaulCbcServers = [System.Collections.ArrayList]@()
 
 # Set the default Global options
 $CBCConfigObject = @{
-	currentConnections = [System.Collections.ArrayList]@()
-	defaultServers = [System.Collections.ArrayList]@()
-	credentials = $Credentials
+	sessionConnections = [System.Collections.ArrayList]@()
+	savedConnections = $Connections
 	endpoints = $Endpoints
 }
 
-# Add the existing CBC servers if any from the `PSCredentials.xml` file
-Select-Xml -Path $CredentialsPath -XPath '/CBCServers/CBCServer' | ForEach-Object {
-	$CBCConfigObject.defaultServers.Add(
-		@{
+# Add the existing CBC servers if any from the `PSConnections.xml` file
+Select-Xml -Path $ConnectionsPath -XPath '/CBCServers/CBCServer' | ForEach-Object {
+	$SecureStringToken = $_.Node.Token | ConvertTo-SecureString
+	$CBCConfigObject.sessionConnections.Add(
+		@{	
 			Uri = $_.Node.Uri
-			Token = $_.Node.Token
+			Token = $secureStringToken
 			Org = $_.Node.Org
+			Notes = $_.Node.Notes
 		}
 	)
 }
 
 
 Set-Variable -Name CBC_CONFIG -Value $CBCConfigObject -Scope global
+Set-Variable -Name DefaultCbcServers -Value $DefaulCbcServers -Scope global
