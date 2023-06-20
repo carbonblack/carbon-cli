@@ -16,17 +16,24 @@ Set the max number of results (default is 500 and max is 10k).
 Set the query - query is in lucene syntax and/or including value searches. Either query or criteria/exclusions must be included.
 .OUTPUTS
 CbcObservation[]
+.NOTES
+While invoking -Id and -AlertId the cmdlet is requsting the `{cbc-hostname}/api/investigate/v2/orgs/{org_key}/observations/detail_jobs` api,
+it is still possible to search by id by providing it into the $criteria param
 .EXAMPLE
-PS > Get-CbcObservation -Id "95016925089911ee9568b74cff311:23f4c71a-e350-8576-f832-0b0968f", "95016925089911ee9568b74cff311:23f4c71a-e350-8576-f832-0b0968f"
+PS > Get-CbcObservation -Id "95016925089911ee9568b74cff311:23f4c71a-e350-8576-f832-0b0968f"
 
 Returns the observations with specified Ids.
 .EXAMPLE
+PS > Get-CbcObservation -AlertId "11a1a1a1-b22b-3333-44cc-dd5555d5d55d"
+
+Returns the observations with that AlertId
+.EXAMPLE
 The criteria for
-PS > $criteria = @{"alert_category" = @("THREAT")
-PS > Get-CbcObservation -Include $Criteria -Id "95016925089911ee9568b74cff311:23f4c71a-e350-8576-f832-0b0968f"
+PS > $criteria = @{"alert_category" = @("THREAT"), "observation_id" = @("11a1a1a1-b22b-3333-44cc-dd5555d5d55a", "11a1a1a1-b22b-3333-44cc-dd5555d5d55b")}
+PS > Get-CbcObservation -Include $Criteria
 
 Include parameters expect a hash table object
-Returns all alerts which correspond to the specified criteria and Ids.
+Returns all alerts which correspond to the specified criteria.
 .EXAMPLE
 PS > Get-CbcObservation -Include @{"alert_category" = @("THREAT")}
 
@@ -41,17 +48,11 @@ function Get-CbcObservation {
     [CmdletBinding(DefaultParameterSetName = "Default")]
     [OutputType([CbcObservation[]])]
     param(
-        [Parameter(ParameterSetName = "Default")]
         [Parameter(ParameterSetName = "Id", Position = 0)]
         [string[]]$Id,
 
-        [Parameter(ParameterSetName = "Default")]
-        [Parameter(ParameterSetName = "IncludeExclude")]
-        [hashtable]$Include,
-
-        [Parameter(ParameterSetName = "Default")]
-        [Parameter(ParameterSetName = "IncludeExclude")]
-        [int32]$MaxResults = 500,
+        [Parameter(ParameterSetName = "AlertId", Position = 0)]
+        [string[]]$AlertId,
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "Default")]
@@ -69,27 +70,15 @@ function Get-CbcObservation {
 
         $ExecuteServers | ForEach-Object {
             $CurrentServer = $_
-            $Endpoint = $global:CBC_CONFIG.endpoints["Observations"]
+            $Endpoint = $global:CBC_CONFIG.endpoints["ObservationDetails"]
             $RequestBody = @{}
+
             switch ($PSCmdlet.ParameterSetName) {
-                "Default" {
-                    $RequestBody.criteria = @{}
-                    if ($PSBoundParameters.ContainsKey("Include")) {
-                        $RequestBody.criteria = $Include
-                    }
-                    if ($PSBoundParameters.ContainsKey("Id")) {
-                        $RequestBody.criteria.observation_id = $Id
-                    }
-                    if ($PSBoundParameters.ContainsKey("Exclude")) {
-                        $RequestBody.exclusions = $Exclude
-                    }
-                    $RequestBody.rows = $MaxResults
+                "Id" {
+                    $RequestBody.observation_ids = $Id
                 }
-                "IncludeExclude" {
-                    if ($Include) {
-                        $RequestBody.criteria = $Include
-                    }
-                    $RequestBody.rows = $MaxResults
+                "AlertId" {
+                    $RequestBody.alert_id = $AlertId
                 }
             }
 
