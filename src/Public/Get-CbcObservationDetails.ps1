@@ -44,7 +44,7 @@ Full list of searchable fields: https://developer.carbonblack.com/reference/carb
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/observations-api
 #>
 
-function Get-CbcObservation {
+function Get-CbcObservationDetails {
     [CmdletBinding(DefaultParameterSetName = "Default")]
     [OutputType([CbcObservation[]])]
     param(
