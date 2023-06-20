@@ -65,7 +65,7 @@ function Get-CbcObservationDetails {
             $ExecuteServers = $Server
         }
         else {
-            $ExecuteServers = $global:CBC_CONFIG.currentConnections
+            $ExecuteServers = $global:DefaultCbcServers
         }
 
         $ExecuteServers | ForEach-Object {
