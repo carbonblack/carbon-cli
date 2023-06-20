@@ -52,7 +52,7 @@ function Get-CbcObservationDetails {
         [string[]]$Id,
 
         [Parameter(ParameterSetName = "AlertId", Position = 0)]
-        [string[]]$AlertId,
+        [string]$AlertId,
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "Default")]
