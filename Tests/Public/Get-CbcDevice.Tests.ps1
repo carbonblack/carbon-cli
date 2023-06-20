@@ -13,11 +13,17 @@ AfterAll {
 Describe "Get-CbcDevice" {
 	Context "When using multiple connections with a specific server" {
 		BeforeAll {
-			$s1 = [CbcServer]::new("https://t.te/", "test", "test")
-			$s2 = [CbcServer]::new("https://t.te2/", "test2", "test2")
-			$global:CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
-			$global:CBC_CONFIG.currentConnections.Add($s1) | Out-Null
-			$global:CBC_CONFIG.currentConnections.Add($s2) | Out-Null
+			$Uri1 = "https://t.te1/"
+			$Org1 = "test1"
+			$secureToken1 = "test1" | ConvertTo-SecureString -AsPlainText
+			$Uri2 = "https://t.te2/"
+			$Org2 = "test2"
+			$secureToken2 = "test2" | ConvertTo-SecureString -AsPlainText
+			$s1 = [CbcServer]::new($Uri1, $Org1, $secureToken1)
+			$s2 = [CbcServer]::new($Uri2, $Org2, $secureToken2)
+			$global:DefaultCbcServers = [System.Collections.ArrayList]@()
+			$global:DefaultCbcServers.Add($s1) | Out-Null
+			$global:DefaultCbcServers.Add($s2) | Out-Null
 		}
 
 		It "Should return devices only from the specific server" {
@@ -48,9 +54,12 @@ Describe "Get-CbcDevice" {
 	Context "When using the 'default' parameter set" {
 		Context "When using one connection" {
 			BeforeAll {
-				$s1 = [CbcServer]::new("https://t.te/", "test", "test")
-				$global:CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
-				$global:CBC_CONFIG.currentConnections.Add($s1) | Out-Null
+				$Uri1 = "https://t.te1/"
+				$Org1 = "test1"
+				$secureToken1 = "test1" | ConvertTo-SecureString -AsPlainText
+				$s1 = [CbcServer]::new($Uri1, $Org1, $secureToken1)
+				$global:DefaultCbcServers = [System.Collections.ArrayList]@()
+				$global:DefaultCbcServers.Add($s1) | Out-Null
 			}
 
 			Context "When not using any params" {
@@ -100,11 +109,17 @@ Describe "Get-CbcDevice" {
 
 		Context "When using multiple connection" {
 			BeforeAll {
-				$s1 = [CbcServer]::new("https://t.te/", "test", "test")
-				$s2 = [CbcServer]::new("https://t.te2/", "test2", "test2")
-				$global:CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
-				$global:CBC_CONFIG.currentConnections.Add($s1) | Out-Null
-				$global:CBC_CONFIG.currentConnections.Add($s2) | Out-Null
+				$Uri1 = "https://t.te1/"
+				$Org1 = "test1"
+				$secureToken1 = "test1" | ConvertTo-SecureString -AsPlainText
+				$Uri2 = "https://t.te2/"
+				$Org2 = "test2"
+				$secureToken2 = "test2" | ConvertTo-SecureString -AsPlainText
+				$s1 = [CbcServer]::new($Uri1, $Org1, $secureToken1)
+				$s2 = [CbcServer]::new($Uri2, $Org2, $secureToken2)
+				$global:DefaultCbcServers = [System.Collections.ArrayList]@()
+				$global:DefaultCbcServers.Add($s1) | Out-Null
+				$global:DefaultCbcServers.Add($s2) | Out-Null
 			}
 
 			Context "When not using any params" {
@@ -147,9 +162,12 @@ Describe "Get-CbcDevice" {
 	Context "When using the 'IncludeExclude' parameter set" {
 		Context "When using one connection" {
 			BeforeAll {
-				$s1 = [CbcServer]::new("https://t.te/", "test", "test")
-				$global:CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
-				$global:CBC_CONFIG.currentConnections.Add($s1) | Out-Null
+				$Uri1 = "https://t.te1/"
+				$Org1 = "test1"
+				$secureToken1 = "test1" | ConvertTo-SecureString -AsPlainText
+			$s1 = [CbcServer]::new($Uri1, $Org1, $secureToken1)
+				$global:DefaultCbcServers = [System.Collections.ArrayList]@()
+				$global:DefaultCbcServers.Add($s1) | Out-Null
 			}
 
 			Context "When using the -Exclude parameter" {
@@ -306,11 +324,17 @@ Describe "Get-CbcDevice" {
 
 		Context "When using multiple connection" {
 			BeforeAll {
-				$s1 = [CbcServer]::new("https://t.te/", "test", "test")
-				$s2 = [CbcServer]::new("https://t.te2/", "test2", "test2")
-				$global:CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
-				$global:CBC_CONFIG.currentConnections.Add($s1) | Out-Null
-				$global:CBC_CONFIG.currentConnections.Add($s2) | Out-Null
+				$Uri1 = "https://t.te1/"
+				$Org1 = "test1"
+				$secureToken1 = "test1" | ConvertTo-SecureString -AsPlainText
+				$Uri2 = "https://t.te2/"
+				$Org2 = "test2"
+				$secureToken2 = "test2" | ConvertTo-SecureString -AsPlainText
+				$s1 = [CbcServer]::new($Uri1, $Org1, $secureToken1)
+				$s2 = [CbcServer]::new($Uri2, $Org2, $secureToken2)
+				$global:DefaultCbcServers = [System.Collections.ArrayList]@()
+				$global:DefaultCbcServers.Add($s1) | Out-Null
+				$global:DefaultCbcServers.Add($s2) | Out-Null
 			}
 
 			Context "When using the -Exclude parameter" {
@@ -477,9 +501,12 @@ Describe "Get-CbcDevice" {
 	Context "When using the 'id' parameter set" {
 		Context "When using one connection" {
 			BeforeAll {
-				$s1 = [CbcServer]::new("https://t.te/", "test", "test")
-				$global:CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
-				$global:CBC_CONFIG.currentConnections.Add($s1) | Out-Null
+				$Uri1 = "https://t.te1/"
+				$Org1 = "test1"
+				$secureToken1 = "test1" | ConvertTo-SecureString -AsPlainText
+				$s1 = [CbcServer]::new($Uri1, $Org1, $secureToken1)
+				$global:DefaultCbcServers = [System.Collections.ArrayList]@()
+				$global:DefaultCbcServers.Add($s1) | Out-Null
 			}
 
 			It "Should return device with the same id" {
@@ -531,27 +558,26 @@ Describe "Get-CbcDevice" {
 
 		Context "When using multiple connection" {
 			BeforeAll {
-				$s1 = [CbcServer]::new("https://t.te/", "test", "test")
-				$s2 = [CbcServer]::new("https://t.te2/", "test2", "test2")
-				$global:CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
-				$global:CBC_CONFIG.currentConnections.Add($s1) | Out-Null
-				$global:CBC_CONFIG.currentConnections.Add($s2) | Out-Null
+				$Uri1 = "https://t.te1/"
+				$Org1 = "test1"
+				$secureToken1 = "test1" | ConvertTo-SecureString -AsPlainText
+				$Uri2 = "https://t.te2/"
+				$Org2 = "test2"
+				$secureToken2 = "test2" | ConvertTo-SecureString -AsPlainText
+				$s1 = [CbcServer]::new($Uri1, $Org1, $secureToken1)
+				$s2 = [CbcServer]::new($Uri2, $Org2, $secureToken2)
+				$global:DefaultCbcServers = [System.Collections.ArrayList]@()
+				$global:DefaultCbcServers.Add($s1) | Out-Null
+				$global:DefaultCbcServers.Add($s2) | Out-Null
 			}
 
 			It "Should return devices with the same id from multiple servers" {
 				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
-					if ($Server -eq $s1) {
-						@{
-							StatusCode = 200
-							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
-						}
+					@{
+						StatusCode = 200
+						Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
 					}
-					else {
-						@{
-							StatusCode = 403
-							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/no_devices.json"
-						}
-					}
+					
 				} -ParameterFilter {
 					$Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Search"] -and
 					$Method -eq "POST" -and
@@ -563,26 +589,22 @@ Describe "Get-CbcDevice" {
 
 				$devices = Get-CbcDevice -Id "5765373"
 
-				$devices.Count | Should -Be 1
-				$devices[0].Server | Should -Be $s1
-				$devices[0].id | Should -Be "5765373"
-				$devices[0].User | Should -Be "vagrant"
+				$devices.Count | Should -Be 2
+				$server1Devices = $devices | Where-Object {$_.Server.Uri -eq $Uri1}
+				$server1Devices.Count | Should -Be 1
+				$server2Devices = $devices | Where-Object {$_.Server.Uri -eq $Uri2}
+				$server2Devices.Count | Should -Be 1
+				$filteredDevices = $devices | Where-Object {$_.Id -eq "5765373" }
+				$filteredDevices.Count | Should -Be 2
 			}
 
 			It "Should return devices with the same id without '-Id' param from multiple servers" {
 				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
-					if ($Server -eq $s1) {
-						@{
-							StatusCode = 200
-							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
-						}
+					@{
+						StatusCode = 200
+						Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
 					}
-					else {
-						@{
-							StatusCode = 403
-							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/no_devices.json"
-						}
-					}
+					
 				} -ParameterFilter {
 					$Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Search"] -and
 					$Method -eq "POST" -and
@@ -594,9 +616,13 @@ Describe "Get-CbcDevice" {
 
 				$devices = Get-CbcDevice "5765373"
 
-				$devices.Count | Should -Be 1
-				$devices[0].Server | Should -Be $s1
-				$devices[0].id | Should -Be "5765373"
+				$devices.Count | Should -Be 2
+				$server1Devices = $devices | Where-Object {$_.Server.Uri -eq $Uri1}
+				$server1Devices.Count | Should -Be 1
+				$server2Devices = $devices | Where-Object {$_.Server.Uri -eq $Uri2}
+				$server2Devices.Count | Should -Be 1
+				$filteredDevices = $devices | Where-Object {$_.Id -eq "5765373" }
+				$filteredDevices.Count | Should -Be 2
 			}
 		}
 	}

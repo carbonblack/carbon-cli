@@ -24,7 +24,7 @@ function Invoke-CbcRequest {
 
 	process {
 		$Headers = @{
-			"X-AUTH-TOKEN" = $Server.Token
+			"X-AUTH-TOKEN" = $Server.Token | ConvertFrom-SecureString -AsPlainText
 			"Content-Type" = "application/json"
 			"User-Agent" = "PSCarbonBlackCloud"
 		}

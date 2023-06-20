@@ -12,11 +12,17 @@ AfterAll {
 
 Describe "Set-CbcAlert" {
 	BeforeAll {
-		$s1 = [CbcServer]::new("https://t.te/", "test", "test")
-		$s2 = [CbcServer]::new("https://t.te2/", "test2", "test2")
-		$global:CBC_CONFIG.currentConnections = [System.Collections.ArrayList]@()
-		$global:CBC_CONFIG.currentConnections.Add($s1) | Out-Null
-		$global:CBC_CONFIG.currentConnections.Add($s2) | Out-Null
+		$Uri1 = "https://t.te1/"
+		$Org1 = "test1"
+		$secureToken1 = "test1" | ConvertTo-SecureString -AsPlainText
+		$Uri2 = "https://t.te2/"
+		$Org2 = "test2"
+		$secureToken2 = "test2" | ConvertTo-SecureString -AsPlainText
+		$s1 = [CbcServer]::new($Uri1, $Org1, $secureToken1)
+		$s2 = [CbcServer]::new($Uri2, $Org2, $secureToken2)
+		$global:DefaultCbcServers = [System.Collections.ArrayList]@()
+		$global:DefaultCbcServers.Add($s1) | Out-Null
+		$global:DefaultCbcServers.Add($s2) | Out-Null
 
 		$alert1 = [CbcAlert]::new(
 			"1",
@@ -186,7 +192,7 @@ Describe "Set-CbcAlert" {
 				($Body | ConvertFrom-Json).criteria.id[0] -eq 1
 			}
 			Set-CbcAlert -Id $alert1.Id -Server $s1 -Dismiss $true -ErrorVariable err
-			$err | Should -Be "Cannot complete action dismiss alert for alerts  for [test] https://t.te/"
+			$err | Should -Be "Cannot complete action dismiss alert for alerts  for [test1] https://t.te1/"
 		}
 	}
 }
