@@ -401,3 +401,22 @@ class CbcObservation{
 		$this.Server = $Server_
 	}
 }
+
+class CbcJob{
+	[string]$Id
+	[string]$Type
+	[string]$Status
+	[CbcServer]$Server
+
+	CbcJob (
+		[string]$Id_,
+		[string]$Type_,
+		[string]$Status_,
+		[CbcServer]$Server_
+	) {
+		$this.Id = $Id_
+		$this.Type = $Type_
+		$this.Status = $Status_
+		$this.Server = $Server_
+	}
+}
