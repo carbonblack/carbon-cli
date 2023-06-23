@@ -9,13 +9,17 @@ function Initialize-CbcJob {
 		[string]$Type,
 
         [Parameter(Mandatory = $true,Position = 2)]
+        [ValidateNotNullOrEmpty()]
+		[string]$Status,
+
+        [Parameter(Mandatory = $true,Position = 3)]
 		[ValidateNotNullOrEmpty()]
 		[CbcServer]$Server
 	)
     [CbcJob]::new(
         $JobId,
         $Type,
-        "Running", # set the initial status to be Running
+        $Status,
         $Server
     )
 }

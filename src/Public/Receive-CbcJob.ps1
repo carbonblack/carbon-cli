@@ -1,26 +1,20 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
-This cmdlet returns the status of a job for async operation.
+This cmdlet returns results of a observation job for async operation.
 .PARAMETER Id
 Sets the job id
 .OUTPUTS
-CbcJob[]
+CbcObservation[] or CbcObservationDetails[]
 .EXAMPLE
-PS > Get-CbcJob -Id "id" -Type "observation_details"
+PS > Receive-CbcJob -Id "id" -Type "observation_details"
 
-.EXAMPLE
-PS > Get-CbcJob -Id "id1", "id2" -Type "observation_details"
-
-.EXAMPLE
-PS > Get-CbcJob -Job $JobObject
-
-Returns the job for specific id.
+Returns the results of a async job.
 .LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/observations-api
 #>
 
-function Get-CbcJob {
+function Receive-CbcJob {
     [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
         [Parameter(ValueFromPipeline = $true,
@@ -75,7 +69,9 @@ function Get-CbcJob {
 
         $Endpoint = $null
         $JobsList | ForEach-Object {
-            switch ($_.Type) {
+            $CurrentServer = $_.Server
+            $CurrentType = $_.Type
+            switch ($CurrentType) {
                 "observation_search" {
                     $Endpoint = $global:CBC_CONFIG.endpoints["Observations"]
                 }
@@ -83,11 +79,12 @@ function Get-CbcJob {
                     $Endpoint = $global:CBC_CONFIG.endpoints["ObservationDetails"]
                 }
             }
+            
             if ($Endpoint) {
                 $Response = Invoke-CbcRequest -Endpoint $Endpoint["Results"] `
                     -Method GET `
                     -Server $_.Server `
-                    -Params @($_.Id, "?start=0&rows=0")
+                    -Params @($_.Id, "?start=0&rows=500")
 
                 if ($Response.StatusCode -ne 200) {
                     Write-Error -Message $("Cannot complete action for $($_.Id) for $($_.Server)")
@@ -96,17 +93,27 @@ function Get-CbcJob {
                     $JsonContent = $Response.Content | ConvertFrom-Json
                     $Contacted = $JsonContent.contacted
                     $Completed = $JsonContent.completed
-
+                    
                     if ($Contacted -ne $Completed) {
-                        return Initialize-CbcJob $_.Id $_.Type "Running" $_.Server
+                        Write-Error "Not ready to retrieve."
                     }
                     else {
-                        return Initialize-CbcJob $_.Id $_.Type "Completed" $_.Server
+                        $JsonContent.results | ForEach-Object {
+                            switch ($CurrentType) {
+                                "observation_search" {
+                                    return Initialize-CbcObservation $_ $CurrentServer
+                                }
+                                "observation_details" {
+                                    # TODO - change to CbcObservationDetails
+                                    return Initialize-CbcObservation $_ $CurrentServer
+                                }
+                            }
+                        }
                     }
                 }
             }
             else {
-                Write-Debug "Not a valid type $($Type)"
+                Write-Debug "Invalid type $($_.Type)"
             }
         }
     }
