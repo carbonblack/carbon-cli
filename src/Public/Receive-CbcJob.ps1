@@ -5,7 +5,7 @@ This cmdlet returns results of a observation job for async operation.
 .PARAMETER Id
 Sets the job id
 .OUTPUTS
-CbcObservation[] or CbcObservationDetails[]
+CbcObservation[] or CbcObservationDetails[] depending on the job type
 .EXAMPLE
 PS > Receive-CbcJob -Id "id" -Type "observation_details"
 
@@ -113,7 +113,7 @@ function Receive-CbcJob {
                 }
             }
             else {
-                Write-Debug "Invalid type $($_.Type)"
+                Write-Error "Not a valid type $($CurrentType)"
             }
         }
     }

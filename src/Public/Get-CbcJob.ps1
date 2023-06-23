@@ -106,7 +106,7 @@ function Get-CbcJob {
                 }
             }
             else {
-                Write-Debug "Not a valid type $($Type)"
+                Write-Error "Not a valid type $($Type)"
             }
         }
     }
