@@ -294,5 +294,54 @@
         </TableRowEntries>
       </TableControl>
     </View>
+    <View>
+      <Name>CbcObservationView</Name>
+      <ViewSelectedBy>
+        <TypeName>CbcObservation</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Id</Label>
+            <Width>70</Width>
+            <Alignment>Left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Alert Category</Label>
+            <Width>15</Width>
+            <Alignment>Left</Alignment>
+            </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Type</Label>
+            <Width>14</Width>
+            <Alignment>Left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Device Id</Label>
+            <Width>15</Width>
+            <Alignment>Left</Alignment>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <Wrap />
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ObservationId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>AlertCategory</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>ObservationType</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DeviceId</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
   </ViewDefinitions>
 </Configuration>

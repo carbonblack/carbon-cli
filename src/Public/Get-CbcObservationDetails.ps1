@@ -32,7 +32,11 @@ function Get-CbcObservationDetails {
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "AlertId")]
-        [CbcServer[]]$Server
+        [CbcServer[]]$Server,
+
+        [Parameter(ParameterSetName = "Id")]
+        [Parameter(ParameterSetName = "AlertId")]
+        [switch]$AsJob
     )
 
     process {
@@ -44,7 +48,6 @@ function Get-CbcObservationDetails {
         }
 
         $ExecuteServers | ForEach-Object {
-            $CurrentServer = $_
             $Endpoint = $global:CBC_CONFIG.endpoints["ObservationDetails"]
             $RequestBody = @{}
 
@@ -64,21 +67,22 @@ function Get-CbcObservationDetails {
                 -Body $RequestBody
 
             if ($Response.StatusCode -ne 200) {
-                Write-Error -Message $("Cannot create observation search job for $($_)")
+                Write-Error -Message $("Cannot create observation details job for $($_)")
             }
             else {
-                # if search job is created, then we could get the results, but
-                # it is async request so to keep checking, till all are available
                 $JsonContent = $Response.Content | ConvertFrom-Json
-                # get the job_id to retrieve the results for this job
-                $JobId = $JsonContent.job_id
-                $Contacted = -1
-                $Completed = -2
+
+                # if started as job, do not wait for the results to be ready
+                if ($AsJob) {
+                    return Initialize-CbcJob $JsonContent.job_id "observation_details" "Running" $_
+                }
+
+                # if details job is created, then we could get the results, but
+                # it is async request so to keep checking, till all are available
                 $TimeOut = 0
                 $TimeOutFlag = false
-
-                # if contacted and completed are equal, this means we could get the results
-                while ($Contacted -ne $Completed) {
+                $job = Initialize-CbcJob $JsonContent.job_id "observation_details" "Running" $_
+                while ($job.Status -eq "Running") {
                     # sleep 0.5 to give it time to retrieve the results - it might still not be enough,
                     # so keep checking for 3 mins before timeout
                     $TimeOut += 0.5
@@ -88,28 +92,12 @@ function Get-CbcObservationDetails {
                         Write-Error -Message $("Cannot retrieve observations due to timeout for $($_)")
                         break
                     }
-
-                    $Response = Invoke-CbcRequest -Endpoint $Endpoint["Results"] `
-                        -Method GET `
-                        -Server $_ `
-                        -Params @($JobId, "?start=0&rows=0")
-
-                    $JsonContent = $Response.Content | ConvertFrom-Json
-                    $Contacted = $JsonContent.contacted
-                    $Completed = $JsonContent.completed
+                    $job = Get-CbcJob -Job $job
                 }
 
                 # if we did not fail due to timeout, then we could get the results
                 if (!$TimeOutFlag) {
-                    $Response = Invoke-CbcRequest -Endpoint $Endpoint["Results"] `
-                        -Method GET `
-                        -Server $_ `
-                        -Params @($JobId, "?start=0&rows=" + $MaxResults)
-                    $JsonContent = $Response.Content | ConvertFrom-Json
-
-                    $JsonContent.results | ForEach-Object {
-                        return Initialize-CbcObservation $_ $CurrentServer
-                    }
+                    Receive-CbcJob -Job $job
                 }
             }
         }

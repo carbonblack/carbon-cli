@@ -111,13 +111,13 @@ function Receive-CbcJob {
                     }
                     else {
                         $JsonContent.results | ForEach-Object {
+                            $Result = $_
                             switch ($CurrentType) {
                                 "observation_search" {
-                                    return Initialize-CbcObservation $_ $CurrentServer
+                                    return Initialize-CbcObservation $Result $CurrentServer
                                 }
                                 "observation_details" {
-                                    # TODO - change to CbcObservationDetails
-                                    return Initialize-CbcObservation $_ $CurrentServer
+                                    return Initialize-CbcObservation $Result $CurrentServer
                                 }
                             }
                         }

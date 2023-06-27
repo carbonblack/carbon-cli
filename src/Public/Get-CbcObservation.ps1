@@ -22,7 +22,7 @@ PS > Get-CbcObservation -Id "95016925089911ee9568b74cff311:23f4c71a-e350-8576-f8
 Returns the observations with specified Ids.
 .EXAMPLE
 The criteria for
-PS > $criteria = @{"alert_category" = @("THREAT")
+PS > $criteria = @{"alert_category" = @("THREAT")}
 PS > Get-CbcObservation -Include $Criteria -Id "95016925089911ee9568b74cff311:23f4c71a-e350-8576-f832-0b0968f"
 
 Include parameters expect a hash table object
@@ -51,6 +51,10 @@ function Get-CbcObservation {
 
         [Parameter(ParameterSetName = "Default")]
         [Parameter(ParameterSetName = "IncludeExclude")]
+        [hashtable]$Exclude,
+
+        [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "IncludeExclude")]
         [int32]$MaxResults = 500,
 
         [Parameter(ParameterSetName = "Id")]
@@ -73,7 +77,6 @@ function Get-CbcObservation {
         }
 
         $ExecuteServers | ForEach-Object {
-            $CurrentServer = $_
             $Endpoint = $global:CBC_CONFIG.endpoints["Observations"]
             $RequestBody = @{}
             switch ($PSCmdlet.ParameterSetName) {
@@ -90,12 +93,6 @@ function Get-CbcObservation {
                     }
                     $RequestBody.rows = $MaxResults
                 }
-                "IncludeExclude" {
-                    if ($Include) {
-                        $RequestBody.criteria = $Include
-                    }
-                    $RequestBody.rows = $MaxResults
-                }
             }
 
             $RequestBody = $RequestBody | ConvertTo-Json
@@ -108,23 +105,18 @@ function Get-CbcObservation {
                 Write-Error -Message $("Cannot create observation search job for $($_)")
             }
             else {
-
+                $JsonContent = $Response.Content | ConvertFrom-Json
+                # if started as job, do not wait for the results to be ready
                 if ($AsJob) {
-                    return Initialize-CbcJob $JsonContent.job_id "Running" $_.Server
+                    return Initialize-CbcJob $JsonContent.job_id "observation_search" "Running" $_
                 }
 
                 # if search job is created, then we could get the results, but
                 # it is async request so to keep checking, till all are available
-                $JsonContent = $Response.Content | ConvertFrom-Json
-                # get the job_id to retrieve the results for this job
-                $JobId = $JsonContent.job_id
-                $Contacted = -1
-                $Completed = -2
                 $TimeOut = 0
                 $TimeOutFlag = false
-
-                # if contacted and completed are equal, this means we could get the results
-                while ($Contacted -ne $Completed) {
+                $job = Initialize-CbcJob $JsonContent.job_id "observation_search" "Running" $_
+                while ($job.Status -eq "Running") {
                     # sleep 0.5 to give it time to retrieve the results - it might still not be enough,
                     # so keep checking for 3 mins before timeout
                     $TimeOut += 0.5
@@ -134,28 +126,12 @@ function Get-CbcObservation {
                         Write-Error -Message $("Cannot retrieve observations due to timeout for $($_)")
                         break
                     }
-
-                    $Response = Invoke-CbcRequest -Endpoint $Endpoint["Results"] `
-                        -Method GET `
-                        -Server $_ `
-                        -Params @($JobId, "?start=0&rows=0")
-
-                    $JsonContent = $Response.Content | ConvertFrom-Json
-                    $Contacted = $JsonContent.contacted
-                    $Completed = $JsonContent.completed
+                    $job = Get-CbcJob -Job $job
                 }
 
                 # if we did not fail due to timeout, then we could get the results
                 if (!$TimeOutFlag) {
-                    $Response = Invoke-CbcRequest -Endpoint $Endpoint["Results"] `
-                        -Method GET `
-                        -Server $_ `
-                        -Params @($JobId, "?start=0&rows=" + $MaxResults)
-                    $JsonContent = $Response.Content | ConvertFrom-Json
-
-                    $JsonContent.results | ForEach-Object {
-                        return Initialize-CbcObservation $_ $CurrentServer
-                    }
+                    Receive-CbcJob -Job $job
                 }
             }
         }

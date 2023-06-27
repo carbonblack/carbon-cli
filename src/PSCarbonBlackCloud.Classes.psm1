@@ -378,26 +378,65 @@ class CbcAlert{
 }
 
 class CbcObservation{
-	# TODO - add more fields
 	[string]$AlertCategory
 	[array]$AlertId
-	[string]$ObservationId
+	[string]$BackendTimestamp
+	[string[]]$BlockedHash
+	[string]$DeviceExternalIp
 	[string]$DeviceId
+	[string]$DeviceInternalIp
+	[string]$DeviceOs
+	[string]$DevicePolicy
+	[string]$DevicePolicyId
+	[string]$DeviceSensorVersion
+	[string]$EventId
+	[string]$ObservationId
+	[string]$ObservationType
+	[string]$ParentCmdline
+	[string[]]$ProcessCmdline
+	[string]$ProcessHash
+	[string]$RuleId
 	[CbcServer]$Server
 
 	CbcObservation (
-		# TODO
 		[string]$AlertCategory_,
 		[array]$AlertId_,
-		[string]$ObservationId_,
+		[string]$BackendTimestamp_,
+		[string[]]$BlockedHash_,
+		[string]$DeviceExternalIp_,
 		[string]$DeviceId_,
+		[string]$DeviceInternalIp_,
+		[string]$DeviceOs_,
+		[string]$DevicePolicy_,
+		[string]$DevicePolicyId_,
+		[string]$DeviceSensorVersion_,
+		[string]$EventId_,
+		[string]$ObservationId_,
+		[string]$ObservationType_,
+		[string]$ParentCmdline_,
+		[string]$ProcessCmdline_,
+		[string]$ProcessHash_,
+		[string]$RuleId_,
 		[CbcServer]$Server_
 	) {
-		# TODO
 		$this.AlertCategory = $AlertCategory_
 		$this.AlertId = $AlertId_
-		$this.ObservationId = $ObservationId_
+		$this.BackendTimestamp = $BackendTimestamp_
+		$this.BlockedHash = $BlockedHash_
+		$this.DeviceExternalIp = $DeviceExternalIp_
 		$this.DeviceId = $DeviceId_
+		$this.DeviceInternalIp = $DeviceInternalIp_
+		$this.DeviceOs = $DeviceOs_
+		$this.DevicePolicy = $DevicePolicy_
+		$this.DevicePolicyId = $DevicePolicyId_
+		$this.DeviceSensorVersion = $DeviceSensorVersion_
+		$this.EventId = $EventId_
+		$this.ObservationId = $ObservationId_
+		$this.ObservationType = $ObservationType_
+		$this.ParentCmdline = $ParentCmdline_
+		$this.ProcessCmdline = $ProcessCmdline_
+		$this.ProcessHash = $ProcessHash_
+		$this.RuleId = $RuleId_
 		$this.Server = $Server_
 	}
 }
