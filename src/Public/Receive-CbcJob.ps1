@@ -18,7 +18,11 @@ PS > if ($job_status.Status -eq "Completed") {
 First operation that is asynchronous should be started as job, which is not going to wait till the completion of the operation,
 but will immediately return CbcJob object based on the started operation. After that the status could be checked with the
 Get-CbcJob cmdlet. Once the status of the job is determed as completed, then the results can be retrieved with Receive-CbcJob cmdlet.
-Currently we support observation_details and observation_search type of jobs.
+Currently we support:
+* observation_search
+* observation_details
+* process_search
+* process_details
 
 PS > Receive-CbcJob -Id "id" -Type "observation_details"
 
@@ -90,6 +94,12 @@ function Receive-CbcJob {
                 "observation_details" {
                     $Endpoint = $global:CBC_CONFIG.endpoints["ObservationDetails"]
                 }
+                "process_search" {
+                    $Endpoint = $global:CBC_CONFIG.endpoints["Processes"]
+                }
+                "process_details" {
+                    $Endpoint = $global:CBC_CONFIG.endpoints["ProcessDetails"]
+                }
             }
             
             if ($Endpoint) {
@@ -118,6 +128,12 @@ function Receive-CbcJob {
                                 }
                                 "observation_details" {
                                     return Initialize-CbcObservation $Result $CurrentServer
+                                }
+                                "process_search" {
+                                    return Initialize-CbcProcess $Result $CurrentServer
+                                }
+                                "process_details" {
+                                    return Initialize-CbcProcess $Result $CurrentServer
                                 }
                             }
                         }
