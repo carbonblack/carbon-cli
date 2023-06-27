@@ -8,7 +8,7 @@ Sets the job id
 .OUTPUTS
 CbcObservation[] or CbcObservationDetails[] depending on the job type
 .EXAMPLE
-PS > $criteria = @{"alert_category" = @("THREAT")
+PS > $criteria = @{"alert_category" = @("THREAT")}
 PS > $job = Get-CbcObservation -Include $Criteria -AsJob
 PS > $job_status = Get-CbcJob -Job $job
 PS > if ($job_status.Status -eq "Completed") {
