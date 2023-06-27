@@ -21,7 +21,7 @@ API Documentation: https://developer.carbonblack.com/reference/carbon-black-clou
 #>
 
 function Get-CbcObservationDetails {
-    [CmdletBinding(DefaultParameterSetName = "Default")]
+    [CmdletBinding(DefaultParameterSetName = "Id")]
     [OutputType([CbcObservation[]])]
     param(
         [Parameter(ParameterSetName = "Id", Position = 0)]
@@ -31,8 +31,7 @@ function Get-CbcObservationDetails {
         [string]$AlertId,
 
         [Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "Default")]
-        [Parameter(ParameterSetName = "IncludeExclude")]
+        [Parameter(ParameterSetName = "AlertId")]
         [CbcServer[]]$Server
     )
 
