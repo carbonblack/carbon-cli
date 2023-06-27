@@ -46,7 +46,7 @@ function Get-CbcObservation {
         [string[]]$Id,
 
         [Parameter(ParameterSetName = "Default")]
-        [Parameter(ParameterSetName = "IncludeExclude")]
+        [Parameter(ParameterSetName = "IncludeExclude", Mandatory = $true)]
         [hashtable]$Include,
 
         [Parameter(ParameterSetName = "Default")]
@@ -56,7 +56,12 @@ function Get-CbcObservation {
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "Default")]
         [Parameter(ParameterSetName = "IncludeExclude")]
-        [CbcServer[]]$Server
+        [CbcServer[]]$Server,
+
+        [Parameter(ParameterSetName = "Id")]
+        [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "IncludeExclude")]
+        [switch]$AsJob
     )
 
     process {
@@ -103,6 +108,11 @@ function Get-CbcObservation {
                 Write-Error -Message $("Cannot create observation search job for $($_)")
             }
             else {
+
+                if ($AsJob) {
+                    return Initialize-CbcJob $JsonContent.job_id "Running" $_.Server
+                }
+
                 # if search job is created, then we could get the results, but
                 # it is async request so to keep checking, till all are available
                 $JsonContent = $Response.Content | ConvertFrom-Json
