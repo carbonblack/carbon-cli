@@ -57,7 +57,7 @@ Describe "Receive-CbcJob" {
 				$Method -eq "GET"
 			}
 
-			$observations = Receive-CbcJob -Job $job -Server @($s1)
+			$observations = Receive-CbcJob -Job $job
 
 			$observations.Count | Should -Be 1
 			$observations[0].Server | Should -Be $s1
@@ -76,7 +76,7 @@ Describe "Receive-CbcJob" {
 				$Method -eq "GET"
 			}
 
-			{Receive-CbcJob -Job $job -Server @($s1) -ErrorAction Stop} | Should -Throw
+			{Receive-CbcJob -Job $job -ErrorAction Stop} | Should -Throw
             $Error[0] | Should -Be "Not ready to retrieve."
 		}
 
@@ -91,7 +91,7 @@ Describe "Receive-CbcJob" {
 				$Method -eq "GET"
 			}
 
-			{Receive-CbcJob -Job @($job) -Server $s1 -ErrorAction Stop} | Should -Throw
+			{Receive-CbcJob -Job @($job) -ErrorAction Stop} | Should -Throw
             $Error[0] | Should -BeLike "Cannot complete action for xxx for*"
 			
 		}

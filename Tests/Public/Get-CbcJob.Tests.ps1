@@ -58,7 +58,7 @@ Describe "Get-CbcJob" {
 				$Method -eq "GET"
 			}
 
-			$jobs = Get-CbcJob -Job $job -Server @($s1)
+			$jobs = Get-CbcJob -Job $job
 
 			$jobs.Count | Should -Be 1
 			$jobs[0].Server | Should -Be $s1
@@ -76,7 +76,7 @@ Describe "Get-CbcJob" {
 				$Method -eq "GET"
 			}
 
-			{Get-CbcJob -Job @($job) -Server $s1 -ErrorAction Stop} | Should -Throw
+			{Get-CbcJob -Job @($job) -ErrorAction Stop} | Should -Throw
             $Error[0] | Should -BeLike "Cannot complete action for xxx for*"
 			
 		}

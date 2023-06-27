@@ -1,13 +1,22 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
-This cmdlet returns the status of a job for async operation.
+This cmdlet returns the status of a job for async operation - currently supported observation_search and observation_details.
 .PARAMETER Id
 Sets the job id
 .OUTPUTS
 CbcJob[]
 .EXAMPLE
-PS > Get-CbcJob -Id "id" -Type "observation_details"
+PS > $criteria = @{"alert_category" = @("THREAT")
+PS > $job = Get-CbcObservation -Include $Criteria -AsJob
+PS > $job_status = Get-CbcJob -Job $job
+PS > $job_status.Status
+
+First operation that is asynchronous should be started as job, which is not going to wait till the completion of the operation,
+but will immediately return CbcJob object based on the started operation. After that the status could be checked with the
+Get-CbcJob cmdlet, which can be started either with a job object that contains all the infomation for the job, or by
+providing id and type of the job.
+Currently we support observation_details and observation_search type of jobs.
 
 .EXAMPLE
 PS > Get-CbcJob -Id "id1", "id2" -Type "observation_details"
@@ -42,7 +51,6 @@ function Get-CbcJob {
         [string]$Type,
 
         [Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "Default")]
         [CbcServer[]]$Server
     )
     
