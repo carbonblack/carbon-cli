@@ -4,7 +4,6 @@ param (
     [string]
     $Scope = "CurrentUser",
 
-    [Parameter(Mandatory = $false )]
     [string]
     $MinNugetVersion = "2.8.5.201"
 )

@@ -1,0 +1,98 @@
+{
+    "results": [
+        {
+            "alert_category": [
+                "THREAT"
+            ],
+            "alert_id": [
+                "82a39c64-3e31-452d-6440-716d68040524"
+            ],
+            "backend_timestamp": "2023-06-26T05:20:23.199Z",
+            "blocked_effective_reputation": "COMPANY_BLACK_LIST",
+            "blocked_hash": [
+                "0fc5fd25e5cb032af0e867b74ad8fcb3a0f5803f3c661e398d5a03448c5ca946"
+            ],
+            "blocked_name": "c:\\program files\\mozilla firefox\\firefox.exe",
+            "childproc_effective_reputation": "COMPANY_BLACK_LIST",
+            "childproc_effective_reputation_source": "HASH_REP",
+            "childproc_hash": [
+                "0fc5fd25e5cb032af0e867b74ad8fcb3a0f5803f3c661e398d5a03448c5ca946"
+            ],
+            "childproc_name": "c:\\program files\\mozilla firefox\\firefox.exe",
+            "childproc_reputation": "COMPANY_BLACK_LIST",
+            "device_external_ip": "66.1.2.1",
+            "device_group_id": 0,
+            "device_id": 11412673,
+            "device_installed_by": "Administrator",
+            "device_internal_ip": "10.100.6.100",
+            "device_location": "OFFSITE",
+            "device_name": "test-wintest",
+            "device_os": "WINDOWS",
+            "device_os_version": "Server 2015 R2 x64",
+            "device_policy": "standard",
+            "device_policy_id": 7113786,
+            "device_target_priority": "MEDIUM",
+            "device_timestamp": "2023-06-26T05:17:05.246Z",
+            "document_guid": "_jraUCifQZKMpwt9WJWnbQ",
+            "enriched": true,
+            "enriched_event_type": "CREATE_PROCESS",
+            "event_attack_stage": [
+                "INSTALL_RUN"
+            ],
+            "event_description": "The application \"\u003cshare\u003e\u003clink hash=\"c7db4ae8175c33a47baa3ddfa089fad17bc8e362f21e835d78ab22c9231fe370\"\u003eC:\\Windows\\system32\\svchost.exe -k netsvcs\u003c/link\u003e\u003c/share\u003e\" invoked the application \"\u003cshare\u003e\u003clink hash=\"0fc5fd25e5cb032af0e867b74ad8fcb3a0f5803f3c661e398d5a03448c5ca946\"\u003eC:\\program files\\mozilla firefox\\firefox.exe\u003c/link\u003e\u003c/share\u003e\". The operation was \u003caccent\u003eblocked by Carbon Black\u003c/accent\u003e.",
+            "event_id": "d266ac1613e011ee9c5d536794589f5e",
+            "event_type": "childproc",
+            "ingress_time": 1687756700278,
+            "legacy": true,
+            "observation_description": " firefox.exe on the Company Black List was detected running. A Deny Policy Action was applied.",
+            "observation_id": "d266ac1613e011ee9c5d536794589aaa:82a39c64-3e31-452d-6440-716d68040aaa",
+            "observation_type": "CB_ANALYTICS",
+            "org_id": "4JDT3MX9Q",
+            "parent_effective_reputation": "LOCAL_WHITE",
+            "parent_effective_reputation_source": "CERT",
+            "parent_guid": "4JDT3MX9Q-00ae24c1-00000238-00000000-1d92cbe6decf4f2",
+            "parent_hash": [
+                "083bb4f3b20419c87db656f1465e5f782acde76838cde6207f26aad035c69de0"
+            ],
+            "parent_name": "c:\\windows\\system32\\services.exe",
+            "parent_pid": 568,
+            "parent_reputation": "NOT_LISTED",
+            "process_cmdline": [
+                "C:\\Windows\\system32\\svchost.exe -k netsvcs"
+            ],
+            "process_cmdline_length": [
+                42
+            ],
+            "process_effective_reputation": "LOCAL_WHITE",
+            "process_effective_reputation_source": "CERT",
+            "process_guid": "4JDT3MX9Q-00ae24c1-000003a8-00000000-1d92cbe6ed8fe34",
+            "process_hash": [
+                "c7db4ae8175c33a47baa3ddfa089fad17bc8e362f21e835d78ab22c9231fe370"
+            ],
+            "process_name": "c:\\windows\\system32\\svchost.exe",
+            "process_pid": [
+                936
+            ],
+            "process_reputation": "NOT_LISTED",
+            "process_sha256": "c7db4ae8175c33a47baa3ddfa089fad17bc8e362f21e835d78ab22c9231fe370",
+            "process_start_time": "2023-01-20T11:00:39.926Z",
+            "process_username": [
+                "NT AUTHORITY\\SYSTEM"
+            ],
+            "sensor_action": [
+                "DENY",
+                "BLOCK"
+            ],
+            "ttp": [
+                "RUN_BLACKLIST_APP",
+                "POLICY_DENY"
+            ]
+        }
+    ],
+    "num_found": 1,
+    "num_available": 1,
+    "approximate_unaggregated": 1,
+    "num_aggregated": 1,
+    "contacted": 13,
+    "completed": 13
+}

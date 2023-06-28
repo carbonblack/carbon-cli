@@ -49,6 +49,18 @@ $ pre-commit install
 PS > ./Invoke-Tests.ps1
 ```
 
+If you want to check the test coverage for all of the files
+
+```powershell
+Invoke-Pester -CodeCoverage ./src/Public/*
+```
+
+or for specific file:
+
+```powershell
+Invoke-Pester -CodeCoverage ./src/Public/Get-CbcDevice.ps1
+```
+
 If you want to enable debug information
 
 ```powershell

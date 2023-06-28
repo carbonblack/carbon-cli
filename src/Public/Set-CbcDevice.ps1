@@ -26,11 +26,11 @@ To uninstall the sensor of the device.
 .OUTPUTS
 CbcDevice[]
 .EXAMPLE
-PS > Get-CBCDevice -Id 9187873 | Set-CbcDevice -ScanEnabled $true
+PS > Get-CbcDevice -Id 9187873 | Set-CbcDevice -ScanEnabled $true
 
 Issuing a background scan on the device.
 .EXAMPLE
-PS > $device = Get-CBCDevice -Id 9187873
+PS > $device = Get-CbcDevice -Id 9187873
 PS > Set-CbcDevice -Device $device -ScanEnabled $false
 
 Pausing a background scan on the device.
@@ -40,7 +40,7 @@ PS > Set-CbcDevice -Id 9187873 -BypassEnabled $true
 Bypassing/Disabling bypass of the device.
 
 .EXAMPLE
-PS > Get-CBCDevice 9187873 | Set-CbcDevice -Device $device -QuarantineEnabled $true
+PS > Get-CbcDevice 9187873 | Set-CbcDevice -Device $device -QuarantineEnabled $true
 
 Quarantine/Unquarantine the device.
 

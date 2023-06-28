@@ -1,0 +1,112 @@
+{
+    "results": [
+      {
+        "backend_timestamp": "2023-05-31T08:33:30.791Z",
+        "childproc_count": 0,
+        "crossproc_count": 12752,
+        "device_external_ip": "66.170.99.2",
+        "device_group_id": 0,
+        "device_id": 18458384,
+        "device_installed_by": "Administrator",
+        "device_internal_ip": "10.193.3.105",
+        "device_location": "UNKNOWN",
+        "device_name": "alabala",
+        "device_os": "LINUX",
+        "device_os_version": "Windows Server 2016 x64",
+        "device_policy": "standard",
+        "device_policy_id": 19888416,
+        "device_sensor_version": "3.9.0.2347",
+        "device_target_priority": "MEDIUM",
+        "device_timestamp": "2023-05-31T08:30:40.131Z",
+        "document_guid": "anjYgA7zTJmuqX69yv7HkQ",
+        "filemod_count": 0,
+        "ingress_time": 1685521983027,
+        "modload_count": 0,
+        "netconn_count": 3,
+        "org_id": "ABCD1234",
+        "parent_cmdline": "C:\\Windows\\system32\\services.exe",
+        "parent_cmdline_length": 32,
+        "parent_effective_reputation": "LOCAL_WHITE",
+        "parent_effective_reputation_source": "IGNORE",
+        "parent_guid": "DJ4TYR8E9P-0119a710-0000027c-00000000-1d9735eabf24829",
+        "parent_hash": [
+          "48d5695e7610e7a742e403b2c37664d961e466c10e4ffae07c8ab6b5be5f7bf8",
+          "9a3b47cd17283b299311013ad3d21d26"
+        ],
+        "parent_issuer": [
+          "Microsoft Windows Production PCA 2011"
+        ],
+        "parent_name": "c:\\windows\\system32\\services.exe",
+        "parent_pid": 636,
+        "parent_publisher": [
+          "Microsoft Windows Publisher"
+        ],
+        "parent_publisher_state": [
+          "FILE_SIGNATURE_STATE_OS",
+          "FILE_SIGNATURE_STATE_SIGNED",
+          "FILE_SIGNATURE_STATE_TRUSTED",
+          "FILE_SIGNATURE_STATE_VERIFIED"
+        ],
+        "parent_reputation": "NOT_LISTED",
+        "process_cmdline": [
+          "C:\\Windows\\system32\\svchost.exe -k RPCSS"
+        ],
+        "process_cmdline_length": [
+          40
+        ],
+        "process_company_name": "Microsoft Corporation",
+        "process_effective_reputation": "TRUSTED_WHITE_LIST",
+        "process_effective_reputation_source": "IGNORE",
+        "process_elevated": true,
+        "process_file_description": "Host Process for Windows Services",
+        "process_guid": "DJ4TYR8E9P-0119a710-00000328-00000000-1d9735eac88ef38",
+        "process_hash": [
+          "36f670d89040709013f6a460176767ec",
+          "438b6ccd84f4dd32d9684ed7d58fd7d1e5a75fe3f3d12ab6c788e6bb0ffad5e7"
+        ],
+        "process_integrity_level": "SYSTEM",
+        "process_internal_name": "svchost.exe",
+        "process_issuer": [
+          "Microsoft Windows Production PCA 2011"
+        ],
+        "process_name": "c:\\windows\\system32\\svchost.exe",
+        "process_original_filename": "svchost.exe",
+        "process_pid": [
+          808
+        ],
+        "process_privileges": [
+          "SeChangeNotifyPrivilege",
+          "SeCreateGlobalPrivilege",
+          "SeImpersonatePrivilege"
+        ],
+        "process_product_name": "Microsoft® Windows® Operating System",
+        "process_product_version": "10.0.14393.0",
+        "process_publisher": [
+          "Microsoft Windows Publisher"
+        ],
+        "process_publisher_state": [
+          "FILE_SIGNATURE_STATE_OS",
+          "FILE_SIGNATURE_STATE_SIGNED",
+          "FILE_SIGNATURE_STATE_TRUSTED",
+          "FILE_SIGNATURE_STATE_VERIFIED"
+        ],
+        "process_reputation": "TRUSTED_WHITE_LIST",
+        "process_service_name": [
+          "rpcss"
+        ],
+        "process_sha256": "438b6ccd84f4dd32d9684ed7d58fd7d1e5a75fe3f3d12ab6c788e6bb0ffad5e7",
+        "process_start_time": "2023-04-20T08:04:04.291Z",
+        "process_username": [
+          "NT AUTHORITY\\NETWORK SERVICE"
+        ],
+        "regmod_count": 0,
+        "scriptload_count": 0
+      }
+    ],
+    "num_found": 1,
+    "num_available": 1,
+    "approximate_unaggregated": 1574,
+    "num_aggregated": 1574,
+    "contacted": 7,
+    "completed": 7
+  }
