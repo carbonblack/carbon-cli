@@ -6,7 +6,11 @@ can be retrieved, before that the cmdlet will log an error stating that the resu
 .PARAMETER Id
 Sets the job id
 .OUTPUTS
-CbcObservation[] or CbcObservationDetails[] depending on the job type
+Depending on the job type:
+* CbcObservation[]
+* CbcObservationDetails[] 
+* CbcProcess[]
+* CbcProcessDetails[]
 .EXAMPLE
 PS > $criteria = @{"alert_category" = @("THREAT")}
 PS > $job = Get-CbcObservation -Include $Criteria -AsJob
@@ -127,13 +131,13 @@ function Receive-CbcJob {
                                     return Initialize-CbcObservation $Result $CurrentServer
                                 }
                                 "observation_details" {
-                                    return Initialize-CbcObservation $Result $CurrentServer
+                                    return Initialize-CbcObservationDetails $Result $CurrentServer
                                 }
                                 "process_search" {
                                     return Initialize-CbcProcess $Result $CurrentServer
                                 }
                                 "process_details" {
-                                    return Initialize-CbcProcess $Result $CurrentServer
+                                    return Initialize-CbcProcessDetails $Result $CurrentServer
                                 }
                             }
                         }

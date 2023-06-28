@@ -23,7 +23,6 @@ function Initialize-CbcProcess {
         $Response.device_policy_id,
         $Response.device_sensor_version,
         $Response.event_type,
-        $Response.parent_cmdline,
         $Response.parent_guid,
         $Response.process_cmdline,
         $Response.process_guid,

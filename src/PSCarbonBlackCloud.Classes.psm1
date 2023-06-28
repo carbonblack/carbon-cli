@@ -377,7 +377,69 @@ class CbcAlert{
 	}
 }
 
-class CbcObservation{
+class CbcObservation {
+	[string]$AlertCategory
+	[array]$AlertId
+	[string]$BackendTimestamp
+	[string[]]$BlockedHash
+	[string]$DeviceExternalIp
+	[string]$DeviceId
+	[string]$DeviceInternalIp
+	[string]$DeviceOs
+	[string]$DevicePolicy
+	[string]$DevicePolicyId
+	[string]$DeviceSensorVersion
+	[string]$EventId
+	[string]$ObservationId
+	[string]$ObservationType
+	[string[]]$ProcessCmdline
+	[string]$ProcessHash
+	[string]$RuleId
+	[CbcServer]$Server
+
+	CbcObservation (
+		[string]$AlertCategory_,
+		[array]$AlertId_,
+		[string]$BackendTimestamp_,
+		[string[]]$BlockedHash_,
+		[string]$DeviceExternalIp_,
+		[string]$DeviceId_,
+		[string]$DeviceInternalIp_,
+		[string]$DeviceOs_,
+		[string]$DevicePolicy_,
+		[string]$DevicePolicyId_,
+		[string]$DeviceSensorVersion_,
+		[string]$EventId_,
+		[string]$ObservationId_,
+		[string]$ObservationType_,
+		[string]$ProcessCmdline_,
+		[string]$ProcessHash_,
+		[string]$RuleId_,
+		[CbcServer]$Server_
+	) {
+		$this.AlertCategory = $AlertCategory_
+		$this.AlertId = $AlertId_
+		$this.BackendTimestamp = $BackendTimestamp_
+		$this.BlockedHash = $BlockedHash_
+		$this.DeviceExternalIp = $DeviceExternalIp_
+		$this.DeviceId = $DeviceId_
+		$this.DeviceInternalIp = $DeviceInternalIp_
+		$this.DeviceOs = $DeviceOs_
+		$this.DevicePolicy = $DevicePolicy_
+		$this.DevicePolicyId = $DevicePolicyId_
+		$this.DeviceSensorVersion = $DeviceSensorVersion_
+		$this.EventId = $EventId_
+		$this.ObservationId = $ObservationId_
+		$this.ObservationType = $ObservationType_
+		$this.ProcessCmdline = $ProcessCmdline_
+		$this.ProcessHash = $ProcessHash_
+		$this.RuleId = $RuleId_
+		$this.Server = $Server_
+	}
+}
+
+
+class CbcObservationDetails {
 	[string]$AlertCategory
 	[array]$AlertId
 	[string]$BackendTimestamp
@@ -398,7 +460,7 @@ class CbcObservation{
 	[string]$RuleId
 	[CbcServer]$Server
 
-	CbcObservation (
+	CbcObservationDetails (
 		[string]$AlertCategory_,
 		[array]$AlertId_,
 		[string]$BackendTimestamp_,
@@ -441,7 +503,8 @@ class CbcObservation{
 	}
 }
 
-class CbcProcess{
+
+class CbcProcess {
 	[string]$AlertCategory
 	[array]$AlertId
 	[string]$BackendTimestamp
@@ -454,7 +517,6 @@ class CbcProcess{
 	[string]$DevicePolicyId
 	[string]$DeviceSensorVersion
 	[string]$EventType
-	[string]$ParentCmdline
 	[string]$ParentGuid
 	[string[]]$ProcessCmdline
 	[string]$ProcessGuid
@@ -474,7 +536,6 @@ class CbcProcess{
 		[string]$DevicePolicyId_,
 		[string]$DeviceSensorVersion_,
 		[string]$EventType_,
-		[string]$ParentCmdline_,
 		[string]$ParentGuid_,
 		[string]$ProcessCmdline_,
 		[string]$ProcessGuid_,
@@ -492,6 +553,63 @@ class CbcProcess{
 		$this.DevicePolicy = $DevicePolicy_
 		$this.DevicePolicyId = $DevicePolicyId_
 		$this.DeviceSensorVersion = $DeviceSensorVersion_
+		$this.EventType = $EventType_
+		$this.ParentGuid = $ParentGuid_
+		$this.ProcessCmdline = $ProcessCmdline_
+		$this.ProcessGuid = $ProcessGuid_
+		$this.ProcessHash = $ProcessHash_
+		$this.Server = $Server_
+	}
+}
+
+class CbcProcessDetails {
+	[string]$AlertCategory
+	[array]$AlertId
+	[string]$BackendTimestamp
+	[string[]]$BlockedHash
+	[string]$DeviceExternalIp
+	[string]$DeviceId
+	[string]$DeviceInternalIp
+	[string]$DeviceOs
+	[string]$DevicePolicy
+	[string]$DevicePolicyId
+	[string]$EventType
+	[string]$ParentCmdline
+	[string]$ParentGuid
+	[string[]]$ProcessCmdline
+	[string]$ProcessGuid
+	[string]$ProcessHash
+	[CbcServer]$Server
+
+	CbcProcessDetails (
+		[string]$AlertCategory_,
+		[array]$AlertId_,
+		[string]$BackendTimestamp_,
+		[string[]]$BlockedHash_,
+		[string]$DeviceExternalIp_,
+		[string]$DeviceId_,
+		[string]$DeviceInternalIp_,
+		[string]$DeviceOs_,
+		[string]$DevicePolicy_,
+		[string]$DevicePolicyId_,
+		[string]$EventType_,
+		[string]$ParentCmdline_,
+		[string]$ParentGuid_,
+		[string]$ProcessCmdline_,
+		[string]$ProcessGuid_,
+		[string]$ProcessHash_,
+		[CbcServer]$Server_
+	) {
+		$this.AlertCategory = $AlertCategory_
+		$this.AlertId = $AlertId_
+		$this.BackendTimestamp = $BackendTimestamp_
+		$this.BlockedHash = $BlockedHash_
+		$this.DeviceExternalIp = $DeviceExternalIp_
+		$this.DeviceId = $DeviceId_
+		$this.DeviceInternalIp = $DeviceInternalIp_
+		$this.DeviceOs = $DeviceOs_
+		$this.DevicePolicy = $DevicePolicy_
+		$this.DevicePolicyId = $DevicePolicyId_
 		$this.EventType = $EventType_
 		$this.ParentCmdline = $ParentCmdline_
 		$this.ParentGuid = $ParentGuid_

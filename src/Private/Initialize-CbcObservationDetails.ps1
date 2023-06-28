@@ -1,6 +1,6 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 
-function Initialize-CbcObservation {
+function Initialize-CbcObservationDetails {
     param(
 		[Parameter(Mandatory = $true,Position = 0)]
 		[ValidateNotNullOrEmpty()]
@@ -10,7 +10,7 @@ function Initialize-CbcObservation {
 		[ValidateNotNullOrEmpty()]
 		[CbcServer]$Server
 	)
-    [CbcObservation]::new(
+    [CbcObservationDetails]::new(
         $Response.alert_category,
         $Response.alert_id,
         $Response.backend_timestamp,
@@ -25,6 +25,7 @@ function Initialize-CbcObservation {
         $Response.event_id,
         $Response.observation_id,
         $Response.observation_type,
+        $Response.parent_cmdline,
         $Response.process_cmdline,
         $Response.process_hash,
         $Response.rule_id,
