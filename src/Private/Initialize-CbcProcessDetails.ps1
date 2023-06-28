@@ -25,8 +25,11 @@ function Initialize-CbcProcessDetails {
         $Response.parent_cmdline,
         $Response.parent_guid,
         $Response.process_cmdline,
+        $Response.process_effective_reputation,
         $Response.process_guid,
         $Response.process_hash,
+        $Response.process_name,
+        $Response.ttp,
         $Server
     )
 }

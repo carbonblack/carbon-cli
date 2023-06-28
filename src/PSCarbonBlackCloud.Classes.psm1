@@ -318,7 +318,7 @@ class CbcPolicyDetails {
 	}
 }
 
-class CbcAlert{
+class CbcAlert {
 
 	[string]$Id
 	[string]$DeviceId
@@ -390,11 +390,15 @@ class CbcObservation {
 	[string]$DevicePolicyId
 	[string]$DeviceSensorVersion
 	[string]$EventId
+	[string]$EventType
 	[string]$ObservationId
 	[string]$ObservationType
 	[string[]]$ProcessCmdline
+	[string]$ProcessEffectiveReputation
 	[string]$ProcessHash
+	[string]$ProcessName
 	[string]$RuleId
+	[string[]]$TTP
 	[CbcServer]$Server
 
 	CbcObservation (
@@ -410,11 +414,15 @@ class CbcObservation {
 		[string]$DevicePolicyId_,
 		[string]$DeviceSensorVersion_,
 		[string]$EventId_,
+		[string]$EventType_,
 		[string]$ObservationId_,
 		[string]$ObservationType_,
 		[string]$ProcessCmdline_,
+		[string]$ProcessEffectiveReputation_,
 		[string]$ProcessHash_,
+		[string]$ProcessName_,
 		[string]$RuleId_,
+		[string[]]$TTP_,
 		[CbcServer]$Server_
 	) {
 		$this.AlertCategory = $AlertCategory_
@@ -429,11 +437,15 @@ class CbcObservation {
 		$this.DevicePolicyId = $DevicePolicyId_
 		$this.DeviceSensorVersion = $DeviceSensorVersion_
 		$this.EventId = $EventId_
+		$this.EventType = $EventType_
 		$this.ObservationId = $ObservationId_
 		$this.ObservationType = $ObservationType_
 		$this.ProcessCmdline = $ProcessCmdline_
+		$this.ProcessEffectiveReputation = $ProcessEffectiveReputation_
 		$this.ProcessHash = $ProcessHash_
+		$this.ProcessName = $ProcessName_
 		$this.RuleId = $RuleId_
+		$this.TTP = $TTP_
 		$this.Server = $Server_
 	}
 }
@@ -452,12 +464,15 @@ class CbcObservationDetails {
 	[string]$DevicePolicyId
 	[string]$DeviceSensorVersion
 	[string]$EventId
+	[string]$EventType
 	[string]$ObservationId
 	[string]$ObservationType
 	[string]$ParentCmdline
 	[string[]]$ProcessCmdline
+	[string]$ProcessEffectiveReputation
 	[string]$ProcessHash
 	[string]$RuleId
+	[string[]]$TTP
 	[CbcServer]$Server
 
 	CbcObservationDetails (
@@ -473,12 +488,15 @@ class CbcObservationDetails {
 		[string]$DevicePolicyId_,
 		[string]$DeviceSensorVersion_,
 		[string]$EventId_,
+		[string]$EventType_,
 		[string]$ObservationId_,
 		[string]$ObservationType_,
 		[string]$ParentCmdline_,
 		[string]$ProcessCmdline_,
+		[string]$ProcessEffectiveReputation_,
 		[string]$ProcessHash_,
 		[string]$RuleId_,
+		[string[]]$TTP_,
 		[CbcServer]$Server_
 	) {
 		$this.AlertCategory = $AlertCategory_
@@ -493,12 +511,15 @@ class CbcObservationDetails {
 		$this.DevicePolicyId = $DevicePolicyId_
 		$this.DeviceSensorVersion = $DeviceSensorVersion_
 		$this.EventId = $EventId_
+		$this.EventType = $EventType_
 		$this.ObservationId = $ObservationId_
 		$this.ObservationType = $ObservationType_
 		$this.ParentCmdline = $ParentCmdline_
 		$this.ProcessCmdline = $ProcessCmdline_
+		$this.ProcessEffectiveReputation = $ProcessEffectiveReputation_
 		$this.ProcessHash = $ProcessHash_
 		$this.RuleId = $RuleId_
+		$this.TTP = $TTP_
 		$this.Server = $Server_
 	}
 }
@@ -519,8 +540,11 @@ class CbcProcess {
 	[string]$EventType
 	[string]$ParentGuid
 	[string[]]$ProcessCmdline
+	[string]$ProcessEffectiveReputation
 	[string]$ProcessGuid
 	[string]$ProcessHash
+	[string]$ProcessName
+	[string[]]$TTP
 	[CbcServer]$Server
 
 	CbcProcess (
@@ -538,8 +562,11 @@ class CbcProcess {
 		[string]$EventType_,
 		[string]$ParentGuid_,
 		[string]$ProcessCmdline_,
+		[string]$ProcessEffectiveReputation_,
 		[string]$ProcessGuid_,
 		[string]$ProcessHash_,
+		[string]$ProcessName_,
+		[string[]]$TTP_,
 		[CbcServer]$Server_
 	) {
 		$this.AlertCategory = $AlertCategory_
@@ -556,8 +583,11 @@ class CbcProcess {
 		$this.EventType = $EventType_
 		$this.ParentGuid = $ParentGuid_
 		$this.ProcessCmdline = $ProcessCmdline_
+		$this.ProcessEffectiveReputation = $ProcessEffectiveReputation_
 		$this.ProcessGuid = $ProcessGuid_
 		$this.ProcessHash = $ProcessHash_
+		$this.ProcessName = $ProcessName_
+		$this.TTP = $TTP_
 		$this.Server = $Server_
 	}
 }
@@ -577,8 +607,11 @@ class CbcProcessDetails {
 	[string]$ParentCmdline
 	[string]$ParentGuid
 	[string[]]$ProcessCmdline
+	[string]$ProcessEffectiveReputation
 	[string]$ProcessGuid
 	[string]$ProcessHash
+	[string]$ProcessName
+	[string[]]$TTP
 	[CbcServer]$Server
 
 	CbcProcessDetails (
@@ -596,8 +629,11 @@ class CbcProcessDetails {
 		[string]$ParentCmdline_,
 		[string]$ParentGuid_,
 		[string]$ProcessCmdline_,
+		[string]$ProcessEffectiveReputation_,
 		[string]$ProcessGuid_,
 		[string]$ProcessHash_,
+		[string]$ProcessName_,
+		[string[]]$TTP_,
 		[CbcServer]$Server_
 	) {
 		$this.AlertCategory = $AlertCategory_
@@ -614,13 +650,16 @@ class CbcProcessDetails {
 		$this.ParentCmdline = $ParentCmdline_
 		$this.ParentGuid = $ParentGuid_
 		$this.ProcessCmdline = $ProcessCmdline_
+		$this.ProcessEffectiveReputation = $ProcessEffectiveReputation_
 		$this.ProcessGuid = $ProcessGuid_
 		$this.ProcessHash = $ProcessHash_
+		$this.ProcessName = $ProcessName_
+		$this.TTP = $TTP_
 		$this.Server = $Server_
 	}
 }
 
-class CbcJob{
+class CbcJob {
 	[string]$Id
 	[string]$Type
 	[string]$Status

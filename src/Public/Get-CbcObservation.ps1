@@ -4,6 +4,12 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 This cmdlet returns all observations from all valid connections. The retrieval of observation includes two API requests
 first to start a job with specific criteria/query. The second one is getting the results based on the job that was created.
 The second API request is asynchronous, so we need to make sure all of the results are available, before returning the results.
+.PARAMETER AlertId
+Returns the observations with the specified AlertIds.
+.PARAMETER DeviceId
+Returns the observations with the specified DeviceIds.
+.PARAMETER EventType
+Returns the observations with the specified EventTypes.
 .PARAMETER Exclude
 Sets the exclusions for the search. Either query or criteria/exclusions must be included.
 .PARAMETER Id
@@ -12,6 +18,8 @@ Returns the observations with the specified Ids.
 Sets the criteria for the search. Either query or criteria/exclusions must be included.
 .PARAMETER MaxResults
 Set the max number of results (default is 500 and max is 10k).
+.PARAMETER ObservationType
+Returns the observations with the specified ObservationTypes.
 .PARAMETER Query
 Set the query - query is in lucene syntax and/or including value searches. Either query or criteria/exclusions must be included.
 .OUTPUTS
@@ -31,6 +39,14 @@ Returns all alerts which correspond to the specified criteria and Ids.
 PS > Get-CbcObservation -Include @{"alert_category" = @("THREAT")}
 
 Returning all the observations that are in the THREAT alert category.
+.EXAMPLE
+PS > Get-CbcObservation -AlertId "b01dad69-09e8-71ba-6542-60f5a8d58030" -ObservationType "CB_ANALYTICS" -EventType "childproc" -DeviceId 1111111 
+
+You can filter by AlertId, DeviceId, EventType, ObservationType
+.EXAMPLE
+PS > Get-CbcObservation -Query "alert_id:b01dad69-09e8-71ba-6542-60f5a8d58030"
+
+You can provide query in lucene syntax.
 .LINK
 Full list of searchable fields: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/platform-search-fields
 .LINK
@@ -42,28 +58,51 @@ function Get-CbcObservation {
     [OutputType([CbcObservation[]])]
     param(
         [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Filter")]
+        [string[]]$AlertId,
+
+        [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Filter")]
+        [string[]]$DeviceId,
+
+        [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Filter")]
+        [string[]]$EventType,
+
+        [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Filter")]
+        [string[]]$ObservationType,
+
+        [Parameter(ParameterSetName = "Default")]
         [Parameter(ParameterSetName = "Id", Position = 0)]
         [string[]]$Id,
 
-        [Parameter(ParameterSetName = "Default")]
         [Parameter(ParameterSetName = "IncludeExclude", Mandatory = $true)]
         [hashtable]$Include,
 
-        [Parameter(ParameterSetName = "Default")]
         [Parameter(ParameterSetName = "IncludeExclude")]
         [hashtable]$Exclude,
 
+        [Parameter(ParameterSetName = "Query", Mandatory = $true)]
+        [string]$Query,
+
         [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = "Query")]
         [Parameter(ParameterSetName = "IncludeExclude")]
         [int32]$MaxResults = 500,
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = "Query")]
         [Parameter(ParameterSetName = "IncludeExclude")]
         [CbcServer[]]$Server,
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = "Query")]
         [Parameter(ParameterSetName = "IncludeExclude")]
         [switch]$AsJob
     )
@@ -79,22 +118,40 @@ function Get-CbcObservation {
         $ExecuteServers | ForEach-Object {
             $Endpoint = $global:CBC_CONFIG.endpoints["Observations"]
             $RequestBody = @{}
+            $RequestBody.rows = $MaxResults
             switch ($PSCmdlet.ParameterSetName) {
                 "Default" {
                     $RequestBody.criteria = @{}
-                    if ($PSBoundParameters.ContainsKey("Include")) {
-                        $RequestBody.criteria = $Include
-                    }
                     if ($PSBoundParameters.ContainsKey("Id")) {
                         $RequestBody.criteria.observation_id = $Id
+                    }
+                    if ($PSBoundParameters.ContainsKey("AlertId")) {
+                        $RequestBody.criteria.alert_id = $AlertId
+                    }
+                    if ($PSBoundParameters.ContainsKey("DeviceId")) {
+                        $RequestBody.criteria.device_id = $DeviceId
+                    }
+                    if ($PSBoundParameters.ContainsKey("EventType")) {
+                        $RequestBody.criteria.event_type = $EventType
+                    }
+                    if ($PSBoundParameters.ContainsKey("ObservationType")) {
+                        $RequestBody.criteria.observation_type = $ObservationType
+                    }
+                }
+                "IncludeExclude" {
+                    if ($PSBoundParameters.ContainsKey("Include")) {
+                        $RequestBody.criteria = $Include
                     }
                     if ($PSBoundParameters.ContainsKey("Exclude")) {
                         $RequestBody.exclusions = $Exclude
                     }
-                    $RequestBody.rows = $MaxResults
+                }
+                "Query" {
+                    if ($PSBoundParameters.ContainsKey("Query")) {
+                        $RequestBody.query = $Query
+                    }
                 }
             }
-
             $RequestBody = $RequestBody | ConvertTo-Json
             $Response = Invoke-CbcRequest -Endpoint $Endpoint["StartJob"] `
                 -Method POST `

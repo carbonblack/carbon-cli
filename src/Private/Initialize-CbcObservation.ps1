@@ -23,11 +23,15 @@ function Initialize-CbcObservation {
         $Response.device_policy_id,
         $Response.device_sensor_version,
         $Response.event_id,
+        $Response.event_type,
         $Response.observation_id,
         $Response.observation_type,
         $Response.process_cmdline,
+        $Response.process_effective_reputation,
         $Response.process_hash,
+        $Response.process_name,
         $Response.rule_id,
+        $Response.ttp,
         $Server
     )
 }

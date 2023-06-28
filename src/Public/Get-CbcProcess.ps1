@@ -26,6 +26,14 @@ PS > Get-CbcProcess -Include $Criteria
 
 Returns all processes which correspond to the specified criteria.
 .EXAMPLE
+PS > Get-CbcProcess -Query "device_name:Win7x64"
+
+Returns all processes which correspond to the specified query.
+.EXAMPLE
+PS > Get-CbcProcess -ProcessHash "95397c121a7282c3edda11d41615fadf50e172e0c4c3671ad16af9d19411f459" -DeviceId "1212121"
+
+Returns all processes which correspond to the specified query.
+.EXAMPLE
 PS > $criteria = @{"device_name" = @("Win7x64")}
 PS > $job = Get-CbcProcess -Include $Criteria -AsJob
 PS > while ($job.Status -eq "Running") {
@@ -51,24 +59,39 @@ function Get-CbcProcess {
         [string[]]$Id,
 
         [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Filter")]
+        [string[]]$DeviceId,
+
+        [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Filter")]
+        [string[]]$ProcessHash,
+
         [Parameter(ParameterSetName = "IncludeExclude", Mandatory = $true)]
         [hashtable]$Include,
 
-        [Parameter(ParameterSetName = "Default")]
         [Parameter(ParameterSetName = "IncludeExclude")]
         [hashtable]$Exclude,
 
+        [Parameter(ParameterSetName = "Query")]
+        [string]$Query,
+
         [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = "Query")]
         [Parameter(ParameterSetName = "IncludeExclude")]
         [int32]$MaxResults = 500,
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = "Query")]
         [Parameter(ParameterSetName = "IncludeExclude")]
         [CbcServer[]]$Server,
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = "Query")]
         [Parameter(ParameterSetName = "IncludeExclude")]
         [switch]$AsJob
     )
@@ -84,19 +107,33 @@ function Get-CbcProcess {
         $ExecuteServers | ForEach-Object {
             $Endpoint = $global:CBC_CONFIG.endpoints["Processes"]
             $RequestBody = @{}
+            $RequestBody.rows = $MaxResults
             switch ($PSCmdlet.ParameterSetName) {
                 "Default" {
+                    $RequestBody.criteria = @{}
+                    if ($PSBoundParameters.ContainsKey("Id")) {
+                        $RequestBody.criteria.process_guid = $Id
+                    }
+                    if ($PSBoundParameters.ContainsKey("DeviceId")) {
+                        $RequestBody.criteria.device_id = $DeviceId
+                    }
+                    if ($PSBoundParameters.ContainsKey("ProcessHash")) {
+                        $RequestBody.criteria.process_hash = $ProcessHash
+                    }
+                }
+                "IncludeExclude" {
                     $RequestBody.criteria = @{}
                     if ($PSBoundParameters.ContainsKey("Include")) {
                         $RequestBody.criteria = $Include
                     }
-                    if ($PSBoundParameters.ContainsKey("Id")) {
-                        $RequestBody.criteria.process_guid = $Id
-                    }
                     if ($PSBoundParameters.ContainsKey("Exclude")) {
                         $RequestBody.exclusions = $Exclude
                     }
-                    $RequestBody.rows = $MaxResults
+                }
+                "Query" {
+                    if ($PSBoundParameters.ContainsKey("Query")) {
+                        $RequestBody.query = $Query
+                    }
                 }
             }
 
