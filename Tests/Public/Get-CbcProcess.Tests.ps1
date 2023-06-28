@@ -67,7 +67,69 @@ Describe "Get-CbcProcess" {
                 $processes.Count | Should -Be 1
                 $processes[0].Server | Should -Be $s1
             }
+
+            It "Should set the HTTP Request Body accordingly based on filter parameters" {
+                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                    @{
+                        StatusCode = 200
+                        Content    = Get-Content "$ProjectRoot/Tests/resources/process_api/start_job.json"
+                    }
+                } -ParameterFilter {
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Processes"]["StartJob"] -and
+                    $Method -eq "POST" -and
+                    $Server -eq $s1 -and
+                    ($Body | ConvertFrom-Json).criteria.process_hash -eq "2c3edda11d41615fadf50e172e0c4c3671ad16af9d19411f459"
+                    ($Body | ConvertFrom-Json).criteria.device_id -eq "111111111"
+                }
+
+                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                    @{
+                        StatusCode = 200
+                        Content    = Get-Content "$ProjectRoot/Tests/resources/process_api/results_search_job.json"
+                    }
+                } -ParameterFilter {
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Processes"]["Results"] -and
+                    $Method -eq "GET" -and
+                    $Server -eq $s1
+                }
+                $processes = Get-CbcProcess -ProcessHash "2c3edda11d41615fadf50e172e0c4c3671ad16af9d19411f459" -DeviceId "111111111"  -Server $s1
+
+                $processes.Count | Should -Be 1
+                $processes[0].Server | Should -Be $s1
+                $processes[0] | Should -Be CbcProcess
+            }
+
+            It "Should set the HTTP Request Body accordingly based on query" {
+                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                    @{
+                        StatusCode = 200
+                        Content    = Get-Content "$ProjectRoot/Tests/resources/process_api/start_job.json"
+                    }
+                } -ParameterFilter {
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Processes"]["StartJob"] -and
+                    $Method -eq "POST" -and
+                    $Server -eq $s1 -and
+                    ($Body | ConvertFrom-Json).query -eq "process_hash:2c3edda11d41615fadf50e172e0c4c3671ad16af9d19411f459"
+                }
+
+                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                    @{
+                        StatusCode = 200
+                        Content    = Get-Content "$ProjectRoot/Tests/resources/process_api/results_search_job.json"
+                    }
+                } -ParameterFilter {
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Processes"]["Results"] -and
+                    $Method -eq "GET" -and
+                    $Server -eq $s1
+                }
+                $processes = Get-CbcProcess -Query "process_hash:2c3edda11d41615fadf50e172e0c4c3671ad16af9d19411f459"
+
+                $processes.Count | Should -Be 1
+                $processes[0].Server | Should -Be $s1
+                $processes[0] | Should -Be CbcProcess
+            }
         }
+
         Context "When using the 'Id' parameter set" {
             BeforeAll {
                 $Uri = "https://t.te1/"

@@ -51,7 +51,7 @@ Describe "Get-CbcProcessDetails" {
                 }
 
                 $process = Get-CbcProcessDetails -Id "d266ac1613e011ee9c5d536794589aaa:82a39c64-3e31-452d-6440-716d68040aaa" -Server $s1
-                $process[0] | Should -Be CbcProcess
+                $process[0] | Should -Be CbcProcessDetails
                 $process.Count | Should -Be 1
             }
 
@@ -140,7 +140,7 @@ Describe "Get-CbcProcessDetails" {
                 }
 
                 $processes = Get-CbcProcessDetails -Id "d266ac1613e011ee9c5d536794589aaa:82a39c64-3e31-452d-6440-716d68040aaa"
-                $processes[0] | Should -Be CbcProcess
+                $processes[0] | Should -Be CbcProcessDetails
                 $processes.Count | Should -Be 2
             }
         }

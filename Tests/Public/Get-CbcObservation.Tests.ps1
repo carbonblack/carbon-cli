@@ -78,6 +78,7 @@ Describe "Get-CbcObservation" {
                 $global:DefaultCbcServers = [System.Collections.ArrayList]@()
 			    $global:DefaultCbcServers.Add($s1) | Out-Null
             }
+
             It "Should set the HTTP Request Body accordingly" {
                 Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
                     @{
@@ -105,6 +106,67 @@ Describe "Get-CbcObservation" {
 
                 $observations = Get-CbcObservation -Id "8fbccc2da75f11ed937ae3cb089984c6:be6ff259-88e3-6286-789f-74defa192d2e"
                 $observations[0].ObservationId | Should -Be "8fbccc2da75f11ed937ae3cb089984c6:be6ff259-88e3-6286-789f-74defa192d2e"
+            }
+
+            It "Should set the filter parameters as criteria accordingly" {
+                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                    @{
+                        StatusCode = 200
+                        Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/start_search_job.json"
+                    }
+                } -ParameterFilter {
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Observations"]["StartJob"] -and
+                    $Method -eq "POST" -and
+                    $Server -eq $s1 -and
+                    ($Body | ConvertFrom-Json).rows -eq 500 -and
+                    ($Body | ConvertFrom-Json).criteria.alert_id -eq "b01dad69-09e8-71ba-6542-60f5a8d58030" -and
+                    ($Body | ConvertFrom-Json).criteria.observation_type -eq "CB_ANALYTICS" -and
+                    ($Body | ConvertFrom-Json).criteria.event_type -eq "childproc" -and
+                    ($Body | ConvertFrom-Json).criteria.device_id -eq "16801738"
+                }
+
+                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                    @{
+                        StatusCode = 200
+                        Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/results_search_job.json"
+                    }
+                } -ParameterFilter {
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Observations"]["Results"] -and
+                    $Method -eq "GET" -and
+                    $Server -eq $s1
+                }
+
+                $observations = Get-CbcObservation -AlertId "b01dad69-09e8-71ba-6542-60f5a8d58030" -ObservationType "CB_ANALYTICS" -EventType "childproc" -DeviceId "16801738"
+                $observations[0] | Should -Be CbcObservation
+            }
+
+            It "Should set the query parameter accordingly" {
+                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                    @{
+                        StatusCode = 200
+                        Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/start_search_job.json"
+                    }
+                } -ParameterFilter {
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Observations"]["StartJob"] -and
+                    $Method -eq "POST" -and
+                    $Server -eq $s1 -and
+                    ($Body | ConvertFrom-Json).rows -eq 500 -and
+                    ($Body | ConvertFrom-Json).query -eq "alert_id:b01dad69-09e8-71ba-6542-60f5a8d58030"
+                }
+
+                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                    @{
+                        StatusCode = 200
+                        Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/results_search_job.json"
+                    }
+                } -ParameterFilter {
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Observations"]["Results"] -and
+                    $Method -eq "GET" -and
+                    $Server -eq $s1
+                }
+
+                $observations = Get-CbcObservation -Query "alert_id:b01dad69-09e8-71ba-6542-60f5a8d58030"
+                $observations[0] | Should -Be CbcObservation
             }
 
             It "Should return job object" {

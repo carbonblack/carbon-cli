@@ -20,7 +20,11 @@ First operation that is asynchronous should be started as job, which is not goin
 but will immediately return CbcJob object based on the started operation. After that the status could be checked with the
 Get-CbcJob cmdlet, which can be started either with a job object that contains all the infomation for the job, or by
 providing id and type of the job.
-Currently we support observation_details and observation_search type of jobs.
+Currently we support:
+* observation_search
+* observation_details
+* process_search
+* process_details
 
 .EXAMPLE
 PS > Get-CbcJob -Id "id1", "id2" -Type "observation_details"

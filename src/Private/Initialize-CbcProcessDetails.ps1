@@ -1,6 +1,6 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 
-function Initialize-CbcProcess {
+function Initialize-CbcProcessDetails {
     param(
         [Parameter(Mandatory = $true, Position = 0)]
         [ValidateNotNullOrEmpty()]
@@ -10,7 +10,7 @@ function Initialize-CbcProcess {
         [ValidateNotNullOrEmpty()]
         [CbcServer]$Server
     )
-    [CbcProcess]::new(
+    [CbcProcessDetails]::new(
         $Response.alert_category,
         $Response.alert_id,
         $Response.backend_timestamp,
@@ -21,8 +21,8 @@ function Initialize-CbcProcess {
         $Response.device_os,
         $Response.device_policy,
         $Response.device_policy_id,
-        $Response.device_sensor_version,
         $Response.event_type,
+        $Response.parent_cmdline,
         $Response.parent_guid,
         $Response.process_cmdline,
         $Response.process_effective_reputation,

@@ -25,6 +25,7 @@ Describe "Get-CbcJob" {
 			$global:DefaultCbcServers.Add($s1) | Out-Null
 			$global:DefaultCbcServers.Add($s2) | Out-Null
             $job = [CbcJob]::new("xxx", "observation_search", "Running", $s1)
+			$job2 = [CbcJob]::new("xxx", "process_details", "Running", $s2)
 		}
 
 		It "Should return jobs (running) only from the specific server" {
@@ -44,6 +45,46 @@ Describe "Get-CbcJob" {
 			$jobs.Count | Should -Be 1
 			$jobs[0].Server | Should -Be $s1
 			$jobs[0].Status | Should -Be "Running"
+		}
+
+		It "Should return process job (running) only from the specific server" {
+			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+				@{
+					StatusCode = 200
+					Content    = Get-Content "$ProjectRoot/Tests/resources/process_api/results_search_job_running.json"
+				}
+			} -ParameterFilter {
+				$Endpoint -eq $global:CBC_CONFIG.endpoints["Processes"]["Results"] -and
+				$Server -eq $s1 -and
+				$Method -eq "GET"
+			}
+
+			$jobs = Get-CbcJob -Id "xxx" -Type "process_search" -Server @($s1)
+
+			$jobs.Count | Should -Be 1
+			$jobs[0].Server | Should -Be $s1
+			$jobs[0].Status | Should -Be "Running"
+			$jobs[0].Type | Should -Be "process_search"
+		}
+
+		It "Should return process details job (running) only from the specific server" {
+			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+				@{
+					StatusCode = 200
+					Content    = Get-Content "$ProjectRoot/Tests/resources/process_api/results_search_job_running.json"
+				}
+			} -ParameterFilter {
+				$Endpoint -eq $global:CBC_CONFIG.endpoints["ProcessDetails"]["Results"] -and
+				$Server -eq $s2 -and
+				$Method -eq "GET"
+			}
+
+			$jobs = Get-CbcJob -Job $job2
+
+			$jobs.Count | Should -Be 1
+			$jobs[0].Server | Should -Be $s2
+			$jobs[0].Status | Should -Be "Running"
+			$jobs[0].Type | Should -Be "process_details"
 		}
 
         It "Should return jobs (running) only from the specific server by job object" {

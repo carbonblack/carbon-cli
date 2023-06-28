@@ -7,7 +7,7 @@ Returns the observations with the specified Ids.
 .PARAMETER AlertId
 Returns the observations with the specified Alert Id.
 .OUTPUTS
-CbcObservation[]
+CbcObservationDetails[]
 .EXAMPLE
 PS > Get-CbcObservationDetails -Id "95016925089911ee9568b74cff311:23f4c71a-e350-8576-f832-0b0968f"
 
@@ -22,7 +22,7 @@ API Documentation: https://developer.carbonblack.com/reference/carbon-black-clou
 
 function Get-CbcObservationDetails {
     [CmdletBinding(DefaultParameterSetName = "Id")]
-    [OutputType([CbcObservation[]])]
+    [OutputType([CbcObservationDetails[]])]
     param(
         [Parameter(ParameterSetName = "Id", Position = 0)]
         [string[]]$Id,
