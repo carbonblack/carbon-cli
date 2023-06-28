@@ -49,7 +49,6 @@ function Set-CbcAlert {
 		[string]$Id,
 
 		[Parameter(ParameterSetName = "Id")]
-		[Parameter(ParameterSetName = "Default")]
 		[CbcServer[]]$Server
 	)
 
