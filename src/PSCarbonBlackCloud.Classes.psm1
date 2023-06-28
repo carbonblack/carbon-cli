@@ -441,6 +441,67 @@ class CbcObservation{
 	}
 }
 
+class CbcProcess{
+	[string]$AlertCategory
+	[array]$AlertId
+	[string]$BackendTimestamp
+	[string[]]$BlockedHash
+	[string]$DeviceExternalIp
+	[string]$DeviceId
+	[string]$DeviceInternalIp
+	[string]$DeviceOs
+	[string]$DevicePolicy
+	[string]$DevicePolicyId
+	[string]$DeviceSensorVersion
+	[string]$EventType
+	[string]$ParentCmdline
+	[string]$ParentGuid
+	[string[]]$ProcessCmdline
+	[string]$ProcessGuid
+	[string]$ProcessHash
+	[CbcServer]$Server
+
+	CbcProcess (
+		[string]$AlertCategory_,
+		[array]$AlertId_,
+		[string]$BackendTimestamp_,
+		[string[]]$BlockedHash_,
+		[string]$DeviceExternalIp_,
+		[string]$DeviceId_,
+		[string]$DeviceInternalIp_,
+		[string]$DeviceOs_,
+		[string]$DevicePolicy_,
+		[string]$DevicePolicyId_,
+		[string]$DeviceSensorVersion_,
+		[string]$EventType_,
+		[string]$ParentCmdline_,
+		[string]$ParentGuid_,
+		[string]$ProcessCmdline_,
+		[string]$ProcessGuid_,
+		[string]$ProcessHash_,
+		[CbcServer]$Server_
+	) {
+		$this.AlertCategory = $AlertCategory_
+		$this.AlertId = $AlertId_
+		$this.BackendTimestamp = $BackendTimestamp_
+		$this.BlockedHash = $BlockedHash_
+		$this.DeviceExternalIp = $DeviceExternalIp_
+		$this.DeviceId = $DeviceId_
+		$this.DeviceInternalIp = $DeviceInternalIp_
+		$this.DeviceOs = $DeviceOs_
+		$this.DevicePolicy = $DevicePolicy_
+		$this.DevicePolicyId = $DevicePolicyId_
+		$this.DeviceSensorVersion = $DeviceSensorVersion_
+		$this.EventType = $EventType_
+		$this.ParentCmdline = $ParentCmdline_
+		$this.ParentGuid = $ParentGuid_
+		$this.ProcessCmdline = $ProcessCmdline_
+		$this.ProcessGuid = $ProcessGuid_
+		$this.ProcessHash = $ProcessHash_
+		$this.Server = $Server_
+	}
+}
+
 class CbcJob{
 	[string]$Id
 	[string]$Type

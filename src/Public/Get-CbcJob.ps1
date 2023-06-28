@@ -1,7 +1,11 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
-This cmdlet returns the status of a job for async operation - currently supported observation_search and observation_details.
+This cmdlet returns the status of a job for async operation - currently supported:
+* observation_search
+* observation_details
+* process_search
+* process_details
 .PARAMETER Id
 Sets the job id
 .OUTPUTS
@@ -89,6 +93,12 @@ function Get-CbcJob {
                 }
                 "observation_details" {
                     $Endpoint = $global:CBC_CONFIG.endpoints["ObservationDetails"]
+                }
+                "process_search" {
+                    $Endpoint = $global:CBC_CONFIG.endpoints["Processes"]
+                }
+                "process_details" {
+                    $Endpoint = $global:CBC_CONFIG.endpoints["ProcessDetails"]
                 }
             }
             if ($Endpoint) {
