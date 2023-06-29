@@ -11,6 +11,7 @@ function Initialize-CbcProcessDetails {
         [CbcServer]$Server
     )
     [CbcProcessDetails]::new(
+        $Response.process_guid,
         $Response.alert_category,
         $Response.alert_id,
         $Response.backend_timestamp,

@@ -93,7 +93,7 @@ Describe "Get-CbcObservationDetails" {
                 }
 
                 {Get-CbcObservationDetails -Id "d266ac1613e011ee9c5d536794589aaa:82a39c64-3e31-452d-6440-716d68040aaa" -ErrorAction Stop} | Should -Throw 
-                $Error[0] | Should -BeLike "Cannot create observation details job for*"
+                $Error[0] | Should -BeLike "Cannot create observation_details job for*"
             }
         }
 

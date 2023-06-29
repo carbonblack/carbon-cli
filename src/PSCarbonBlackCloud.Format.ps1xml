@@ -416,18 +416,18 @@
       <TableControl>
         <TableHeaders>
           <TableColumnHeader>
-            <Label>Process GUID</Label>
-            <Width>60</Width>
+            <Label>Id</Label>
+            <Width>40</Width>
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
-            <Label>Alert Category</Label>
-            <Width>15</Width>
+            <Label>Process Name</Label>
+            <Width>30</Width>
             <Alignment>Left</Alignment>
             </TableColumnHeader>
           <TableColumnHeader>
-            <Label>Type</Label>
-            <Width>14</Width>
+            <Label>Process Hash</Label>
+            <Width>40</Width>
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
@@ -444,10 +444,10 @@
                 <PropertyName>ProcessGuid</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>AlertCategory</PropertyName>
+                <PropertyName>ProcessName</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>EventType</PropertyName>
+                <PropertyName>ProcessHash</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>DeviceId</PropertyName>
@@ -465,18 +465,18 @@
       <TableControl>
         <TableHeaders>
           <TableColumnHeader>
-            <Label>Process GUID</Label>
-            <Width>60</Width>
+            <Label>Id</Label>
+            <Width>40</Width>
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
-            <Label>Alert Category</Label>
-            <Width>15</Width>
+            <Label>Process Name</Label>
+            <Width>30</Width>
             <Alignment>Left</Alignment>
             </TableColumnHeader>
           <TableColumnHeader>
-            <Label>Type</Label>
-            <Width>14</Width>
+            <Label>Process Hash</Label>
+            <Width>40</Width>
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
@@ -493,10 +493,10 @@
                 <PropertyName>ProcessGuid</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>AlertCategory</PropertyName>
+                <PropertyName>ProcessName</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>EventType</PropertyName>
+                <PropertyName>ProcessHash</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>DeviceId</PropertyName>

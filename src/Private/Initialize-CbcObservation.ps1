@@ -11,6 +11,7 @@ function Initialize-CbcObservation {
 		[CbcServer]$Server
 	)
     [CbcObservation]::new(
+        $Response.observation_id,
         $Response.alert_category,
         $Response.alert_id,
         $Response.backend_timestamp,

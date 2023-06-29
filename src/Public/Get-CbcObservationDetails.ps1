@@ -48,6 +48,8 @@ function Get-CbcObservationDetails {
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "AlertId")]
+        [Parameter(ParameterSetName = "Alert")]
+        [Parameter(ParameterSetName = "Observation")]
         [switch]$AsJob,
 
         [Parameter(ValueFromPipeline = $true,
@@ -60,7 +62,7 @@ function Get-CbcObservationDetails {
 			Mandatory = $true,
 			Position = 0,
 			ParameterSetName = "Alert")]
-		[CbcAlert]$Alert
+		[CbcAlert[]]$Alert
     )
 
     process {
@@ -70,66 +72,43 @@ function Get-CbcObservationDetails {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
+        $Endpoint = $global:CBC_CONFIG.endpoints["ObservationDetails"]
 
-        $ExecuteServers | ForEach-Object {
-            $Endpoint = $global:CBC_CONFIG.endpoints["ObservationDetails"]
-            $RequestBody = @{}
+        if ($PSCmdlet.ParameterSetName -eq "Id" -or $PSCmdlet.ParameterSetName -eq "AlertId") {
+            $ExecuteServers | ForEach-Object {
+                $RequestBody = @{}
+                switch ($PSCmdlet.ParameterSetName) {
+                    "Id" {
+                        $RequestBody.observation_ids = $Id
+                    }
+                    "AlertId" {
+                        $RequestBody.alert_id = $AlertId
+                    }
+                }
+                return Create-Job $Endpoint $RequestBody "observation_details" $_
+            }
+        }
+        else {
             switch ($PSCmdlet.ParameterSetName) {
-                "Id" {
-                    $RequestBody.observation_ids = $Id
-                }
-                "AlertId" {
-                    $RequestBody.alert_id = $AlertId
-                }
                 "Alert" {
-                    $RequestBody.alert_id = $Alert.Id
+                    $Alert | ForEach-Object {
+                        # only one alert could be sent in the body, so do not group
+                        $RequestBody = @{}
+                        $RequestBody.alert_id = $Alert.Id
+                        return Create-Job $Endpoint $RequestBody "observation_details" $Alert.Server
+                    }
                 }
                 "Observation" {
-                    $Ids = $Observation | ForEach-Object {
-					    $_.ObservationId
-				    }
-                    $RequestBody.observation_ids = @($Ids)
-                }
-            }
-
-            $RequestBody = $RequestBody | ConvertTo-Json
-            $Response = Invoke-CbcRequest -Endpoint $Endpoint["StartJob"] `
-                -Method POST `
-                -Server $_ `
-                -Body $RequestBody
-
-            if ($Response.StatusCode -ne 200) {
-                Write-Error -Message $("Cannot create observation details job for $($_)")
-            }
-            else {
-                $JsonContent = $Response.Content | ConvertFrom-Json
-
-                # if started as job, do not wait for the results to be ready
-                if ($AsJob) {
-                    return Initialize-CbcJob $JsonContent.job_id "observation_details" "Running" $_
-                }
-
-                # if details job is created, then we could get the results, but
-                # it is async request so to keep checking, till all are available
-                $TimeOut = 0
-                $TimeOutFlag = false
-                $job = Initialize-CbcJob $JsonContent.job_id "observation_details" "Running" $_
-                while ($job.Status -eq "Running") {
-                    # sleep 0.5 to give it time to retrieve the results - it might still not be enough,
-                    # so keep checking for 3 mins before timeout
-                    $TimeOut += 0.5
-                    Start-Sleep -Seconds 0.5
-                    if ($TimeOut -gt 180) {
-                        $TimeOutFlag = true
-                        Write-Error -Message $("Cannot retrieve observations due to timeout for $($_)")
-                        break
+                    $ObservationGroups = $Observation | Group-Object -Property Server
+                    foreach ($Group in $ObservationGroups) {
+                        $RequestBody = @{}
+                        $RequestBody.observation_ids = @()
+                        foreach ($CurrObservation in $Group.Group) {
+                            $RequestBody.observation_ids += $CurrObservation.Id
+                            $CurrentServer = $CurrObservation.Server
+            			}
+                        return Create-Job $Endpoint $RequestBody "observation_details" $CurrentServer
                     }
-                    $job = Get-CbcJob -Job $job
-                }
-
-                # if we did not fail due to timeout, then we could get the results
-                if (!$TimeOutFlag) {
-                    Receive-CbcJob -Job $job
                 }
             }
         }

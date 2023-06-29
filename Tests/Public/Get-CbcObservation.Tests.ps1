@@ -250,7 +250,7 @@ Describe "Get-CbcObservation" {
                 }
 
                 {Get-CbcObservation -Id "8fbccc2da75f11ed937ae3cb089984c6:be6ff259-88e3-6286-789f-74defa192d2e" -ErrorAction Stop} | Should -Throw
-                $Error[0] | Should -BeLike "Cannot create observation search*"
+                $Error[0] | Should -BeLike "Cannot create observation_search*"
             }
         }
     }

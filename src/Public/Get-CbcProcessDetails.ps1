@@ -32,6 +32,7 @@ function Get-CbcProcessDetails {
         [CbcServer[]]$Server,
 
         [Parameter(ParameterSetName = "Id")]
+        [Parameter(ParameterSetName = "Process")]
         [switch]$AsJob,
 
         [Parameter(ValueFromPipeline = $true,
@@ -48,62 +49,25 @@ function Get-CbcProcessDetails {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
+        $Endpoint = $global:CBC_CONFIG.endpoints["ProcessDetails"]
 
-        $ExecuteServers | ForEach-Object {
-            $Endpoint = $global:CBC_CONFIG.endpoints["ProcessDetails"]
-            $RequestBody = @{}
-
-            switch ($PSCmdlet.ParameterSetName) {
-                "Id" {
-                    $RequestBody.process_guids = $Id
-                }
-                "Process" {
-                    $Ids = $Process | ForEach-Object {
-					    $_.ProcessGuid
-				    }
-                    $RequestBody.process_guids = @($Ids)
-                }
+        if ($PSCmdlet.ParameterSetName -eq "Id") {
+            $ExecuteServers | ForEach-Object {
+                $RequestBody = @{}
+                $RequestBody.process_guids = @($Id)
+                return Create-Job $Endpoint $RequestBody "process_details" $_
             }
-
-            $RequestBody = $RequestBody | ConvertTo-Json
-            $Response = Invoke-CbcRequest -Endpoint $Endpoint["StartJob"] `
-                -Method POST `
-                -Server $_ `
-                -Body $RequestBody
-
-            if ($Response.StatusCode -ne 200) {
-                Write-Error -Message $("Cannot create process details job for $($_)")
-            }
-            else {
-                $JsonContent = $Response.Content | ConvertFrom-Json
-
-                # if started as job, do not wait for the results to be ready
-                if ($AsJob) {
-                    return Initialize-CbcJob $JsonContent.job_id "process_details" "Running" $_
+        }
+        elseif ($PSCmdlet.ParameterSetName -eq "Process") {
+            $ProcessGroups = $Process | Group-Object -Property Server
+            foreach ($Group in $ProcessGroups) {
+                $RequestBody = @{}
+                $RequestBody.process_guids = @()
+                foreach ($CurrProcess in $Group.Group) {
+                    $RequestBody.process_guids += $CurrProcess.Id
+                    $CurrentServer = $CurrProcess.Server
                 }
-
-                # if details job is created, then we could get the results, but
-                # it is async request so to keep checking, till all are available
-                $TimeOut = 0
-                $TimeOutFlag = false
-                $job = Initialize-CbcJob $JsonContent.job_id "process_details" "Running" $_
-                while ($job.Status -eq "Running") {
-                    # sleep 0.5 to give it time to retrieve the results - it might still not be enough,
-                    # so keep checking for 3 mins before timeout
-                    $TimeOut += 0.5
-                    Start-Sleep -Seconds 0.5
-                    if ($TimeOut -gt 180) {
-                        $TimeOutFlag = true
-                        Write-Error -Message $("Cannot retrieve processes due to timeout for $($_)")
-                        break
-                    }
-                    $job = Get-CbcJob -Job $job
-                }
-
-                # if we did not fail due to timeout, then we could get the results
-                if (!$TimeOutFlag) {
-                    Receive-CbcJob -Job $job
-                }
+                return Create-Job $Endpoint $RequestBody "process_details" $CurrentServer
             }
         }
     }

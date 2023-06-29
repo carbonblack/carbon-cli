@@ -119,7 +119,6 @@ function Set-CbcDevice {
 	}
 
 	process {
-
 		switch ($PSCmdlet.ParameterSetName) {
 			"Id" {
 				$Device = Get-CbcDevice -Id $Id
