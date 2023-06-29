@@ -4,6 +4,8 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 This cmdlet returns all observations from all valid connections. The retrieval of observation includes two API requests
 first to start a job with specific criteria/query. The second one is getting the results based on the job that was created.
 The second API request is asynchronous, so we need to make sure all of the results are available, before returning the results.
+.PARAMETER Alert
+Returns the observations with the specified CbcAlert.
 .PARAMETER AlertId
 Returns the observations with the specified AlertIds.
 .PARAMETER DeviceId
@@ -47,6 +49,10 @@ You can filter by AlertId, DeviceId, EventType, ObservationType
 PS > Get-CbcObservation -Query "alert_id:b01dad69-09e8-71ba-6542-60f5a8d58030"
 
 You can provide query in lucene syntax.
+.EXAMPLE
+PS > Get-CbcAlert -Id "982e5f1c-e893-5914-cea9-3478f88e9ef1" | Get-CbcObservation
+
+Returns the observations with that Alert
 .LINK
 Full list of searchable fields: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/platform-search-fields
 .LINK
@@ -96,6 +102,7 @@ function Get-CbcObservation {
         [Parameter(ParameterSetName = "Default")]
         [Parameter(ParameterSetName = "Filter")]
         [Parameter(ParameterSetName = "Query")]
+        [Parameter(ParameterSetName = "Alert")]
         [Parameter(ParameterSetName = "IncludeExclude")]
         [CbcServer[]]$Server,
 
@@ -104,7 +111,13 @@ function Get-CbcObservation {
         [Parameter(ParameterSetName = "Filter")]
         [Parameter(ParameterSetName = "Query")]
         [Parameter(ParameterSetName = "IncludeExclude")]
-        [switch]$AsJob
+        [switch]$AsJob,
+
+        [Parameter(ValueFromPipeline = $true,
+			Mandatory = $true,
+			Position = 0,
+			ParameterSetName = "Alert")]
+		[CbcAlert[]]$Alert
     )
 
     process {
@@ -151,7 +164,15 @@ function Get-CbcObservation {
                         $RequestBody.query = $Query
                     }
                 }
+                "Alert" {
+                    $RequestBody.criteria = @{}
+                    $Ids = $Alert | ForEach-Object {
+					    $_.Id
+				    }
+                    $RequestBody.criteria.alert_id = @($Ids)
+                }
             }
+
             $RequestBody = $RequestBody | ConvertTo-Json
             $Response = Invoke-CbcRequest -Endpoint $Endpoint["StartJob"] `
                 -Method POST `

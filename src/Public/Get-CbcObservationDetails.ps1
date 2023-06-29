@@ -1,11 +1,15 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
-This cmdlet returns an observation.
+This cmdlet returns an observation details.
 .PARAMETER Id
-Returns the observations with the specified Ids.
+Returns the observation details with the specified Ids.
 .PARAMETER AlertId
-Returns the observations with the specified Alert Id.
+Returns the observation details with the specified Alert Id.
+.PARAMETER Alert
+Returns the observation details for the specified CbcAlert.
+.PARAMETER Observation
+Returns the observation details for the specified CbcObservation.
 .OUTPUTS
 CbcObservationDetails[]
 .EXAMPLE
@@ -16,6 +20,14 @@ Returns the observations with specified Ids.
 PS > Get-CbcObservationDetails -AlertId "11a1a1a1-b22b-3333-44cc-dd5555d5d55d"
 
 Returns the observations with that AlertId
+.EXAMPLE
+PS > Get-CbcAlert -Id "982e5f1c-e893-5914-cea9-3478f88e9ef1" | Get-CbcObservationDetails
+
+Returns the observation details with that Alert
+.EXAMPLE
+PS > Get-CbcObservation -Include @{"alert_category" = @("THREAT")} | Get-CbcObservationDetails
+
+Returning all the observation details that are for observations in the THREAT alert category.
 .LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/observations-api
 #>
@@ -36,7 +48,19 @@ function Get-CbcObservationDetails {
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "AlertId")]
-        [switch]$AsJob
+        [switch]$AsJob,
+
+        [Parameter(ValueFromPipeline = $true,
+			Mandatory = $true,
+			Position = 0,
+			ParameterSetName = "Observation")]
+		[CbcObservation[]]$Observation,
+
+        [Parameter(ValueFromPipeline = $true,
+			Mandatory = $true,
+			Position = 0,
+			ParameterSetName = "Alert")]
+		[CbcAlert]$Alert
     )
 
     process {
@@ -50,13 +74,21 @@ function Get-CbcObservationDetails {
         $ExecuteServers | ForEach-Object {
             $Endpoint = $global:CBC_CONFIG.endpoints["ObservationDetails"]
             $RequestBody = @{}
-
             switch ($PSCmdlet.ParameterSetName) {
                 "Id" {
                     $RequestBody.observation_ids = $Id
                 }
                 "AlertId" {
                     $RequestBody.alert_id = $AlertId
+                }
+                "Alert" {
+                    $RequestBody.alert_id = $Alert.Id
+                }
+                "Observation" {
+                    $Ids = $Observation | ForEach-Object {
+					    $_.ObservationId
+				    }
+                    $RequestBody.observation_ids = @($Ids)
                 }
             }
 

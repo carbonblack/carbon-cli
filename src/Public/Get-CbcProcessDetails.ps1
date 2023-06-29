@@ -4,12 +4,19 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 This cmdlet returns processes.
 .PARAMETER Id
 Returns the processes with the specified process guids.
+.PARAMETER Process
+Returns the process details based on a CbcProcess object
 .OUTPUTS
 CbcProcessDetails[]
 .EXAMPLE
 PS > Get-CbcProcessDetails -Id "95016925089911ee9568b74cff311:23f4c71a-e350-8576-f832-0b0968f"
 
 Returns the processes with specified Ids.
+.EXAMPLE
+PS > $criteria = @{"device_name" = @("Win7x64")} 
+PS > Get-CbcProcess -Include $criteria | Get-CbcProcessDetails
+
+Returns the process details for all processes that matches the criteria.
 .LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/platform-search-api-processes
 #>
@@ -22,12 +29,16 @@ function Get-CbcProcessDetails {
         [string[]]$Id,
 
         [Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "AlertId")]
         [CbcServer[]]$Server,
 
         [Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "AlertId")]
-        [switch]$AsJob
+        [switch]$AsJob,
+
+        [Parameter(ValueFromPipeline = $true,
+			Mandatory = $true,
+			Position = 0,
+			ParameterSetName = "Process")]
+		[CbcProcess[]]$Process
     )
 
     process {
@@ -45,6 +56,12 @@ function Get-CbcProcessDetails {
             switch ($PSCmdlet.ParameterSetName) {
                 "Id" {
                     $RequestBody.process_guids = $Id
+                }
+                "Process" {
+                    $Ids = $Process | ForEach-Object {
+					    $_.ProcessGuid
+				    }
+                    $RequestBody.process_guids = @($Ids)
                 }
             }
 
