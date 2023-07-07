@@ -1,11 +1,15 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
-This cmdlet returns an observation.
+This cmdlet returns an observation details.
 .PARAMETER Id
-Returns the observations with the specified Ids.
+Returns the observation details with the specified Ids.
 .PARAMETER AlertId
-Returns the observations with the specified Alert Id.
+Returns the observation details with the specified Alert Id.
+.PARAMETER Alert
+Returns the observation details for the specified CbcAlert.
+.PARAMETER Observation
+Returns the observation details for the specified CbcObservation.
 .OUTPUTS
 CbcObservationDetails[]
 .EXAMPLE
@@ -16,6 +20,14 @@ Returns the observations with specified Ids.
 PS > Get-CbcObservationDetails -AlertId "11a1a1a1-b22b-3333-44cc-dd5555d5d55d"
 
 Returns the observations with that AlertId
+.EXAMPLE
+PS > Get-CbcAlert -Id "982e5f1c-e893-5914-cea9-3478f88e9ef1" | Get-CbcObservationDetails
+
+Returns the observation details with that Alert
+.EXAMPLE
+PS > Get-CbcObservation -Include @{"alert_category" = @("THREAT")} | Get-CbcObservationDetails
+
+Returning all the observation details that are for observations in the THREAT alert category.
 .LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/observations-api
 #>
@@ -36,7 +48,21 @@ function Get-CbcObservationDetails {
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "AlertId")]
-        [switch]$AsJob
+        [Parameter(ParameterSetName = "Alert")]
+        [Parameter(ParameterSetName = "Observation")]
+        [switch]$AsJob,
+
+        [Parameter(ValueFromPipeline = $true,
+			Mandatory = $true,
+			Position = 0,
+			ParameterSetName = "Observation")]
+		[CbcObservation[]]$Observation,
+
+        [Parameter(ValueFromPipeline = $true,
+			Mandatory = $true,
+			Position = 0,
+			ParameterSetName = "Alert")]
+		[CbcAlert[]]$Alert
     )
 
     process {
@@ -46,58 +72,43 @@ function Get-CbcObservationDetails {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
+        $Endpoint = $global:CBC_CONFIG.endpoints["ObservationDetails"]
 
-        $ExecuteServers | ForEach-Object {
-            $Endpoint = $global:CBC_CONFIG.endpoints["ObservationDetails"]
-            $RequestBody = @{}
-
-            switch ($PSCmdlet.ParameterSetName) {
-                "Id" {
-                    $RequestBody.observation_ids = $Id
-                }
-                "AlertId" {
-                    $RequestBody.alert_id = $AlertId
-                }
-            }
-
-            $RequestBody = $RequestBody | ConvertTo-Json
-            $Response = Invoke-CbcRequest -Endpoint $Endpoint["StartJob"] `
-                -Method POST `
-                -Server $_ `
-                -Body $RequestBody
-
-            if ($Response.StatusCode -ne 200) {
-                Write-Error -Message $("Cannot create observation details job for $($_)")
-            }
-            else {
-                $JsonContent = $Response.Content | ConvertFrom-Json
-
-                # if started as job, do not wait for the results to be ready
-                if ($AsJob) {
-                    return Initialize-CbcJob $JsonContent.job_id "observation_details" "Running" $_
-                }
-
-                # if details job is created, then we could get the results, but
-                # it is async request so to keep checking, till all are available
-                $TimeOut = 0
-                $TimeOutFlag = false
-                $job = Initialize-CbcJob $JsonContent.job_id "observation_details" "Running" $_
-                while ($job.Status -eq "Running") {
-                    # sleep 0.5 to give it time to retrieve the results - it might still not be enough,
-                    # so keep checking for 3 mins before timeout
-                    $TimeOut += 0.5
-                    Start-Sleep -Seconds 0.5
-                    if ($TimeOut -gt 180) {
-                        $TimeOutFlag = true
-                        Write-Error -Message $("Cannot retrieve observations due to timeout for $($_)")
-                        break
+        if ($PSCmdlet.ParameterSetName -eq "Id" -or $PSCmdlet.ParameterSetName -eq "AlertId") {
+            $ExecuteServers | ForEach-Object {
+                $RequestBody = @{}
+                switch ($PSCmdlet.ParameterSetName) {
+                    "Id" {
+                        $RequestBody.observation_ids = $Id
                     }
-                    $job = Get-CbcJob -Job $job
+                    "AlertId" {
+                        $RequestBody.alert_id = $AlertId
+                    }
                 }
-
-                # if we did not fail due to timeout, then we could get the results
-                if (!$TimeOutFlag) {
-                    Receive-CbcJob -Job $job
+                return Create-Job $Endpoint $RequestBody "observation_details" $_
+            }
+        }
+        else {
+            switch ($PSCmdlet.ParameterSetName) {
+                "Alert" {
+                    $Alert | ForEach-Object {
+                        # only one alert could be sent in the body, so do not group
+                        $RequestBody = @{}
+                        $RequestBody.alert_id = $Alert.Id
+                        return Create-Job $Endpoint $RequestBody "observation_details" $Alert.Server
+                    }
+                }
+                "Observation" {
+                    $ObservationGroups = $Observation | Group-Object -Property Server
+                    foreach ($Group in $ObservationGroups) {
+                        $RequestBody = @{}
+                        $RequestBody.observation_ids = @()
+                        foreach ($CurrObservation in $Group.Group) {
+                            $RequestBody.observation_ids += $CurrObservation.Id
+                            $CurrentServer = $CurrObservation.Server
+            			}
+                        return Create-Job $Endpoint $RequestBody "observation_details" $CurrentServer
+                    }
                 }
             }
         }

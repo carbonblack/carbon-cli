@@ -67,32 +67,53 @@ function Set-CbcAlert {
 		switch ($PSCmdlet.ParameterSetName) {
 			"Id" {
 				$ids = @($Id)
-			}
-			"Alert" {
-				$ids = $Alert | ForEach-Object {
-					$_.Id
+				$RequestBody = @{
+					"state"             = "DISMISSED"
+					"comment"           = "Dismiss by CarbonCli"
+					"remediation_state" = "FIXED"
+				}
+				$RequestBody.criteria = @{"id" = @($ids) }
+
+				$JsonBody = $RequestBody | ConvertTo-Json
+				$ExecuteServers | ForEach-Object {
+					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Dismiss"] `
+						-Method POST `
+						-Server $_ `
+						-Body $JsonBody
+					if ($Response.StatusCode -ne 200) {
+						Write-Error -Message $("Cannot complete action dismiss alert for alerts $($RequestBody.device_id) for $($_)")
+					}
+					else {
+						return Get-CbcAlert -Include @{"id" = @($ids) } -Server $_
+					}
 				}
 			}
-		}
-
-		$RequestBody = @{
-			"state"             = "DISMISSED"
-			"comment"           = "Dismiss by CarbonCli"
-			"remediation_state" = "FIXED"
-		}
-		$RequestBody.criteria = @{"id" = @($ids) }
-
-		$JsonBody = $RequestBody | ConvertTo-Json
-		$ExecuteServers | ForEach-Object {
-			$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Dismiss"] `
-				-Method POST `
-				-Server $_ `
-				-Body $JsonBody
-			if ($Response.StatusCode -ne 200) {
-				Write-Error -Message $("Cannot complete action dismiss alert for alerts $($RequestBody.device_id) for $($_)")
-			}
-			else {
-				return Get-CbcAlert -Include @{"id" = @($ids) } -Server $_
+			"Alert" {
+				$AlertGroups = $Alert | Group-Object -Property Server
+				foreach ($Group in $AlertGroups) {
+					$RequestBody = @{
+						"state"             = "DISMISSED"
+						"comment"           = "Dismiss by CarbonCli"
+						"remediation_state" = "FIXED"
+					}
+					$RequestBody.criteria = @{}
+					$RequestBody.criteria.id = @()
+					foreach ($CurrAlert in $Group.Group) {
+						$RequestBody.criteria.id += $CurrAlert.Id
+						$CurrentServer = $CurrAlert.Server
+					}
+					$JsonBody = $RequestBody | ConvertTo-Json
+					$Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Alerts"]["Dismiss"] `
+						-Method POST `
+						-Server $CurrentServer `
+						-Body $JsonBody
+					if ($Response.StatusCode -ne 200) {
+						Write-Error -Message $("Cannot complete action dismiss alert for alerts $($RequestBody.device_id) for $($Current)")
+					}
+					else {
+						return Get-CbcAlert -Include @{"id" = @($RequestBody.criteria.id) } -Server $CurrentServer
+					}
+				}
 			}
 		}
 	}

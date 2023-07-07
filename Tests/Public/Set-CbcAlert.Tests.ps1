@@ -48,22 +48,14 @@ Describe "Set-CbcAlert" {
 	Context "When using a `CbcAlert` object" {
 		It "Should dismiss alert" {
 			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
-				if ($Server -eq $s1) {
-					@{
-						StatusCode = 200
-						Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
-					}
-				}
-				else {
-					@{
-						StatusCode = 200
-						Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts_2.json"
-					}
+				@{
+					StatusCode = 200
+					Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
 				}
 			} -ParameterFilter {
 				$Endpoint -eq $global:CBC_CONFIG.endpoints["Alerts"]["Search"] -and
 				$Method -eq "POST" -and
-				($Server -eq $s1 -or $Server -eq $s2) -and
+				$Server -eq $s1 -and
 				(
 					($Body | ConvertFrom-Json).rows -eq 50 -and
 					($Body | ConvertFrom-Json).criteria.id[0] -eq "1"
@@ -82,11 +74,9 @@ Describe "Set-CbcAlert" {
 			}
 
 			$a = Set-CbcAlert -Alert $alert1 -Dismiss $true
-			$a.Count | Should -Be 2
+			$a.Count | Should -Be 1
 			$a[0].Server | Should -Be $s1
 			$a[0].Type | Should -Be "CB_ANALYTICS"
-			$a[1].Server | Should -Be $s2
-			$a[1].Type | Should -Be "WATCHLIST"
 		}
 	}
 

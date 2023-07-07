@@ -378,6 +378,7 @@ class CbcAlert {
 }
 
 class CbcObservation {
+	[string]$Id
 	[string]$AlertCategory
 	[array]$AlertId
 	[string]$BackendTimestamp
@@ -402,6 +403,7 @@ class CbcObservation {
 	[CbcServer]$Server
 
 	CbcObservation (
+		[string]$Id_,
 		[string]$AlertCategory_,
 		[array]$AlertId_,
 		[string]$BackendTimestamp_,
@@ -425,6 +427,7 @@ class CbcObservation {
 		[string[]]$TTP_,
 		[CbcServer]$Server_
 	) {
+		$this.Id = $Id_
 		$this.AlertCategory = $AlertCategory_
 		$this.AlertId = $AlertId_
 		$this.BackendTimestamp = $BackendTimestamp_
@@ -452,6 +455,7 @@ class CbcObservation {
 
 
 class CbcObservationDetails {
+	[string]$Id
 	[string]$AlertCategory
 	[array]$AlertId
 	[string]$BackendTimestamp
@@ -476,6 +480,7 @@ class CbcObservationDetails {
 	[CbcServer]$Server
 
 	CbcObservationDetails (
+		[string]$Id_,
 		[string]$AlertCategory_,
 		[array]$AlertId_,
 		[string]$BackendTimestamp_,
@@ -499,6 +504,7 @@ class CbcObservationDetails {
 		[string[]]$TTP_,
 		[CbcServer]$Server_
 	) {
+		$this.Id = $Id_
 		$this.AlertCategory = $AlertCategory_
 		$this.AlertId = $AlertId_
 		$this.BackendTimestamp = $BackendTimestamp_
@@ -526,6 +532,7 @@ class CbcObservationDetails {
 
 
 class CbcProcess {
+	[string]$Id
 	[string]$AlertCategory
 	[array]$AlertId
 	[string]$BackendTimestamp
@@ -548,6 +555,7 @@ class CbcProcess {
 	[CbcServer]$Server
 
 	CbcProcess (
+		[string]$Id_,
 		[string]$AlertCategory_,
 		[array]$AlertId_,
 		[string]$BackendTimestamp_,
@@ -569,6 +577,7 @@ class CbcProcess {
 		[string[]]$TTP_,
 		[CbcServer]$Server_
 	) {
+		$this.Id = $Id_
 		$this.AlertCategory = $AlertCategory_
 		$this.AlertId = $AlertId_
 		$this.BackendTimestamp = $BackendTimestamp_
@@ -593,6 +602,7 @@ class CbcProcess {
 }
 
 class CbcProcessDetails {
+	[string]$Id
 	[string]$AlertCategory
 	[array]$AlertId
 	[string]$BackendTimestamp
@@ -615,6 +625,7 @@ class CbcProcessDetails {
 	[CbcServer]$Server
 
 	CbcProcessDetails (
+		[string]$Id_,
 		[string]$AlertCategory_,
 		[array]$AlertId_,
 		[string]$BackendTimestamp_,
@@ -636,6 +647,7 @@ class CbcProcessDetails {
 		[string[]]$TTP_,
 		[CbcServer]$Server_
 	) {
+		$this.Id = $Id_
 		$this.AlertCategory = $AlertCategory_
 		$this.AlertId = $AlertId_
 		$this.BackendTimestamp = $BackendTimestamp_

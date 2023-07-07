@@ -4,6 +4,8 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 This cmdlet returns all observations from all valid connections. The retrieval of observation includes two API requests
 first to start a job with specific criteria/query. The second one is getting the results based on the job that was created.
 The second API request is asynchronous, so we need to make sure all of the results are available, before returning the results.
+.PARAMETER Alert
+Returns the observations with the specified CbcAlert.
 .PARAMETER AlertId
 Returns the observations with the specified AlertIds.
 .PARAMETER DeviceId
@@ -47,6 +49,10 @@ You can filter by AlertId, DeviceId, EventType, ObservationType
 PS > Get-CbcObservation -Query "alert_id:b01dad69-09e8-71ba-6542-60f5a8d58030"
 
 You can provide query in lucene syntax.
+.EXAMPLE
+PS > Get-CbcAlert -Id "982e5f1c-e893-5914-cea9-3478f88e9ef1" | Get-CbcObservation
+
+Returns the observations with that Alert
 .LINK
 Full list of searchable fields: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/platform-search-fields
 .LINK
@@ -104,9 +110,14 @@ function Get-CbcObservation {
         [Parameter(ParameterSetName = "Filter")]
         [Parameter(ParameterSetName = "Query")]
         [Parameter(ParameterSetName = "IncludeExclude")]
-        [switch]$AsJob
-    )
+        [switch]$AsJob,
 
+        [Parameter(ValueFromPipeline = $true,
+			Mandatory = $true,
+			Position = 0,
+			ParameterSetName = "Alert")]
+		[CbcAlert[]]$Alert
+    )
     process {
         if ($Server) {
             $ExecuteServers = $Server
@@ -114,82 +125,60 @@ function Get-CbcObservation {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
+        $Endpoint = $global:CBC_CONFIG.endpoints["Observations"]
 
-        $ExecuteServers | ForEach-Object {
-            $Endpoint = $global:CBC_CONFIG.endpoints["Observations"]
-            $RequestBody = @{}
-            $RequestBody.rows = $MaxResults
-            switch ($PSCmdlet.ParameterSetName) {
-                "Default" {
-                    $RequestBody.criteria = @{}
-                    if ($PSBoundParameters.ContainsKey("Id")) {
-                        $RequestBody.criteria.observation_id = $Id
-                    }
-                    if ($PSBoundParameters.ContainsKey("AlertId")) {
-                        $RequestBody.criteria.alert_id = $AlertId
-                    }
-                    if ($PSBoundParameters.ContainsKey("DeviceId")) {
-                        $RequestBody.criteria.device_id = $DeviceId
-                    }
-                    if ($PSBoundParameters.ContainsKey("EventType")) {
-                        $RequestBody.criteria.event_type = $EventType
-                    }
-                    if ($PSBoundParameters.ContainsKey("ObservationType")) {
-                        $RequestBody.criteria.observation_type = $ObservationType
-                    }
+        if ($PSCmdlet.ParameterSetName -eq "Alert") {
+            $AlertGroups = $Alert | Group-Object -Property Server
+            foreach ($Group in $AlertGroups) {
+                $RequestBody = @{}
+                $RequestBody.rows = $MaxResults
+                $RequestBody.criteria = @{}
+                $RequestBody.criteria.alert_id = @()
+                foreach ($CurrAlert in $Group.Group) {
+                    $RequestBody.criteria.alert_id += $CurrAlert.Id
+                    $CurrentServer = $CurrAlert.Server
                 }
-                "IncludeExclude" {
-                    if ($PSBoundParameters.ContainsKey("Include")) {
-                        $RequestBody.criteria = $Include
-                    }
-                    if ($PSBoundParameters.ContainsKey("Exclude")) {
-                        $RequestBody.exclusions = $Exclude
-                    }
-                }
-                "Query" {
-                    if ($PSBoundParameters.ContainsKey("Query")) {
-                        $RequestBody.query = $Query
-                    }
-                }
+                return Create-Job $Endpoint $RequestBody "observation_search" $CurrentServer
             }
-            $RequestBody = $RequestBody | ConvertTo-Json
-            $Response = Invoke-CbcRequest -Endpoint $Endpoint["StartJob"] `
-                -Method POST `
-                -Server $_ `
-                -Body $RequestBody
-
-            if ($Response.StatusCode -ne 200) {
-                Write-Error -Message $("Cannot create observation search job for $($_)")
-            }
-            else {
-                $JsonContent = $Response.Content | ConvertFrom-Json
-                # if started as job, do not wait for the results to be ready
-                if ($AsJob) {
-                    return Initialize-CbcJob $JsonContent.job_id "observation_search" "Running" $_
-                }
-
-                # if search job is created, then we could get the results, but
-                # it is async request so to keep checking, till all are available
-                $TimeOut = 0
-                $TimeOutFlag = false
-                $job = Initialize-CbcJob $JsonContent.job_id "observation_search" "Running" $_
-                while ($job.Status -eq "Running") {
-                    # sleep 0.5 to give it time to retrieve the results - it might still not be enough,
-                    # so keep checking for 3 mins before timeout
-                    $TimeOut += 0.5
-                    Start-Sleep -Seconds 0.5
-                    if ($TimeOut -gt 180) {
-                        $TimeOutFlag = true
-                        Write-Error -Message $("Cannot retrieve observations due to timeout for $($_)")
-                        break
+        }
+        else {
+            $ExecuteServers | ForEach-Object {
+                $RequestBody = @{}
+                $RequestBody.rows = $MaxResults
+                switch ($PSCmdlet.ParameterSetName) {
+                    "Default" {
+                        $RequestBody.criteria = @{}
+                        if ($PSBoundParameters.ContainsKey("Id")) {
+                            $RequestBody.criteria.observation_id = $Id
+                        }
+                        if ($PSBoundParameters.ContainsKey("AlertId")) {
+                            $RequestBody.criteria.alert_id = $AlertId
+                        }
+                        if ($PSBoundParameters.ContainsKey("DeviceId")) {
+                            $RequestBody.criteria.device_id = $DeviceId
+                        }
+                        if ($PSBoundParameters.ContainsKey("EventType")) {
+                            $RequestBody.criteria.event_type = $EventType
+                        }
+                        if ($PSBoundParameters.ContainsKey("ObservationType")) {
+                            $RequestBody.criteria.observation_type = $ObservationType
+                        }
                     }
-                    $job = Get-CbcJob -Job $job
+                    "IncludeExclude" {
+                        if ($PSBoundParameters.ContainsKey("Include")) {
+                            $RequestBody.criteria = $Include
+                        }
+                        if ($PSBoundParameters.ContainsKey("Exclude")) {
+                            $RequestBody.exclusions = $Exclude
+                        }
+                    }
+                    "Query" {
+                        if ($PSBoundParameters.ContainsKey("Query")) {
+                            $RequestBody.query = $Query
+                        }
+                    }
                 }
-
-                # if we did not fail due to timeout, then we could get the results
-                if (!$TimeOutFlag) {
-                    Receive-CbcJob -Job $job
-                }
+                return Create-Job $Endpoint $RequestBody "observation_search" $_
             }
         }
     }
