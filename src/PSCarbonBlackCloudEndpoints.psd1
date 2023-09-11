@@ -10,9 +10,9 @@
         "Details" = "policyservice/v1/orgs/{0}/policies/{1}"
     }
     "Alerts" = @{
-        "Search" = "appservices/v6/orgs/{0}/alerts/_search"
-        "Details" = "appservices/v6/orgs/{0}/alerts/{1}"
-        "Dismiss" = "appservices/v6/orgs/{0}/alerts/workflow/_criteria"
+        "Search" = "api/alerts/v7/orgs/{0}/alerts/_search"
+        "Details" = "api/alerts/v7/orgs/{0}/alerts/{1}"
+        "Dismiss" = "api/alerts/v7/orgs/{0}/alerts/workflow"
     }
     "Observations" = @{
         "StartJob" = "api/investigate/v2/orgs/{0}/observations/search_jobs"

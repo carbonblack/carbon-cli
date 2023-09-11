@@ -80,12 +80,12 @@ Describe "Get-CbcAlert" {
 
 					$alerts = Get-CbcAlert -DeviceId 388948
 
-					$alerts[0].category | Should -Be "MONITORED"
+					$alerts[0].type | Should -Be "CB_ANALYTICS"
 					$alerts[0].Server | Should -Be $s1
 				}
 			}
 
-			Context "When using the -Category, -PolicyName, -ThreatId, -Type, -MinSeverity parameter" {
+			Context "When using the -DevicePolicy, -ThreatId, -Type, -Severity parameter" {
 				It "Should return the alerts according to the params" {
 					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
 						@{
@@ -98,17 +98,14 @@ Describe "Get-CbcAlert" {
 						$Server -eq $s1 -and
 						(
 							($Body | ConvertFrom-Json).rows -eq 50 -and
-							($Body | ConvertFrom-Json).criteria.category -eq "MONITORED" -and
-							($Body | ConvertFrom-Json).criteria.policy_name -eq "Standard" -and
+							($Body | ConvertFrom-Json).criteria.device_policy -eq "Standard" -and
 							($Body | ConvertFrom-Json).criteria.threat_id -eq "xxx" -and
 							($Body | ConvertFrom-Json).criteria.type -eq "CB_ANALYTICS" -and
-							($Body | ConvertFrom-Json).criteria.minimum_severity -eq 3
+							($Body | ConvertFrom-Json).criteria.severity -eq 3
 						)
 					}
 
-					$alerts = Get-CbcAlert -Category "MONITORED" -PolicyName "Standard" -ThreatId "xxx" -Type "CB_ANALYTICS" -MinSeverity 3
-
-					$alerts[0].category | Should -Be "MONITORED"
+					$alerts = Get-CbcAlert -DevicePolicy "Standard" -ThreatId "xxx" -Type "CB_ANALYTICS" -Severity 3
 					$alerts[0].Server | Should -Be $s1
 				}
 			}
@@ -126,16 +123,16 @@ Describe "Get-CbcAlert" {
 						$Server -eq $s1 -and
 						(
 							($Body | ConvertFrom-Json).rows -eq 50 -and
-							($Body | ConvertFrom-Json).criteria.category -eq "MONITORED"
+							($Body | ConvertFrom-Json).criteria.type -eq "CB_ANALYTICS"
 						)
 					}
 
 					$Criteria = @{
-						"category" = "MONITORED"
+						"type" = "CB_ANALYTICS"
 					}
 					$alerts = Get-CbcAlert -Include $Criteria
 
-					$alerts[0].category | Should -Be "MONITORED"
+					$alerts[0].type | Should -Be "CB_ANALYTICS"
 					$alerts[0].Server | Should -Be $s1
 				}
 
@@ -151,12 +148,12 @@ Describe "Get-CbcAlert" {
 						$Server -eq $s1 -and
 						(
 							($Body | ConvertFrom-Json).rows -eq 50 -and
-							($Body | ConvertFrom-Json).criteria.category -eq "MONITORED"
+							($Body | ConvertFrom-Json).criteria.type -eq "CB_ANALYTICS"
 						)
 					}
 
 					$Criteria = @{
-						"category" = "MONITORED"
+						"type" = "CB_ANALYTICS"
 					}
 					{Get-CbcAlert -Include $Criteria -ErrorAction Stop} | Should -Throw
 				}
@@ -175,15 +172,15 @@ Describe "Get-CbcAlert" {
 						$Server -eq $s1 -and
 						(
 							($Body | ConvertFrom-Json).rows -eq 20 -and
-							($Body | ConvertFrom-Json).criteria.category -eq "MONITORED"
+							($Body | ConvertFrom-Json).criteria.type -eq "CB_ANALYTICS"
 						)
 					}
 					$Criteria = @{
-						"category" = "MONITORED"
+						"type" = "CB_ANALYTICS"
 					}
 
 					$alerts = Get-CbcAlert -Include $Criteria -MaxResults 20
-					$alerts[0].category | Should -Be "MONITORED"
+					$alerts[0].type | Should -Be "CB_ANALYTICS"
 					$alerts[0].Server | Should -Be $s1
 				}
 			}
@@ -256,19 +253,19 @@ Describe "Get-CbcAlert" {
 						($Server -eq $s1 -or $Server -eq $s2) -and
 						(
 							($Body | ConvertFrom-Json).rows -eq 50 -and
-							($Body | ConvertFrom-Json).criteria.category -eq "MONITORED"
+							($Body | ConvertFrom-Json).criteria.type -eq "CB_ANALYTICS"
 						)
 					}
 
 					$Criteria = @{
-						"category" = "MONITORED"
+						"type" = "CB_ANALYTICS"
 					}
 					$alerts = Get-CbcAlert -Include $Criteria
 
 					$alerts.Count | Should -Be 2
-					$alerts[0].category | Should -Be "MONITORED"
+					$alerts[0].type | Should -Be "CB_ANALYTICS"
 					$alerts[0].Server | Should -Be $s1
-					$alerts[1].category | Should -Be "MONITORED"
+					$alerts[1].type | Should -Be "WATCHLIST"
 					$alerts[1].Server | Should -Be $s2
 				}
 			}
@@ -294,18 +291,18 @@ Describe "Get-CbcAlert" {
 						($Server -eq $s1 -or $Server -eq $s2) -and
 						(
 							($Body | ConvertFrom-Json).rows -eq 20 -and
-							($Body | ConvertFrom-Json).criteria.category -eq "MONITORED"
+							($Body | ConvertFrom-Json).criteria.type -eq "CB_ANALYTICS"
 						)
 					}
 
 					$Criteria = @{
-						"category" = "MONITORED"
+						"type" = "CB_ANALYTICS"
 					}
 					$alerts = Get-CbcAlert -Include $Criteria -MaxResults 20
 
-					$alerts[0].category | Should -Be "MONITORED"
+					$alerts[0].type | Should -Be "CB_ANALYTICS"
 					$alerts[0].Server | Should -Be $s1
-					$alerts[1].category | Should -Be "MONITORED"
+					$alerts[1].type | Should -Be "WATCHLIST"
 					$alerts[1].Server | Should -Be $s2
 				}
 			}
