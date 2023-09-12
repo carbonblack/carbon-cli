@@ -68,9 +68,8 @@ function Set-CbcAlert {
 			"Id" {
 				$ids = @($Id)
 				$RequestBody = @{
-					"state"             = "DISMISSED"
-					"comment"           = "Dismiss by CarbonCli"
-					"remediation_state" = "FIXED"
+					"status" = "CLOSED"
+					"note"   = "Dismiss by CarbonCli"
 				}
 				$RequestBody.criteria = @{"id" = @($ids) }
 
