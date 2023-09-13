@@ -7,21 +7,20 @@
       "legacy_alert_id": "1DDU8H9N",
       "type": "CB_ANALYTICS",
       "org_key": "ABCD1234",
-      "create_time": "2019-09-13T14:17:21.668Z",
-      "last_update_time": "2019-09-13T14:17:21.668Z",
-      "first_event_time": "2019-09-13T14:16:55.878Z",
-      "last_event_time": "2019-09-13T14:16:55.878Z",
+      "backend_timestamp": "2019-09-13T14:17:21.668Z",
+      "last_update_timestamp": "2019-09-13T14:17:21.668Z",
+      "first_event_timestamp": "2019-09-13T14:16:55.878Z",
+      "last_event_timestamp": "2019-09-13T14:16:55.878Z",
       "threat_id": "b7ce4f79e8903c09d2cd6b615c965c9f",
       "severity": 3,
-      "category": "MONITORED",
       "device_id": 388948,
       "device_os": "MAC",
       "device_os_version": "10.14.6",
       "device_name": "some-system",
       "device_username": "support@carbonblack.com",
-      "policy_id": 1,
-      "policy_name": "default",
-      "target_value": "MISSION_CRITICAL"
+      "device_policy_id": 1,
+      "device_policy": "default",
+      "device_target_value": "MISSION_CRITICAL"
     }
   ]
 }

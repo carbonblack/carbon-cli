@@ -339,7 +339,7 @@ class CbcAlert {
 	CbcAlert (
 		[string]$Id_,
 		[string]$DeviceId_,
-		[string]$CreateTimestamp_,
+		[string]$BackendTimestamp_,
 		[string]$FirstEventTimestamp_,
 		[string]$LastEventTimestamp_,
 		[string]$LastUpdateTimestamp_,
@@ -355,15 +355,15 @@ class CbcAlert {
 	) {
 		$this.Id = $Id_
 		$this.DeviceId = $DeviceId_
-		$this.CreateTime = $CreateTimestamp_
-		$this.FirstEventTime = $FirstEventTimestamp_
-		$this.LastEventTime = $LastEventTimestamp_
-		$this.LastUpdateTime = $LastUpdateTimestamp_
-		$this.PolicyId = $DevicePolicyId_
-		$this.PolicyName = $DevicePolicy_
+		$this.BackendTimestamp = $BackendTimestamp_
+		$this.FirstEventTimestamp = $FirstEventTimestamp_
+		$this.LastEventTimestamp = $LastEventTimestamp_
+		$this.LastUpdateTimestamp = $LastUpdateTimestamp_
+		$this.DevicePolicyId = $DevicePolicyId_
+		$this.DevicePolicy = $DevicePolicy_
 		$this.Severity = $Severity_
 		$this.Tags = $Tags_
-		$this.TargetValue = $DeviceTargetValue_
+		$this.DeviceTargetValue = $DeviceTargetValue_
 		$this.ThreatId = $ThreatId_
 		$this.Type = $Type_
 		$this.Workflow = $Workflow_

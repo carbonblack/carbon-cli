@@ -87,11 +87,6 @@
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
-            <Label>Category</Label>
-            <Width>9</Width>
-            <Alignment>Left</Alignment>
-          </TableColumnHeader>
-          <TableColumnHeader>
             <Label>Type</Label>
             <Width>12</Width>
             <Alignment>Left</Alignment>
@@ -130,25 +125,22 @@
                 <PropertyName>Id</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>Category</PropertyName>
-              </TableColumnItem>
-              <TableColumnItem>
                 <PropertyName>Type</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>Severity</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>PolicyName</PropertyName>
+                <PropertyName>DevicePolicy</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>DeviceId</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>FirstEventTime</PropertyName>
+                <PropertyName>FirstEventTimestamp</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>LastEventTime</PropertyName>
+                <PropertyName>LastEventTimestamp</PropertyName>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>

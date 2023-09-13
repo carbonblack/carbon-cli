@@ -23,7 +23,7 @@ CbcReport
 .NOTES
 Permissions needed: CREATE org.feeds
 .EXAMPLE
-PS > Set-CbcReport -FeedId JuXVurDTFmszw93it0Gvw -Id 59ac2095-c663-44cd-99cb-4ce83e7aa894 -Action ADDIOC -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess")
+PS > Set-CbcReport -FeedId JuXVurDTFmszw93it0Gvw -Id 59ac2095-c663-44cd-99cb-4ce83e7aa894 -Action ADDIOC -MatchType equality -Field process_sha256 -Values "SHA256HashOfAProcess"
 
 If you have multiple connections and you want alerts from a specific connection
 you can add the `-Server` param.
@@ -51,7 +51,7 @@ function Set-CbcReport {
 
         [Parameter(ParameterSetName = "Default", Mandatory = $true)]
         [Parameter(ParameterSetName = "AddIOC", Mandatory = $true)]
-        [string[]]$IOCValues,
+        [string[]]$Values,
 
         [Parameter(ParameterSetName = "Default")]
         [Parameter(ParameterSetName = "AddIOC")]
@@ -68,7 +68,6 @@ function Set-CbcReport {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
-        Write-Host $IOCValues[0]
         $ExecuteServers | ForEach-Object {
             $CurrentServer = $_
             $RequestBody = @{}
@@ -85,7 +84,7 @@ function Set-CbcReport {
                 "id" = [string](New-Guid)
                 "match_type" = $MatchType
                 "field" = $Field
-                "values" = $IOCValues
+                "values" = $Values
             }
             
             $UpdatedReport.iocs_v2 = @($IOC)
