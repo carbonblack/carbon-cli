@@ -322,17 +322,15 @@ class CbcAlert {
 
 	[string]$Id
 	[string]$DeviceId
-	[string]$Category
-	[string]$CreateTime
-	[string]$FirstEventTime
-	[string]$LastEventTime
-	[string]$LastUpdateTime
-	[hashtable]$GroupDetails
-	[string]$PolicyId
-	[string]$PolicyName
+	[string]$BackendTimestamp
+	[string]$FirstEventTimestamp
+	[string]$LastEventTimestamp
+	[string]$LastUpdateTimestamp
+	[string]$DevicePolicyId
+	[string]$DevicePolicy
 	[int]$Severity
 	[array]$Tags
-	[string]$TargetValue
+	[string]$DeviceTargetValue
 	[string]$ThreatId
 	[string]$Type
 	[PSCustomObject]$Workflow
@@ -341,17 +339,15 @@ class CbcAlert {
 	CbcAlert (
 		[string]$Id_,
 		[string]$DeviceId_,
-		[string]$Category_,
-		[string]$CreateTime_,
-		[string]$FirstEventTime_,
-		[string]$LastEventTime_,
-		[string]$LastUpdateTime_,
-		[hashtable]$GroupDetails_,
-		[string]$PolicyId_,
-		[string]$PolicyName_,
+		[string]$CreateTimestamp_,
+		[string]$FirstEventTimestamp_,
+		[string]$LastEventTimestamp_,
+		[string]$LastUpdateTimestamp_,
+		[string]$DevicePolicyId_,
+		[string]$DevicePolicy_,
 		[int]$Severity_,
 		[array]$Tags_,
-		[string]$TargetValue_,
+		[string]$DeviceTargetValue_,
 		[string]$ThreatId_,
 		[string]$Type_,
 		[PSCustomObject]$Workflow_,
@@ -359,17 +355,15 @@ class CbcAlert {
 	) {
 		$this.Id = $Id_
 		$this.DeviceId = $DeviceId_
-		$this.Category = $Category_
-		$this.CreateTime = $CreateTime_
-		$this.FirstEventTime = $FirstEventTime_
-		$this.LastEventTime = $LastEventTime_
-		$this.LastUpdateTime = $LastUpdateTime_
-		$this.GroupDetails = $GroupDetails_
-		$this.PolicyId = $PolicyId_
-		$this.PolicyName = $PolicyName_
+		$this.CreateTime = $CreateTimestamp_
+		$this.FirstEventTime = $FirstEventTimestamp_
+		$this.LastEventTime = $LastEventTimestamp_
+		$this.LastUpdateTime = $LastUpdateTimestamp_
+		$this.PolicyId = $DevicePolicyId_
+		$this.PolicyName = $DevicePolicy_
 		$this.Severity = $Severity_
 		$this.Tags = $Tags_
-		$this.TargetValue = $TargetValue_
+		$this.TargetValue = $DeviceTargetValue_
 		$this.ThreatId = $ThreatId_
 		$this.Type = $Type_
 		$this.Workflow = $Workflow_
@@ -686,6 +680,93 @@ class CbcJob {
 		$this.Id = $Id_
 		$this.Type = $Type_
 		$this.Status = $Status_
+		$this.Server = $Server_
+	}
+}
+
+class CbcFeed {
+	[string]$Id
+	[string]$Name
+	[string]$Owner
+	[string]$ProviderUrl
+	[string]$Summary
+	[string]$Category
+	[bool]$Alertable
+	[CbcReport[]]$Reports
+	[CbcServer]$Server
+
+	CbcFeed (
+		[string]$Id_,
+		[string]$Name_,
+		[string]$Owner_,
+		[string]$ProviderUrl_,
+		[string]$Summary_,
+		[string]$Category_,
+		[bool]$Alertable_,
+		[CbcReport[]]$Reports_,
+		[CbcServer]$Server_
+	) {
+		$this.Id = $Id_
+		$this.Name = $Name_
+		$this.Owner = $Owner_
+		$this.ProviderUrl = $ProviderUrl_
+		$this.Summary = $Summary_
+		$this.Category = $Category_
+		$this.Alertable = $Alertable_
+		$this.Reports = $Reports_
+		$this.Server = $Server_
+	}
+}
+
+class CbcReport {
+	[string]$Id
+	[string]$Title
+	[string]$Description
+	[int]$Severity
+	[string]$Link
+	[System.Object[]]$IocsV2
+	[string]$Visibility
+	[CbcServer]$Server
+
+	CbcReport (
+		[string]$Id_,
+		[string]$Title_,
+		[string]$Description_,
+		[int]$Severity_,
+		[string]$Link_,
+		[System.Object[]]$IocsV2_,
+		[string]$Visibility_,
+		[CbcServer]$Server_
+	) {
+		$this.Id = $Id_
+		$this.Title = $Title_
+		$this.Description = $Description_
+		$this.Severity = $Severity_
+		$this.Link = $Link_
+		$this.IocsV2 = $IocsV2_
+		$this.Visibility = $Visibility_
+		$this.Server = $Server_
+	}
+}
+
+class CbcWatchlist {
+	[string]$Id
+	[string]$Name
+	[string]$Description
+	[bool]$AlertsEnabled
+	[CbcServer]$Server
+
+	CbcWatchlist (
+		[string]$Id_,
+		[string]$Name_,
+		[string]$Description_,
+		[bool]$AlertsEnabled_,
+		[CbcServer]$Server_
+	) {
+		$this.Id = $Id_
+		$this.Name = $Name_
+		$this.Description = $Description_
+		$this.AlertsEnabled = $AlertsEnabled_
 		$this.Server = $Server_
 	}
 }
