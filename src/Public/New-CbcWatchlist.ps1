@@ -48,7 +48,7 @@ function New-CbcWatchlist {
             $RequestBody.description = $Feed.Summary
             $RequestBody.alerts_enabled = $Feed.Alertable
             $RequestBody.classifier = @{
-                "key" = "feed_id"
+                "key"   = "feed_id"
                 "value" = $Feed.Id
             }
             

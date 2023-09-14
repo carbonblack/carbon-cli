@@ -84,10 +84,10 @@ function Set-CbcReport {
                 $UpdatedReport.id = $Report.Id
                 $UpdatedReport.iocs_v2 = @() + $Report.RawIocsV2
                 $IOC = @{
-                    "id" = [string](New-Guid)
+                    "id"         = [string](New-Guid)
                     "match_type" = $MatchType
-                    "field" = $Field
-                    "values" = $Values
+                    "field"      = $Field
+                    "values"     = $Values
                 }
                 
                 $UpdatedReport.iocs_v2 += $IOC
