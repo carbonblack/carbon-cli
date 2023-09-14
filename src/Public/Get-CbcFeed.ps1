@@ -71,7 +71,7 @@ function Get-CbcFeed {
             else {
                 $JsonContent = $Response.Content | ConvertFrom-Json
                 if ($PSCmdlet.ParameterSetName -eq "Id") {
-                    return Initialize-CbcFeed $JsonContent.feedinfo $CurrentServer
+                    return Initialize-CbcFeed $JsonContent.feedinfo $CurrentServer $JsonContent.reports
                 }
                 else {
                     $JsonContent.results | ForEach-Object {

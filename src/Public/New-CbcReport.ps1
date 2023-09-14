@@ -35,6 +35,9 @@ function New-CbcReport {
         [Parameter(ParameterSetName = "Default", Mandatory = $true)]
         [string]$FeedId,
 
+        [Parameter(ParameterSetName = "Feed", Mandatory = $true)]
+        [CbcFeed]$Feed,
+
         [Parameter(ParameterSetName = "Default", Mandatory = $true)]
         [string]$Title,
 
@@ -58,6 +61,7 @@ function New-CbcReport {
        
         $ExecuteServers | ForEach-Object {
             $CurrentServer = $_
+            $Feed = Get-CbcFeed -Id $FeedId -Server $_
             $RequestBody = @{}
             # TODO - get the reports from the feed and ADD the new report
             $NewReport = @{}
@@ -66,7 +70,9 @@ function New-CbcReport {
             $NewReport.severity = $Severity
             $NewReport.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
             $NewReport.id = [string](New-Guid)
-            $RequestBody.reports = @($NewReport)
+            $RequestBody.reports = @()
+            $RequestBody.reports += $Feed.RawReports
+            $RequestBody.reports += $NewReport
 
             $RequestBody = $RequestBody | ConvertTo-Json
 

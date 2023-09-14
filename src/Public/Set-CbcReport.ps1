@@ -71,7 +71,6 @@ function Set-CbcReport {
         $ExecuteServers | ForEach-Object {
             $CurrentServer = $_
             $RequestBody = @{}
-            # TODO - get the iocs from the report and ADD the new ioc
             $Report = Get-CbcReport -FeedId $FeedId -Id $Id
             $UpdatedReport = @{}
             $UpdatedReport.title = $Report.Title
@@ -79,7 +78,7 @@ function Set-CbcReport {
             $UpdatedReport.severity = $Report.Severity
             $UpdatedReport.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
             $UpdatedReport.id = $Report.Id
-            $UpdatedReport.iocs_v2 = @()
+            $UpdatedReport.iocs_v2 = @() + $Report.RawIocsV2
             $IOC = @{
                 "id" = [string](New-Guid)
                 "match_type" = $MatchType
@@ -87,7 +86,7 @@ function Set-CbcReport {
                 "values" = $Values
             }
             
-            $UpdatedReport.iocs_v2 = @($IOC)
+            $UpdatedReport.iocs_v2 += $IOC
             $RequestBody = $UpdatedReport
 
             $RequestBody = $RequestBody | ConvertTo-Json -Depth 3
