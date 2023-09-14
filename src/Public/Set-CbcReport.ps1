@@ -72,37 +72,42 @@ function Set-CbcReport {
             $CurrentServer = $_
             $RequestBody = @{}
             $Report = Get-CbcReport -FeedId $FeedId -Id $Id
-            $UpdatedReport = @{}
-            $UpdatedReport.title = $Report.Title
-            $UpdatedReport.description = $Report.Description
-            $UpdatedReport.severity = $Report.Severity
-            $UpdatedReport.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
-            $UpdatedReport.id = $Report.Id
-            $UpdatedReport.iocs_v2 = @() + $Report.RawIocsV2
-            $IOC = @{
-                "id" = [string](New-Guid)
-                "match_type" = $MatchType
-                "field" = $Field
-                "values" = $Values
-            }
-            
-            $UpdatedReport.iocs_v2 += $IOC
-            $RequestBody = $UpdatedReport
-
-            $RequestBody = $RequestBody | ConvertTo-Json -Depth 3
-
-            $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
-                -Method PUT `
-                -Server $_ `
-                -Params @($FeedId, $Id) `
-                -Body $RequestBody
-
-            if ($Response.StatusCode -ne 200) {
-                Write-Error -Message $("Cannot update reports for $($_)")
+            if ($Report.RawIocsV2.Count -ge 10000) {
+                Write-Error "Cannot add more IOCs to this report."
             }
             else {
-                $JsonContent = $Response.Content | ConvertFrom-Json
-                return Initialize-CbcReport $JsonContent $CurrentServer
+                $UpdatedReport = @{}
+                $UpdatedReport.title = $Report.Title
+                $UpdatedReport.description = $Report.Description
+                $UpdatedReport.severity = $Report.Severity
+                $UpdatedReport.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
+                $UpdatedReport.id = $Report.Id
+                $UpdatedReport.iocs_v2 = @() + $Report.RawIocsV2
+                $IOC = @{
+                    "id" = [string](New-Guid)
+                    "match_type" = $MatchType
+                    "field" = $Field
+                    "values" = $Values
+                }
+                
+                $UpdatedReport.iocs_v2 += $IOC
+                $RequestBody = $UpdatedReport
+
+                $RequestBody = $RequestBody | ConvertTo-Json -Depth 3
+
+                $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
+                    -Method PUT `
+                    -Server $_ `
+                    -Params @($FeedId, $Id) `
+                    -Body $RequestBody
+
+                if ($Response.StatusCode -ne 200) {
+                    Write-Error -Message $("Cannot update reports for $($_)")
+                }
+                else {
+                    $JsonContent = $Response.Content | ConvertFrom-Json
+                    return Initialize-CbcReport $JsonContent $CurrentServer
+                }
             }
         }
     }
