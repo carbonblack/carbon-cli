@@ -101,7 +101,7 @@ Describe "Get-CbcAlert" {
 							($Body | ConvertFrom-Json).criteria.device_policy -eq "Standard" -and
 							($Body | ConvertFrom-Json).criteria.threat_id -eq "xxx" -and
 							($Body | ConvertFrom-Json).criteria.type -eq "CB_ANALYTICS" -and
-							($Body | ConvertFrom-Json).criteria.severity -eq 3
+							($Body | ConvertFrom-Json).criteria.minimum_severity -eq 3
 						)
 					}
 
