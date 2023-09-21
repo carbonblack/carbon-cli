@@ -61,11 +61,11 @@ PS > Get-CbcAlert -Include $Criteria
 Returns all alerts which correspond to the specified criteria.
 
 PS > Get-CbcAlert -Include @{"type"= @("CB_ANALYTICS")
->>  "severity" = 3 }
+>>  "minimum_severity" = 3 }
 
 PS > $IncludeCriteria = @{}
 PS > $IncludeCriteria.type = @("CB_ANALYTICS")
-PS > $IncludeCriteria.severity = 3
+PS > $IncludeCriteria.minimum_severity = 3
 Get-CbcAlert -Include $IncludeCriteria
 
 Returns all alerts which correspond to the specified include criteria
@@ -78,7 +78,7 @@ Quarantines all devices that contain alert with id = "cfdb1201-fd5d-90db-81bb-b6
 .EXAMPLE
 PS > $IncludeCriteria = @{}
 PS > $IncludeCriteria.type = @("CB_ANALYTICS")
-PS > $IncludeCriteria.severity = 3
+PS > $IncludeCriteria.minimum_severity = 3
 PS > Get-CbcAlert -Include $IncludeCriteria | foreach { Set-CbcDevice -Id $_.DeviceID -QuarantineEnabled $true }
 
 Quarantines all devices that contain analytics alerts with severity 3 or higher
@@ -159,7 +159,7 @@ function Get-CbcAlert {
                     }
 
                     if ($PSBoundParameters.ContainsKey("Severity")) {
-                        $RequestBody.criteria.severity = $Severity
+                        $RequestBody.criteria.minimum_severity = $Severity
                     }
 
                     $RequestBody.rows = $MaxResults
