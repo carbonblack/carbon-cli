@@ -87,7 +87,7 @@ function Set-CbcReport {
                 $ExecuteServers | ForEach-Object {
                     $CurrentServer = $_
                     $Report = Get-CbcReport -FeedId $FeedId -Id $Id
-                    if ($Report.RawIocsV2.Count -ge 10000) {
+                    if ($Report.IocsV2.Count -ge 10000) {
                         Write-Error "Cannot add more IOCs to this report."
                     }
                     else {
@@ -105,15 +105,15 @@ function Set-CbcReport {
                             "field"      = $Field
                             "values"     = $Values
                         }
-                        if ($Report.RawIocsV2) {
-                            $UpdatedReport.iocs_v2 = $Report.RawIocsV2 + $IOC
+                        if ($Report.IocsV2) {
+                            $UpdatedReport.iocs_v2 = $Report.IocsV2 + $IOC
                         }
                         else {
                             $UpdatedReport.iocs_v2 = @($IOC)
                         }
 
                         $RequestBody = $UpdatedReport        
-                        $RequestBody = $RequestBody | ConvertTo-Json -Depth 3
+                        $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
         
                         $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
                             -Method PUT `
@@ -133,7 +133,7 @@ function Set-CbcReport {
             }
             "Feed" {
                 $Report = Get-CbcReport -Feed $Feed -Id $Id
-                if ($Report.RawIocsV2.Count -ge 10000) {
+                if ($Report.IocsV2.Count -ge 10000) {
                     Write-Error "Cannot add more IOCs to this report."
                 }
                 else {
@@ -151,15 +151,15 @@ function Set-CbcReport {
                         "field"      = $Field
                         "values"     = $Values
                     }
-                    if ($Report.RawIocsV2) {
-                        $UpdatedReport.iocs_v2 = $Report.RawIocsV2 + $IOC
+                    if ($Report.IocsV2) {
+                        $UpdatedReport.iocs_v2 = $Report.IocsV2 + $IOC
                     }
                     else {
                         $UpdatedReport.iocs_v2 = @($IOC)
                     }
                     $RequestBody = $UpdatedReport
     
-                    $RequestBody = $RequestBody | ConvertTo-Json -Depth 3
+                    $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
     
                     $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
                         -Method PUT `

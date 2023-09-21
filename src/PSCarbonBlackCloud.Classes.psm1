@@ -693,7 +693,6 @@ class CbcFeed {
 	[string]$Category
 	[bool]$Alertable
 	[System.Object[]]$Reports
-	[System.Object[]]$RawReports
 	[CbcServer]$Server
 
 	CbcFeed (
@@ -714,21 +713,7 @@ class CbcFeed {
 		$this.Summary = $Summary_
 		$this.Category = $Category_
 		$this.Alertable = $Alertable_
-		$this.Reports = @()
-		$Reports_ | ForEach-Object {
-			$Report = [CbcReport]::new(
-				$_.id,
-				$_.title,
-				$_.description,
-				$_.severity,
-				$_.link,
-				$_.iocs_v2,
-				$_.visibility,
-				$Server_
-			)
-			$this.Reports += $Report
-		}
-		$this.RawReports = $Reports_
+		$this.Reports = $Reports_
 		$this.Server = $Server_
 	}
 }
@@ -741,7 +726,6 @@ class CbcReport {
 	[string]$Link
 	[System.Object[]]$IocsV2
 	[string]$Visibility
-	[System.Object[]]$RawIocsV2
 	[CbcServer]$Server
 
 	CbcReport (
@@ -759,20 +743,9 @@ class CbcReport {
 		$this.Description = $Description_
 		$this.Severity = $Severity_
 		$this.Link = $Link_
-		$this.IocsV2 = @()
-		$IocsV2_ | ForEach-Object {
-			$IOC = [CbcIOC]::new(
-				$_.id,
-				$_.match_type,
-				$_.values,
-				$_.field,
-				$_.link,
-				$Server_
-			)
-			$this.IocsV2 += $IOC
-		}
+		$this.IocsV2 = $IocsV2_
 		$this.Visibility = $Visibility_
-		$this.RawIocsV2 = $IocsV2_
+		$this.IocsV2 = $IocsV2_
 		$this.Server = $Server_
 	}
 }

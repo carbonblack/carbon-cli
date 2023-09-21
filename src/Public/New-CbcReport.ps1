@@ -74,7 +74,9 @@ function New-CbcReport {
                     else {
                         $RequestBody = @{}
                         $RequestBody.reports = @()
-                        $RequestBody.reports += $Feed.RawReports
+                        if ($Feed.Reports) {
+                            $RequestBody.reports = $Feed.Reports
+                        }
                         $NewReport = @{}
                         $NewReport.title = $Title
                         $NewReport.description = $Description
@@ -84,7 +86,7 @@ function New-CbcReport {
                         
                         $RequestBody.reports += $NewReport
 
-                        $RequestBody = $RequestBody | ConvertTo-Json
+                        $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
 
                         $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Search"] `
                             -Method POST `
@@ -104,7 +106,9 @@ function New-CbcReport {
             "Feed" {
                 $RequestBody = @{}
                 $RequestBody.reports = @()
-                $RequestBody.reports += $Feed.RawReports
+                if ($Feed.Reports) {
+                    $RequestBody.reports = $Feed.Reports
+                }
 
                 if ($RequestBody.reports.Count -ge 10000) {
                     Write-Error "Cannot add more reports to that feed."
@@ -119,7 +123,7 @@ function New-CbcReport {
                     
                     $RequestBody.reports += $NewReport
 
-                    $RequestBody = $RequestBody | ConvertTo-Json
+                    $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
 
                     $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Search"] `
                         -Method POST `

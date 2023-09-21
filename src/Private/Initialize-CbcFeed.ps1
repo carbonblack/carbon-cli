@@ -9,7 +9,7 @@ function Initialize-CbcFeed {
 		[CbcServer]$Server,
 
         [Parameter(Mandatory = $false, Position = 2)]
-		[PSCustomObject]$Reports
+		[System.Object[]]$Reports
 	)
     [CbcFeed]::new(
         $Response.id,
