@@ -1,4 +1,4 @@
-class CbcServer{
+class CbcServer {
 	[ValidateNotNullOrEmpty()] [string]$Uri
 	[ValidateNotNullOrEmpty()] [string]$Org
 	[ValidateNotNullOrEmpty()] [SecureString]$Token
@@ -8,7 +8,7 @@ class CbcServer{
 		return "[" + $this.Org + "] " + $this.Uri
 	}
 
-	CbcServer ([string]$Uri_,[string]$Org_,[SecureString]$Token_, [string]$Notes_) {
+	CbcServer ([string]$Uri_, [string]$Org_, [SecureString]$Token_, [string]$Notes_) {
 		$this.Uri = $Uri_
 		$this.Org = $Org_
 		$this.Token = $Token_
@@ -16,7 +16,7 @@ class CbcServer{
 
 	}
 
-	CbcServer ([string]$Uri_,[string]$Org_,[SecureString]$Token_) {
+	CbcServer ([string]$Uri_, [string]$Org_, [SecureString]$Token_) {
 		$this.Uri = $Uri_
 		$this.Org = $Org_
 		$this.Token = $Token_
@@ -36,7 +36,7 @@ class CbcServer{
 	}
 }
 
-class CbcConnections{
+class CbcConnections {
 	[string]$FullPath
 	[System.Xml.XmlDocument]$XmlDocument
 
@@ -76,10 +76,10 @@ class CbcConnections{
 			# Convert the secure string to a regular encrypted string so it can be stored in a file
 			$secureTokenAsEncryptedString = $Server.Token | ConvertFrom-SecureString
 			$ServerElement = $this.XmlDocument.CreateElement("CBCServer")
-			$ServerElement.SetAttribute("Uri",$Server.Uri)
-			$ServerElement.SetAttribute("Org",$Server.Org)
-			$ServerElement.SetAttribute("Token",$secureTokenAsEncryptedString)
-			$ServerElement.SetAttribute("Notes",$Server.Notes)
+			$ServerElement.SetAttribute("Uri", $Server.Uri)
+			$ServerElement.SetAttribute("Org", $Server.Org)
+			$ServerElement.SetAttribute("Token", $secureTokenAsEncryptedString)
+			$ServerElement.SetAttribute("Notes", $Server.Notes)
 
 			$ServersNode = $this.XmlDocument.SelectSingleNode("CBCServers")
 			$ServersNode.AppendChild($ServerElement)
@@ -91,13 +91,13 @@ class CbcConnections{
 	}
 
 	[void] RemoveFromFile ($Server) {
-		$Node = $this.XmlDocument.SelectSingleNode($("//CBCServer[@Uri = '{0}'][@Org = '{1}']" -f $Server.Uri,$Server.Org))
+		$Node = $this.XmlDocument.SelectSingleNode($("//CBCServer[@Uri = '{0}'][@Org = '{1}']" -f $Server.Uri, $Server.Org))
 		$Node.ParentNode.RemoveChild($Node) | Out-Null
 		$this.XmlDocument.Save($this.FullPath)
 	}
 
 	[bool] IsInFile ($Server) {
-		$Node = $this.XmlDocument.SelectSingleNode($("//CBCServer[@Uri = '{0}'][@Org = '{1}']" -f $Server.Uri,$Server.Org))
+		$Node = $this.XmlDocument.SelectSingleNode($("//CBCServer[@Uri = '{0}'][@Org = '{1}']" -f $Server.Uri, $Server.Org))
 		if (-not $Node) {
 			return $false
 		}
@@ -105,7 +105,7 @@ class CbcConnections{
 	}
 }
 
-class CbcDevice{
+class CbcDevice {
 
 	[string]$Id
 	[string]$Status
@@ -196,7 +196,7 @@ class CbcDevice{
 		[string]$HostBasedFirewallStatus_,
 		[string]$SensorGatewayUrl_,
 		[string]$SensorGatewayUuid_
-		) {
+	) {
 		$this.Id = $Id_
 		$this.Status = $Status_
 		$this.Group = $Group_
@@ -244,7 +244,7 @@ class CbcDevice{
 	}
 }
 
-class CbcPolicy{
+class CbcPolicy {
 
 	[string]$Id
 	[string]$Name
@@ -692,7 +692,7 @@ class CbcFeed {
 	[string]$Summary
 	[string]$Category
 	[bool]$Alertable
-	[System.Object[]]$Reports
+	[string]$Access
 	[CbcServer]$Server
 
 	CbcFeed (
@@ -703,6 +703,42 @@ class CbcFeed {
 		[string]$Summary_,
 		[string]$Category_,
 		[bool]$Alertable_,
+		[string]$Access_,
+		[CbcServer]$Server_
+	) {
+		$this.Id = $Id_
+		$this.Name = $Name_
+		$this.Owner = $Owner_
+		$this.ProviderUrl = $ProviderUrl_
+		$this.Summary = $Summary_
+		$this.Category = $Category_
+		$this.Alertable = $Alertable_
+		$this.Access = $Access_
+		$this.Server = $Server_
+	}
+}
+
+class CbcFeedDetails {
+	[string]$Id
+	[string]$Name
+	[string]$Owner
+	[string]$ProviderUrl
+	[string]$Summary
+	[string]$Category
+	[bool]$Alertable
+	[string]$Access
+	[System.Object[]]$Reports
+	[CbcServer]$Server
+
+	CbcFeedDetails (
+		[string]$Id_,
+		[string]$Name_,
+		[string]$Owner_,
+		[string]$ProviderUrl_,
+		[string]$Summary_,
+		[string]$Category_,
+		[bool]$Alertable_,
+		[string]$Access_,
 		[System.Object[]]$Reports_,
 		[CbcServer]$Server_
 	) {
@@ -713,6 +749,7 @@ class CbcFeed {
 		$this.Summary = $Summary_
 		$this.Category = $Category_
 		$this.Alertable = $Alertable_
+		$this.Access = $Access_
 		$this.Reports = $Reports_
 		$this.Server = $Server_
 	}

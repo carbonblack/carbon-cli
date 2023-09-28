@@ -1,0 +1,36 @@
+{
+    "feedinfo": {
+        "name": "My Feed",
+        "owner": "ABCD1234",
+        "provider_url": "https://example.com",
+        "summary": "Example Feed",
+        "category": "None",
+        "source_label": null,
+        "access": "private",
+        "id": "ABCDEFGHIJKLMNOPQRSTUVWX"
+    },
+    "reports": [
+        {
+            "id": "1",
+            "timestamp": 1571083459,
+            "title": "yara",
+            "description": "microsoft:microsoft",
+            "severity": 5,
+            "link": null,
+            "tags": null,
+            "iocs": null,
+            "iocs_v2": [
+                {
+                    "id": "1",
+                    "match_type": "equality",
+                    "values": [
+                        "TQBpAGMAcgBvAHMAbwBmAHQA"
+                    ],
+                    "field": "$microsoft",
+                    "link": null
+                }
+            ],
+            "visibility": null
+        }
+    ]
+}

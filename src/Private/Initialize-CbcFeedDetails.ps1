@@ -1,14 +1,17 @@
-function Initialize-CbcFeed {
+function Initialize-CbcFeedDetails {
     param(
         [Parameter(Mandatory = $true, Position = 0)]
 		[ValidateNotNullOrEmpty()]
 		[PSCustomObject]$Response,
 
-        [Parameter(Mandatory = $true, Position = 1)]
+        [Parameter(Mandatory = $true,Position = 1)]
 		[ValidateNotNullOrEmpty()]
-		[CbcServer]$Server
+		[CbcServer]$Server,
+
+        [Parameter(Mandatory = $false, Position = 2)]
+		[System.Object[]]$Reports
 	)
-    [CbcFeed]::new(
+    [CbcFeedDetails]::new(
         $Response.id,
         $Response.name,
         $Response.owner,
@@ -17,6 +20,7 @@ function Initialize-CbcFeed {
         $Response.category,
         $Response.alertable,
         $Response.access,
+        $Reports,
         $Server
     )
 }

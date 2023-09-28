@@ -8,6 +8,10 @@ https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/l
 This cmdlet returns all feeds or specific feed from all valid connections.
 .PARAMETER Id
 Filter param: Specify the Id of the feed to retrieve.
+.PARAMETER Name
+Filter param: Specify the Name of the feeds to retrieve.
+.PARAMETER Access
+Filter param: Specify the Access (private, public, reserved) of the feeds to retrieve.
 .OUTPUTS
 CbcFeed[]
 .NOTES
@@ -21,17 +25,27 @@ you can add the `-Server` param.
 
 PS > Get-CbcFeed -Server $SpecifiedServer
 .EXAMPLE
-PS > Get-CbcFeed -Id "11a1a1a1-b22b-3333-44cc-dd5555d5d55d"
+PS > Get-CbcFeed -Id 5hBIvXltQqy0oAAqdEh0A, jwUoZu1WRBujSoCcYNa6fA
 
-Returns the feed with specified Id.
+Returns the feed with specified Ids.
+.EXAMPLE
+PS > Get-CbcFeed -Name "myfeed", "otherfeed" -Access "private", "public"
+
+Returns the feed with specified Name and Access.
 #>
 
 function Get-CbcFeed {
     [CmdletBinding(DefaultParameterSetName = "Default")]
     [OutputType([CbcFeed[]])]
     param(
-        [Parameter(ParameterSetName = "Id", Position = 0)]
-        [string]$Id,
+        [Parameter(ParameterSetName = "Id")]
+        [string[]]$Id,
+
+        [Parameter(ParameterSetName = "Default")]
+        [string[]]$Name,
+
+        [Parameter(ParameterSetName = "Default")]
+        [string[]]$Access,
 
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "Default")]
@@ -39,7 +53,6 @@ function Get-CbcFeed {
     )
 
     process {
-
         if ($Server) {
             $ExecuteServers = $Server
         }
@@ -51,16 +64,8 @@ function Get-CbcFeed {
             $CurrentServer = $_
             $Endpoint = $null
             $Params = ""
-            
-            if ($PSCmdlet.ParameterSetName -eq "Id") {
-                $Endpoint = $global:CBC_CONFIG.endpoints["Feed"]["Details"]
-                $Params = $Id
-            }
-            else {
-                $Endpoint = $global:CBC_CONFIG.endpoints["Feed"]["Search"]
-            }
-   
-            $Response = Invoke-CbcRequest -Endpoint $Endpoint `
+  
+            $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Feed"]["Search"] `
                 -Method GET `
                 -Server $_ `
                 -Params $Params `
@@ -70,11 +75,28 @@ function Get-CbcFeed {
             }
             else {
                 $JsonContent = $Response.Content | ConvertFrom-Json
-                if ($PSCmdlet.ParameterSetName -eq "Id") {
-                    return Initialize-CbcFeed $JsonContent.feedinfo $CurrentServer $JsonContent.reports
-                }
-                else {
-                    $JsonContent.results | ForEach-Object {
+                $JsonContent.results | ForEach-Object {
+                    if ($PSBoundParameters.ContainsKey("Id")) {
+                        if ($Id.Contains($_.id)) {
+                            return Initialize-CbcFeed $_ $CurrentServer
+                        }
+                    }
+                    elseif ($PSBoundParameters.ContainsKey("Name") -and $PSBoundParameters.ContainsKey("Access")) {
+                        if ($Name.Contains($_.name) -and $Access.Contains($_.access)) {
+                            return Initialize-CbcFeed $_ $CurrentServer
+                        }
+                    }
+                    elseif ($PSBoundParameters.ContainsKey("Name")) {
+                        if ($Name.Contains($_.name)) {
+                            return Initialize-CbcFeed $_ $CurrentServer
+                        }
+                    }
+                    elseif ($PSBoundParameters.ContainsKey("Access")) {
+                        if ($Access.Contains($_.access)) {
+                            return Initialize-CbcFeed $_ $CurrentServer
+                        }
+                    }
+                    else {
                         return Initialize-CbcFeed $_ $CurrentServer
                     }
                 }
