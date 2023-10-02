@@ -28,6 +28,11 @@ you can add the `-Server` param.
 
 PS > New-CbcFeed -Name myfeed -ProviderUrl http://test.test/ -Summary summary -Category category -Alertable $true -Server $SpecifiedServer
 .EXAMPLE
+PS > New-CbcFeed -Body @{"name"= "myfeed"
+>> "provider_url"  = "http://test.test/"
+>> "summary" = "summary"
+>> "category" = "category" 
+>> "alertable" = $true}
 #>
 
 function New-CbcFeed {
@@ -49,6 +54,10 @@ function New-CbcFeed {
         [Parameter(ParameterSetName = "Default")]
         [bool]$Alertable,
 
+        [Parameter(ParameterSetName = "CustomBody", Mandatory = $true)]
+        [hashtable]$Body,
+
+        [Parameter(ParameterSetName = "CustomBody")]
         [Parameter(ParameterSetName = "Default")]
         [CbcServer[]]$Server
     )
@@ -63,17 +72,21 @@ function New-CbcFeed {
        
         $ExecuteServers | ForEach-Object {
             $CurrentServer = $_
-            $RequestBody = @{}
-            $RequestBody.feedinfo = @{}
-            $RequestBody.reports = @()
-            $RequestBody.feedinfo.name = $Name
-            $RequestBody.feedinfo.provider_url = $ProviderUrl
-            $RequestBody.feedinfo.summary = $Summary
-            $RequestBody.feedinfo.category = $Category
-            if ($PSBoundParameters.ContainsKey("Alertable")) {
-                $RequestBody.feedinfo.alertable = $Alertable
+            if ($PSCmdlet.ParameterSetName -eq "Default") {
+                $RequestBody = @{}
+                $RequestBody.feedinfo = @{}
+                $RequestBody.reports = @()
+                $RequestBody.feedinfo.name = $Name
+                $RequestBody.feedinfo.provider_url = $ProviderUrl
+                $RequestBody.feedinfo.summary = $Summary
+                $RequestBody.feedinfo.category = $Category
+                if ($PSBoundParameters.ContainsKey("Alertable")) {
+                    $RequestBody.feedinfo.alertable = $Alertable
+                }
             }
-            
+            else {
+                $RequestBody = $Body
+            }
             $RequestBody = $RequestBody | ConvertTo-Json
 
             $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Feed"]["Search"] `
@@ -86,7 +99,7 @@ function New-CbcFeed {
             }
             else {
                 $JsonContent = $Response.Content | ConvertFrom-Json
-                return Initialize-CbcFeed $JsonContent $CurrentServer
+                return Initialize-CbcFeedDetails $JsonContent.feedinfo $CurrentServer $JsonContent.reports
             }
         }
     }

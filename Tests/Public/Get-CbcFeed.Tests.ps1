@@ -181,15 +181,15 @@ Describe "Get-CbcFeed" {
                     ($Server -eq $s1 -or $Server -eq $s2)
                 }
 
-                $Policy = Get-CbcFeed
+                $Feed = Get-CbcFeed
 
-                $Policy.Count | Should -Be 3
-                $Policy[0].Name | Should -Be "My Feed"
-                $Policy[0].Server | Should -Be $s1
-                $Policy[1].Name | Should -Be "Other Feed"
-                $Policy[1].Server | Should -Be $s1
-                $Policy[2].Name | Should -Be "My Feed2"
-                $Policy[2].Server | Should -Be $s2
+                $Feed.Count | Should -Be 3
+                $Feed[0].Name | Should -Be "My Feed"
+                $Feed[0].Server | Should -Be $s1
+                $Feed[1].Name | Should -Be "Other Feed"
+                $Feed[1].Server | Should -Be $s1
+                $Feed[2].Name | Should -Be "My Feed2"
+                $Feed[2].Server | Should -Be $s2
             }
 
             It "Should return all feeds with specified ids" {
@@ -212,13 +212,13 @@ Describe "Get-CbcFeed" {
                     ($Server -eq $s1 -or $Server -eq $s2)
                 }
 
-                $Policy = Get-CbcFeed -Id ABCDEFGHIJKLMNOPQRSTUVWX
+                $Feed = Get-CbcFeed -Id ABCDEFGHIJKLMNOPQRSTUVWX
 
-                $Policy.Count | Should -Be 2
-                $Policy[0].Name | Should -Be "My Feed"
-                $Policy[0].Server | Should -Be $s1
-                $Policy[1].Name | Should -Be "My Feed2"
-                $Policy[1].Server | Should -Be $s2
+                $Feed.Count | Should -Be 2
+                $Feed[0].Name | Should -Be "My Feed"
+                $Feed[0].Server | Should -Be $s1
+                $Feed[1].Name | Should -Be "My Feed2"
+                $Feed[1].Server | Should -Be $s2
             }
 
             It "Should return all feeds with specified ids - exception" {
@@ -241,11 +241,11 @@ Describe "Get-CbcFeed" {
                     ($Server -eq $s1 -or $Server -eq $s2)
                 }
 
-                $Policy = Get-CbcFeed -Id ABCDEFGHIJKLMNOPQRSTUVWX
+                $Feed = Get-CbcFeed -Id ABCDEFGHIJKLMNOPQRSTUVWX
 
-                $Policy.Count | Should -Be 1
-                $Policy[0].Name | Should -Be "My Feed"
-                $Policy[0].Server | Should -Be $s1
+                $Feed.Count | Should -Be 1
+                $Feed[0].Name | Should -Be "My Feed"
+                $Feed[0].Server | Should -Be $s1
             }
         }
     }
