@@ -29,10 +29,10 @@ you can add the `-Server` param.
 PS > New-CbcFeed -Name myfeed -ProviderUrl http://test.test/ -Summary summary -Category category -Alertable $true -Server $SpecifiedServer
 .EXAMPLE
 PS > New-CbcFeed -Body @{"name"= "myfeed"
->> "provider_url"  = "http://test.test/"
->> "summary" = "summary"
->> "category" = "category" 
->> "alertable" = $true}
+> "provider_url"  = "http://test.test/"
+> "summary" = "summary"
+> "category" = "category" 
+> "alertable" = $true}
 #>
 
 function New-CbcFeed {

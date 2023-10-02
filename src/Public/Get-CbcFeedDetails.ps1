@@ -16,6 +16,12 @@ Permissions needed: READ org.feeds
 PS > Get-CbcFeedDetails -Id 5hBIvXltQqy0oAAqdEh0A, jwUoZu1WRBujSoCcYNa6fA
 
 Returns the feed with specified Id.
+
+.EXAMPLE
+PS > $Feed = Get-CbcFeed -Id 5hBIvXltQqy0oAAqdEh0A
+PS > Get-CbcFeedDetails -Feed $Feed
+
+Returns the feed details for a CbcFeed.
 #>
 
 function Get-CbcFeedDetails {

@@ -1,0 +1,26 @@
+{
+    "results": [
+        {
+            "id": "1",
+            "timestamp": 1571083459,
+            "title": "yara",
+            "description": "microsoft:microsoft",
+            "severity": 5,
+            "link": null,
+            "tags": null,
+            "iocs": null,
+            "iocs_v2": [
+                {
+                    "id": "1",
+                    "match_type": "equality",
+                    "values": [
+                        "TQBpAGMAcgBvAHMAbwBmAHQA"
+                    ],
+                    "field": "$microsoft",
+                    "link": null
+                }
+            ],
+            "visibility": null
+        }
+    ]
+}

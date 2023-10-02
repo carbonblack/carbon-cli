@@ -17,22 +17,28 @@ CbcReport[]
 .NOTES
 Permissions needed: READ org.feeds
 .EXAMPLE
-PS > Get-CbcReport -FeedId "11a1a1a1-b22b-3333-44cc-dd5555d5d55d"
+PS > Get-CbcReport -FeedId 5hBIvXltQqy0oAAqdEh0A, jwUoZu1WRBujSoCcYNa6fA
 
 Returns all reports for specific feed from all connections. 
 If you have multiple connections and you want alerts from a specific connection
 you can add the `-Server` param.
 
-PS > Get-CbcReport -FeedId "11a1a1a1-b22b-3333-44cc-dd5555d5d55d" -Server $SpecifiedServer
+PS > Get-CbcReport -FeedId 5hBIvXltQqy0oAAqdEh0A, jwUoZu1WRBujSoCcYNa6fA -Server $SpecifiedServer
 .EXAMPLE
-PS > Get-CbcReport -FeedId "11a1a1a1-b22b-3333-44cc-dd5555d5d55d" -Id "11a1a1a1-b22b-3333-44cc-dd5555d5d5fd"
+PS > Get-CbcReport -FeedId 5hBIvXltQqy0oAAqdEh0A, jwUoZu1WRBujSoCcYNa6fA -Id 11a1a1a1-b22b-3333-44cc-dd5555d5d5fd, 11a1a1a1-b22b-3333-44cc-dd5555d5d5fs
 
 Returns the report with specified Id under feed.
 .EXAMPLE
-PS > $Feed = Get-CbcFeed -Id "11a1a1a1-b22b-3333-44cc-dd5555d5d55d"
+PS > $Feed = Get-CbcFeed -Id 5hBIvXltQqy0oAAqdEh0A
 PS > Get-CbcReport -Feed $Feed
 
-Returns all reports for specific feed from all connections.
+Returns all reports for specific feed.
+
+.EXAMPLE
+PS > $Feed = Get-CbcFeed -Id 5hBIvXltQqy0oAAqdEh0A
+PS > Get-CbcReport -Feed $Feed -Id 11a1a1a1-b22b-3333-44cc-dd5555d5d5fd
+
+Returns report with specific id for specific feed.
 #>
 
 function Get-CbcReport {
@@ -40,17 +46,17 @@ function Get-CbcReport {
     [OutputType([CbcReport[]])]
     param(
         [Parameter(ParameterSetName = "Default", Position = 0, Mandatory = $true)]
-        [string]$FeedId,
+        [string[]]$FeedId,
 
         [Parameter(ParameterSetName = "Feed", Position = 0, Mandatory = $true)]
-        [CbcFeed]$Feed,
+        [CbcFeed[]]$Feed,
 
         [Parameter(ParameterSetName = "Default", Position = 1)]
         [Parameter(ParameterSetName = "Feed", Position = 1)]
         [Parameter(ParameterSetName = "Id", Position = 1)]
-        [string]$Id,
+        [string[]]$Id,
 
-        [Parameter(ParameterSetName = "Id")]
+        [Parameter(ParameterSetName = "Default")]
         [CbcServer[]]$Server
     )
 
@@ -65,68 +71,55 @@ function Get-CbcReport {
             "Default" {
                 $ExecuteServers | ForEach-Object {
                     $CurrentServer = $_
-                    $Endpoint = $null
-                    $Params = ""
+     
+                    $FeedId | ForEach-Object {
+                        $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Search"] `
+                            -Method GET `
+                            -Server $CurrentServer `
+                            -Params @($_) `
 
-                    if ($PSBoundParameters.ContainsKey("Id")) {
-                        $Endpoint = $global:CBC_CONFIG.endpoints["Report"]["Details"]
-                        $Params = @($FeedId, $Id)
-                    }
-                    else {
-                        $Endpoint = $global:CBC_CONFIG.endpoints["Report"]["Search"]
-                        $Params = $FeedId
-                    }
-        
-                    $Response = Invoke-CbcRequest -Endpoint $Endpoint `
-                        -Method GET `
-                        -Server $_ `
-                        -Params $Params `
-
-                    if ($Response.StatusCode -ne 200) {
-                        Write-Error -Message $("Cannot get reports(s) for $($_)")
-                    }
-                    else {
-                        $JsonContent = $Response.Content | ConvertFrom-Json
-                        if ($PSBoundParameters.ContainsKey("Id")) {
-                            return Initialize-CbcReport $JsonContent.report $CurrentServer
+                        if ($Response.StatusCode -ne 200) {
+                            Write-Error -Message $("Cannot get reports(s) for $($CurrentServer)")
                         }
                         else {
+                            $JsonContent = $Response.Content | ConvertFrom-Json
                             $JsonContent.results | ForEach-Object {
-                                return Initialize-CbcReport $_ $CurrentServer
+                                if ($PSBoundParameters.ContainsKey("Id")) {
+                                    if ($Id.Contains($_.id)) {
+                                        return Initialize-CbcReport $_ $CurrentServer
+                                    }
+                                }
+                                else {
+                                    return Initialize-CbcReport $_ $CurrentServer
+                                }
                             }
                         }
                     }
                 }
             }
             "Feed" {
-                $Endpoint = $null
-                $Params = ""
-                
-                if ($PSBoundParameters.ContainsKey("Id")) {
-                    $Endpoint = $global:CBC_CONFIG.endpoints["Report"]["Details"]
-                    $Params = @($Feed.Id, $Id)
-                }
-                else {
-                    $Endpoint = $global:CBC_CONFIG.endpoints["Report"]["Search"]
-                    $Params = $Feed.Id
-                }
-    
-                $Response = Invoke-CbcRequest -Endpoint $Endpoint `
-                    -Method GET `
-                    -Server $Feed.Server `
-                    -Params $Params `
+                $Feed | ForEach-Object {
+                    $FeedId = $_.id
+                    $CurrentServer = $_.Server
+                    $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Search"] `
+                        -Method GET `
+                        -Server $CurrentServer `
+                        -Params $FeedId `
 
-                if ($Response.StatusCode -ne 200) {
-                    Write-Error -Message $("Cannot get reports(s) for $($Feed.Server)")
-                }
-                else {
-                    $JsonContent = $Response.Content | ConvertFrom-Json
-                    if ($PSBoundParameters.ContainsKey("Id")) {
-                        return Initialize-CbcReport $JsonContent.report $Feed.Server
+                    if ($Response.StatusCode -ne 200) {
+                        Write-Error -Message $("Cannot get reports(s) for $($CurrentServer)")
                     }
                     else {
+                        $JsonContent = $Response.Content | ConvertFrom-Json
                         $JsonContent.results | ForEach-Object {
-                            return Initialize-CbcReport $_ $Feed.Server
+                            if ($PSBoundParameters.ContainsKey("Id")) {
+                                if ($Id.Contains($_.id)) {
+                                    return Initialize-CbcReport $_ $CurrentServer
+                                }
+                            }
+                            else {
+                                return Initialize-CbcReport $_ $CurrentServer
+                            }
                         }
                     }
                 }
