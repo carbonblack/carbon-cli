@@ -34,9 +34,11 @@ function New-CbcReport {
     [CmdletBinding(DefaultParameterSetName = "Default")]
     [OutputType([CbcReport])]
     param(
+        [Parameter(ParameterSetName = "CustomBody")]
         [Parameter(ParameterSetName = "Default", Position = 0, Mandatory = $true)]
         [string]$FeedId,
 
+        [Parameter(ParameterSetName = "CustomBody")]
         [Parameter(ParameterSetName = "Feed", Position = 0, Mandatory = $true)]
         [CbcFeed]$Feed,
 
@@ -52,6 +54,9 @@ function New-CbcReport {
         [Parameter(ParameterSetName = "Default", Mandatory = $true)]
         [int]$Severity,
 
+        [Parameter(ParameterSetName = "CustomBody", Mandatory = $true)]
+        [hashtable]$Body,
+
         [Parameter(ParameterSetName = "Default")]
         [CbcServer[]]$Server
     )
@@ -63,55 +68,70 @@ function New-CbcReport {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
-       
-        switch ($PSCmdlet.ParameterSetName) {
-            "Default" {
-                $ExecuteServers | ForEach-Object {
-                    $Feed = Get-CbcFeed -Id $FeedId -Server $_
-                    if ($Feed.RawReports.Count -ge 10000) {
-                        Write-Error "Cannot add more reports to that feed."
+
+        if ($PSBoundParameters.ContainsKey("FeedId")) {
+            $ExecuteServers | ForEach-Object {
+                $FeedDetails = Get-CbcFeedDetails -Id $FeedId -Server $_
+                if ($FeedDetails.Reports.Count -ge 10000) {
+                    Write-Error "Cannot add more reports to that feed."
+                }
+                else {
+                    $RequestBody = @{}
+                    $RequestBody.reports = @()
+                    if ($FeedDetails.Reports) {
+                        $RequestBody.reports = $FeedDetails.Reports
+                    }
+                    if ($PSBoundParameters.ContainsKey("Body")) {
+                        if (!$Body.ContainsKey("id")) {
+                            $Body.id = [string](New-Guid)
+                        }
+                        $Body.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
+                        $RequestBody.reports += $Body
                     }
                     else {
-                        $RequestBody = @{}
-                        $RequestBody.reports = @()
-                        if ($Feed.Reports) {
-                            $RequestBody.reports = $Feed.Reports
-                        }
                         $NewReport = @{}
                         $NewReport.title = $Title
                         $NewReport.description = $Description
                         $NewReport.severity = $Severity
                         $NewReport.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
                         $NewReport.id = [string](New-Guid)
-                        
                         $RequestBody.reports += $NewReport
+                    }
 
-                        $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
+                    $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
+                    $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Search"] `
+                        -Method POST `
+                        -Server $_ `
+                        -Params $FeedId `
+                        -Body $RequestBody
 
-                        $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Search"] `
-                            -Method POST `
-                            -Server $_ `
-                            -Params $FeedId `
-                            -Body $RequestBody
-
-                        if ($Response.StatusCode -ne 200) {
-                            Write-Error -Message $("Cannot update reports for $($_)")
-                        }
-                        else {
-                            return Get-CbcReport -FeedId $FeedId -Id $NewReport.id
-                        }
+                    if ($Response.StatusCode -ne 200) {
+                        Write-Error -Message $("Cannot update reports for $($_)")
+                    }
+                    else {
+                        return Get-CbcReport -FeedId $FeedId -Id $NewReport.id
                     }
                 }
             }
-            "Feed" {
-                $RequestBody = @{}
-                $RequestBody.reports = @()
-                if ($Feed.Reports) {
-                    $RequestBody.reports = $Feed.Reports
-                }
+        }
+        elseif ($PSBoundParameters.ContainsKey("Feed")) {
+            $FeedDetails = Get-CbcFeedDetails -Feed $Feed
+            $RequestBody = @{}
+            $RequestBody.reports = @()
+            if ($FeedDetails.Reports) {
+                $RequestBody.reports = $FeedDetails.Reports
+            }
 
-                if ($RequestBody.reports.Count -ge 10000) {
-                    Write-Error "Cannot add more reports to that feed."
+            if ($RequestBody.reports.Count -ge 10000) {
+                Write-Error "Cannot add more reports to that feed."
+            }
+            else {
+                if ($PSBoundParameters.ContainsKey("Body")) {
+                    if (!$Body.ContainsKey("id")) {
+                        $Body.id = [string](New-Guid)
+                    }
+                    $Body.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
+                    $RequestBody.reports += $Body
                 }
                 else {
                     $NewReport = @{}
@@ -120,23 +140,22 @@ function New-CbcReport {
                     $NewReport.severity = $Severity
                     $NewReport.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
                     $NewReport.id = [string](New-Guid)
-                    
                     $RequestBody.reports += $NewReport
+                }
 
-                    $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
+                $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
 
-                    $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Search"] `
-                        -Method POST `
-                        -Server $Feed.Server `
-                        -Params $Feed.Id `
-                        -Body $RequestBody
+                $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Search"] `
+                    -Method POST `
+                    -Server $Feed.Server `
+                    -Params $Feed.Id `
+                    -Body $RequestBody
 
-                    if ($Response.StatusCode -ne 200) {
-                        Write-Error -Message $("Cannot update reports for $($Feed.Server)")
-                    }
-                    else {
-                        return Get-CbcReport -Feed $Feed -Id $NewReport.id
-                    }
+                if ($Response.StatusCode -ne 200) {
+                    Write-Error -Message $("Cannot update reports for $($Feed.Server)")
+                }
+                else {
+                    return Get-CbcReport -Feed $Feed -Id $NewReport.id
                 }
             }
         }
