@@ -49,7 +49,7 @@ function New-CbcWatchlist {
             "Default" {
                 $ExecuteServers | ForEach-Object {
                     $CurrentServer = $_
-                    $Feed = Get-CbcFeed -Id $FeedId
+                    $Feed = Get-CbcFeed -Id $FeedId -Server $CurrentServer
                     $RequestBody = @{}
                     $RequestBody.name = $Feed.Name
                     $RequestBody.description = $Feed.Summary

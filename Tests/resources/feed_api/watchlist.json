@@ -1,0 +1,15 @@
+{
+    "name": "My Feed",
+    "description": "Watchlist subscribed to a Feed",
+    "id": "MEjVbdeyS1uJtQ8auEq3A",
+    "tags_enabled": true,
+    "alerts_enabled": false,
+    "alert_classification_enabled": false,
+    "create_timestamp": 1604693936,
+    "last_update_timestamp": 1604693936,
+    "report_ids": null,
+    "classifier": {
+      "key": "feed_id",
+      "value": "ABCDEFGHIJKLMNOPQRSTU"
+  }
+}
