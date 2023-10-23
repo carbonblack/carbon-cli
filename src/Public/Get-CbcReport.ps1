@@ -73,6 +73,7 @@ function Get-CbcReport {
                     $CurrentServer = $_
      
                     $FeedId | ForEach-Object {
+                        $CurrentFeedId = $_
                         $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Search"] `
                             -Method GET `
                             -Server $CurrentServer `
@@ -86,11 +87,11 @@ function Get-CbcReport {
                             $JsonContent.results | ForEach-Object {
                                 if ($PSBoundParameters.ContainsKey("Id")) {
                                     if ($Id.Contains($_.id)) {
-                                        return Initialize-CbcReport $_ $CurrentServer
+                                        return Initialize-CbcReport $_ $CurrentFeedId[0] $CurrentServer
                                     }
                                 }
                                 else {
-                                    return Initialize-CbcReport $_ $CurrentServer
+                                    return Initialize-CbcReport $_ $CurrentFeedId[0] $CurrentServer
                                 }
                             }
                         }
@@ -114,11 +115,11 @@ function Get-CbcReport {
                         $JsonContent.results | ForEach-Object {
                             if ($PSBoundParameters.ContainsKey("Id")) {
                                 if ($Id.Contains($_.id)) {
-                                    return Initialize-CbcReport $_ $CurrentServer
+                                    return Initialize-CbcReport $_ $FeedId[0] $CurrentServer
                                 }
                             }
                             else {
-                                return Initialize-CbcReport $_ $CurrentServer
+                                return Initialize-CbcReport $_ $FeedId[0] $CurrentServer
                             }
                         }
                     }

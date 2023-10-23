@@ -763,6 +763,7 @@ class CbcReport {
 	[string]$Link
 	[System.Object[]]$IocsV2
 	[string]$Visibility
+	[string]$FeedId
 	[CbcServer]$Server
 
 	CbcReport (
@@ -773,6 +774,7 @@ class CbcReport {
 		[string]$Link_,
 		[System.Object[]]$IocsV2_,
 		[string]$Visibility_,
+		[string]$FeedId_,
 		[CbcServer]$Server_
 	) {
 		$this.Id = $Id_
@@ -783,6 +785,7 @@ class CbcReport {
 		$this.IocsV2 = $IocsV2_
 		$this.Visibility = $Visibility_
 		$this.IocsV2 = $IocsV2_
+		$this.FeedId = $FeedId_
 		$this.Server = $Server_
 	}
 }
@@ -809,7 +812,7 @@ class CbcWatchlist {
 	}
 }
 
-class CbcIOC {
+class CbcIoc {
 	[string]$Id
 	[string]$MatchType
 	[string[]]$Values
@@ -817,7 +820,7 @@ class CbcIOC {
 	[string]$Link
 	[CbcServer]$Server
 
-	CbcIOC (
+	CbcIoc (
 		[string]$Id_,
 		[string]$MatchType_,
 		[string]$Values_,

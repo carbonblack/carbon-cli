@@ -40,6 +40,7 @@ Describe "New-CbcReport" {
                     "google.com",
                     @(),
                     "visible",
+                    "ABCDEFGHIJKLMNOPQRSTUVWX",
                     $s1
                 )
             }
@@ -149,6 +150,7 @@ Describe "New-CbcReport" {
                     "google.com",
                     @(),
                     "visible",
+                    "ABCDEFGHIJKLMNOPQRSTUVWX",
                     $s1
                 )
             }

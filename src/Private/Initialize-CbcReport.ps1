@@ -6,6 +6,10 @@ function Initialize-CbcReport {
 
         [Parameter(Mandatory = $true,Position = 1)]
 		[ValidateNotNullOrEmpty()]
+		[string]$FeedId,
+
+        [Parameter(Mandatory = $true,Position = 2)]
+		[ValidateNotNullOrEmpty()]
 		[CbcServer]$Server
 	)
     [CbcReport]::new(
@@ -16,6 +20,7 @@ function Initialize-CbcReport {
         $Response.link,
         $Response.iocs_v2,
         $Response.visibility,
+        $FeedId,
         $Server
     )
 }
