@@ -12,6 +12,8 @@ Filter param: Specify the Id of the feed to retrieve.
 Filter param: Specify the Name of the feeds to retrieve.
 .PARAMETER Access
 Filter param: Specify the Access (private, public, reserved) of the feeds to retrieve.
+.PARAMETER Server
+Sets a specified Cbc Server from the current connections to execute the cmdlet with.
 .OUTPUTS
 CbcFeed[]
 .NOTES

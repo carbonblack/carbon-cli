@@ -13,6 +13,8 @@ function Initialize-CbcWatchlist {
         $Response.name,
         $Response.description,
         $Response.alerts_enabled,
+        $Response.tags_enabled,
+        $Response.alert_classification_enabled,
         $Server
     )
 }

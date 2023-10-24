@@ -14,6 +14,10 @@
         "Details" = "threathunter/feedmgr/v2/orgs/{0}/feeds/{1}"
         "Subscribe" = "threathunter/watchlistmgr/v3/orgs/{0}/watchlists"
     }
+    "Watchlist" = @{
+        "Search" = "threathunter/watchlistmgr/v3/orgs/{0}/watchlists"
+        "Details" = "threathunter/watchlistmgr/v3/orgs/{0}/watchlists/{1}"
+    }
     "Report"  = @{
         "Search" = "threathunter/feedmgr/v2/orgs/{0}/feeds/{1}/reports"
         "Details" = "threathunter/feedmgr/v2/orgs/{0}/feeds/{1}/reports/{2}"

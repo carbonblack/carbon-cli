@@ -16,6 +16,8 @@ Title of the Report (required)
 Description of the Report (required)
 .PARAMETER Severity
 Severity of the Report (required)
+.PARAMETER Server
+Sets a specified Cbc Server from the current connections to execute the cmdlet with.
 .OUTPUTS
 CbcReport
 .NOTES

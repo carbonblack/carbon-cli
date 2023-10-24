@@ -16,6 +16,8 @@ Summary of the Feed (required)
 Category of the Feed (required)
 .PARAMETER Alertable
 Optional indicator for noisy feeds to prevent alerting when a watchlist is subscribed.
+.PARAMETER Server
+Sets a specified Cbc Server from the current connections to execute the cmdlet with.
 .OUTPUTS
 CbcFeed
 .NOTES

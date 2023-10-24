@@ -87,11 +87,11 @@ function Get-CbcReport {
                             $JsonContent.results | ForEach-Object {
                                 if ($PSBoundParameters.ContainsKey("Id")) {
                                     if ($Id.Contains($_.id)) {
-                                        return Initialize-CbcReport $_ $CurrentFeedId[0] $CurrentServer
+                                        return Initialize-CbcReport $_ $CurrentFeedId $CurrentServer
                                     }
                                 }
                                 else {
-                                    return Initialize-CbcReport $_ $CurrentFeedId[0] $CurrentServer
+                                    return Initialize-CbcReport $_ $CurrentFeedId $CurrentServer
                                 }
                             }
                         }

@@ -8,6 +8,8 @@ https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/l
 This cmdlet returns specific feed from all valid connections.
 .PARAMETER Id
 Filter param: Specify the Ids of the feeds to retrieve.
+.PARAMETER Server
+Sets a specified Cbc Server from the current connections to execute the cmdlet with.
 .OUTPUTS
 CbcFeedDetails[]
 .NOTES

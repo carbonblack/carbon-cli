@@ -22,6 +22,8 @@ MatchType of the IOC (required) - possible values: equality, regex, query
 Values for the IOC (required)
 .PARAMETER Field
 Search field to match on (optional)
+.PARAMETER Server
+Sets a specified Cbc Server from the current connections to execute the cmdlet with.
 .OUTPUTS
 CbcIoc
 .NOTES

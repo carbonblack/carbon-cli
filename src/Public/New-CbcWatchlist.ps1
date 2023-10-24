@@ -8,6 +8,8 @@ https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/l
 This cmdlet subscribes to feed in all valid connections.
 .PARAMETER Feed
 CbcFeed (required)
+.PARAMETER Server
+Sets a specified Cbc Server from the current connections to execute the cmdlet with.
 .OUTPUTS
 CbcWatchlist
 .NOTES
