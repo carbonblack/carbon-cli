@@ -157,7 +157,7 @@ function New-CbcIoc {
                         Write-Error -Message $("Cannot update reports for $($_)")
                     }
                     else {
-                        return Initialize-CbcIoc $IOC $CurrentServer
+                        return Initialize-CbcIoc $IOC $ReportId $CurrentServer
                     }
                 }
             }
@@ -210,8 +210,7 @@ function New-CbcIoc {
                     Write-Error -Message $("Cannot update reports for $($Feed.Server)")
                 }
                 else {
-                    # what to return here?
-                    return Initialize-CbcIoc $IOC $CurrentServer
+                    return Initialize-CbcIoc $IOC $Report.Id $CurrentServer
                 }
             }
         }
@@ -262,7 +261,7 @@ function New-CbcIoc {
                     Write-Error -Message $("Cannot update reports for $($Report.Server)")
                 }
                 else {
-                    return Initialize-CbcIoc $IOC $CurrentServer
+                    return Initialize-CbcIoc $IOC $Report.Id $CurrentServer
                 }
             }
         }
