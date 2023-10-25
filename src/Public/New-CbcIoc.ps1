@@ -7,21 +7,13 @@ https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/l
 .SYNOPSIS
 This cmdlet is created to add ioc to existing report.
 .PARAMETER FeedId
-Id of the FeedId (required)
-.PARAMETER Feed
-CbcFeed object
+Id of the FeedId
 .PARAMETER ReportId
-Id of the ReportId (required)
+Id of the ReportId
 .PARAMETER Report
-CbcReport - contains the FeedId and ReportId - can be provided instead of FeedId & ReportId
+CbcReport under which the ioc should be added.
 .PARAMETER Body
-Hashtable with information about the IOC - either this or the MatchType, IOCValues and Field should be provided.
-.PARAMETER MatchType
-MatchType of the IOC (required) - possible values: equality, regex, query
-.PARAMETER IOCValues
-Values for the IOC (required)
-.PARAMETER Field
-Search field to match on (optional)
+Hashtable with information about the IOC
 .PARAMETER Server
 Sets a specified Cbc Server from the current connections to execute the cmdlet with.
 .OUTPUTS
@@ -29,72 +21,43 @@ CbcIoc
 .NOTES
 Permissions needed: CREATE org.feeds
 .EXAMPLE
-PS > New-CbcIoc -FeedId JuXVurDTFmszw93it0Gvw -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894 -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess")
+PS > $Body = @{"MatchType" = "equality"
+>    "Field" =  "process_sha256"
+>    "Values" = @("SHA256HashOfAProcess")
+> }
+PS > New-CbcIoc -FeedId JuXVurDTFmszw93it0Gvw -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894 -Body $Body
 
 If you have multiple connections and you want alerts from a specific connection
 you can add the `-Server` param.
 
-PS > New-CbcIoc -FeedId JuXVurDTFmszw93it0Gvw -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894 -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess") -Server $SpecifiedServer
+PS > New-CbcIoc -FeedId JuXVurDTFmszw93it0Gvw -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894 -Body $Body -Server $SpecifiedServer
 
 .EXAMPLE
 PS > $Feed = Get-CbcFeed -Id JuXVurDTFmszw93it0Gvw
 PS > New-CbcIoc -Feed $Feed -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894 -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess")
 
 .EXAMPLE
-PS > $Feed = Get-CbcFeed -Id JuXVurDTFmszw93it0Gvw
-PS > $Body = @{"MatchType" = "equality"
->    "Field" =  "process_sha256"
->    "Values" = @("SHA256HashOfAProcess")
-> }
-PS > New-CbcIoc -Feed $Feed -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894 -Body $Body
-
-.EXAMPLE
 PS > $Report = Get-CbcReport -FeedId JuXVurDTFmszw93it0Gvw -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894
-PS > New-CbcIoc -Report $Report -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess")
+PS > New-CbcIoc -Report $Report -Body $Body
 #>
 
 function New-CbcIoc {
     [CmdletBinding(DefaultParameterSetName = "Default")]
-    [OutputType([CbcIoc])]
+    [OutputType([CbcIoc[]])]
     param(
         [Parameter(ParameterSetName = "Default", Mandatory = $true)]
-        [Parameter(ParameterSetName = "CustomBody")]
         [string]$FeedId,
 
-        [Parameter(ParameterSetName = "Feed", Mandatory = $true)]
-        [Parameter(ParameterSetName = "CustomBody")]
-        [CbcFeed]$Feed,
-
-        [Parameter(ParameterSetName = "Feed", Mandatory = $true)]
         [Parameter(ParameterSetName = "Default", Mandatory = $true)]
-        [Parameter(ParameterSetName = "CustomBody")]
         [string]$ReportId,
 
         [Parameter(ParameterSetName = "Report", Mandatory = $true)]
-        [Parameter(ParameterSetName = "CustomBody")]
-        [CbcReport]$Report,
+        [CbcReport[]]$Report,
 
-        [Parameter(ParameterSetName = "Feed")]
-        [Parameter(ParameterSetName = "Report")]
-        [Parameter(ParameterSetName = "CustomBody", Mandatory = $true)]
+        [Parameter(ParameterSetName = "Report", Mandatory = $true)]
+        [Parameter(ParameterSetName = "Default", Mandatory = $true)]
         [hashtable]$Body,
 
-        [Parameter(ParameterSetName = "Feed")]
-        [Parameter(ParameterSetName = "Report")]
-        [Parameter(ParameterSetName = "Default")]
-        [string]$MatchType,
-
-        [Parameter(ParameterSetName = "Feed")]
-        [Parameter(ParameterSetName = "Report")]
-        [Parameter(ParameterSetName = "Default")]
-        [string[]]$Values,
-
-        [Parameter(ParameterSetName = "Feed")]
-        [Parameter(ParameterSetName = "Report")]
-        [Parameter(ParameterSetName = "Default")]
-        [string]$Field,
-
-        [Parameter(ParameterSetName = "CustomBody")]
         [Parameter(ParameterSetName = "Default")]
         [CbcServer[]]$Server
     )
@@ -106,161 +69,99 @@ function New-CbcIoc {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
-        if ($PSBoundParameters.ContainsKey("FeedId") -and $PSBoundParameters.ContainsKey("ReportId")) {
-            $ExecuteServers | ForEach-Object {
-                $CurrentServer = $_
-                $Report = Get-CbcReport -FeedId $FeedId -Id $ReportId -Server $_
-                if ($Report.IocsV2.Count -ge 10000) {
-                    Write-Error "Cannot add more IOCs to this report."
-                }
-                else {
-                    $RequestBody = @{}
-                    $UpdatedReport = @{}
-                    $UpdatedReport.title = $Report.Title
-                    $UpdatedReport.description = $Report.Description
-                    $UpdatedReport.severity = $Report.Severity
-                    $UpdatedReport.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
-                    $UpdatedReport.id = $Report.Id
-                    if ($PSBoundParameters.ContainsKey("Body")) {
-                        if (!$Body.ContainsKey("id")) {
-                            $Body.id = [string](New-Guid)
-                        }
+        switch ($PSCmdlet.ParameterSetName) {
+            "Default" {
+                $ExecuteServers | ForEach-Object {
+                    $CurrentServer = $_
+                    $Report = Get-CbcReport -FeedId $FeedId -Id $ReportId -Server $_
+                    if ($Report.IocsV2.Count -ge 10000) {
+                        Write-Error "Cannot add more IOCs to this report."
+                    }
+                    else {
+                        $RequestBody = @{}
+                        $UpdatedReport = @{}
+                        $UpdatedReport.title = $Report.Title
+                        $UpdatedReport.description = $Report.Description
+                        $UpdatedReport.severity = $Report.Severity
+                        $UpdatedReport.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
+                        $UpdatedReport.id = $Report.Id
+                        $IOC = @{}
                         $IOC = $Body
-                    }
-                    else {
-                        $IOC = @{
-                            "id"         = [string](New-Guid)
-                            "match_type" = $MatchType
-                            "field"      = $Field
-                            "values"     = $Values
+                        if (!$IOC.ContainsKey("id")) {
+                            $IOC.id = [string](New-Guid)
+                        }
+
+                        $UpdatedReport.iocs_v2 = @()
+                        if ($Report.IocsV2) {
+                            $UpdatedReport.iocs_v2 += $Report.IocsV2
+                            $UpdatedReport.iocs_v2 += $IOC
+                           
+                        }
+                        else {
+                            $UpdatedReport.iocs_v2 += $IOC
+                        }
+
+                        $RequestBody = $UpdatedReport        
+                        $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
+        
+                        $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
+                            -Method PUT `
+                            -Server $_ `
+                            -Params @($FeedId, $ReportId) `
+                            -Body $RequestBody
+        
+                        if ($Response.StatusCode -ne 200) {
+                            Write-Error -Message $("Cannot update reports for $($_)")
+                        }
+                        else {
+                            return Initialize-CbcIoc $IOC $FeedId $ReportId $CurrentServer
                         }
                     }
-                    $UpdatedReport.iocs_v2 = @()
-                    if ($Report.IocsV2) {
-                        $UpdatedReport.iocs_v2 = $Report.IocsV2 + $IOC
+                }
+            }
+            "Report" {
+                $Report | ForEach-Object {
+                    $CurrentReport = $_
+                    if ($CurrentReport.IocsV2.Count -ge 10000) {
+                        Write-Error "Cannot add more IOCs to this report."
                     }
                     else {
-                        $UpdatedReport.iocs_v2 = @($IOC)
-                    }
+                        $RequestBody = @{}
+                        $UpdatedReport = @{}
+                        $UpdatedReport.title = $CurrentReport.Title
+                        $UpdatedReport.description = $CurrentReport.Description
+                        $UpdatedReport.severity = $CurrentReport.Severity
+                        $UpdatedReport.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
+                        $UpdatedReport.id = $CurrentReport.Id
+                        $IOC = $Body
+                        if (!$IOC.ContainsKey("id")) {
+                            $IOC.id = [string](New-Guid)
+                        }
 
-                    $RequestBody = $UpdatedReport        
-                    $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
-    
-                    $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
-                        -Method PUT `
-                        -Server $_ `
-                        -Params @($FeedId, $ReportId) `
-                        -Body $RequestBody
-    
-                    if ($Response.StatusCode -ne 200) {
-                        Write-Error -Message $("Cannot update reports for $($_)")
-                    }
-                    else {
-                        return Initialize-CbcIoc $IOC $FeedId $ReportId $CurrentServer
-                    }
-                }
-            }
-        }
-        elseif ($PSBoundParameters.ContainsKey("Feed")) {
-            $Report = Get-CbcReport -Feed $Feed -Id $ReportId -Server $Feed.Server
-            if ($Report.IocsV2.Count -ge 10000) {
-                Write-Error "Cannot add more IOCs to this report."
-            }
-            else {
-                $RequestBody = @{}
-                $UpdatedReport = @{}
-                $UpdatedReport.title = $Report.Title
-                $UpdatedReport.description = $Report.Description
-                $UpdatedReport.severity = $Report.Severity
-                $UpdatedReport.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
-                $UpdatedReport.id = $Report.Id
-                $UpdatedReport.iocs_v2 = @()
-                if ($PSBoundParameters.ContainsKey("Body")) {
-                    if (!$Body.ContainsKey("id")) {
-                        $Body.id = [string](New-Guid)
-                    }
-                    $IOC = $Body
-                }
-                else {
-                    $IOC = @{
-                        "id"         = [string](New-Guid)
-                        "match_type" = $MatchType
-                        "field"      = $Field
-                        "values"     = $Values
-                    }
-                }
-                if ($Report.IocsV2) {
-                    $UpdatedReport.iocs_v2 = $Report.IocsV2 + $IOC
-                }
-                else {
-                    $UpdatedReport.iocs_v2 = @($IOC)
-                }
-                $RequestBody = $UpdatedReport
+                        $UpdatedReport.iocs_v2 = @()
+                        if ($CurrentReport.IocsV2) {
+                            $UpdatedReport.iocs_v2 = $CurrentReport.IocsV2 + $IOC
+                        }
+                        else {
+                            $UpdatedReport.iocs_v2 = @($IOC)
+                        }
 
-                $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
-
-                $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
-                    -Method PUT `
-                    -Server $Feed.Server `
-                    -Params @($Feed.Id, $ReportId) `
-                    -Body $RequestBody
-
-                if ($Response.StatusCode -ne 200) {
-                    Write-Error -Message $("Cannot update reports for $($Feed.Server)")
-                }
-                else {
-                    return Initialize-CbcIoc $IOC $FeedId $Report.Id $CurrentServer
-                }
-            }
-        }
-        elseif ($PSBoundParameters.ContainsKey("Report")) {
-            if ($Report.IocsV2.Count -ge 10000) {
-                Write-Error "Cannot add more IOCs to this report."
-            }
-            else {
-                $RequestBody = @{}
-                $UpdatedReport = @{}
-                $UpdatedReport.title = $Report.Title
-                $UpdatedReport.description = $Report.Description
-                $UpdatedReport.severity = $Report.Severity
-                $UpdatedReport.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
-                $UpdatedReport.id = $Report.Id
-                $UpdatedReport.iocs_v2 = @()
-                if ($PSBoundParameters.ContainsKey("Body")) {
-                    if (!$Body.ContainsKey("id")) {
-                        $Body.id = [string](New-Guid)
+                        $RequestBody = $UpdatedReport        
+                        $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
+        
+                        $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
+                            -Method PUT `
+                            -Server $CurrentReport.Server `
+                            -Params @($CurrentReport.FeedId, $CurrentReport.Id) `
+                            -Body $RequestBody
+        
+                        if ($Response.StatusCode -ne 200) {
+                            Write-Error -Message $("Cannot update reports for $($CurrentReport.Server)")
+                        }
+                        else {
+                            return Initialize-CbcIoc $IOC $CurrentReport.FeedId $CurrentReport.Id $CurrentReport.Server
+                        }
                     }
-                    $IOC = $Body
-                }
-                else {
-                    $IOC = @{
-                        "id"         = [string](New-Guid)
-                        "match_type" = $MatchType
-                        "field"      = $Field
-                        "values"     = $Values
-                    }
-                }
-                if ($Report.IocsV2) {
-                    $UpdatedReport.iocs_v2 = $Report.IocsV2 + $IOC
-                }
-                else {
-                    $UpdatedReport.iocs_v2 = @($IOC)
-                }
-                $RequestBody = $UpdatedReport
-
-                $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
-
-                $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
-                    -Method PUT `
-                    -Server $Report.Server `
-                    -Params @($Report.FeedId, $ReportId) `
-                    -Body $RequestBody
-
-                if ($Response.StatusCode -ne 200) {
-                    Write-Error -Message $("Cannot update reports for $($Report.Server)")
-                }
-                else {
-                    return Initialize-CbcIoc $IOC $FeedId $Report.Id $CurrentServer
                 }
             }
         }

@@ -21,6 +21,12 @@ Describe "New-CbcIoc" {
 			    $s1 = [CbcServer]::new($Uri1, $Org1, $secureToken1)
                 $global:DefaultCbcServers = [System.Collections.ArrayList]@()
                 $global:DefaultCbcServers.Add($s1) | Out-Null
+                $ioc = @{
+                    "id" = "id123"
+                    "match_type" = "equality"
+                    "values" = @("SHA256HashOfAProcess")
+                    "field" = "process_sha256"
+                }
                 $feed1 = [CbcFeed]::new(
                     "ABCDEFGHIJKLMNOPQRSTUVWX",
                     "My Feed",
@@ -62,7 +68,7 @@ Describe "New-CbcIoc" {
                     ($Body | ConvertFrom-Json).iocs_v2.Count -eq 1
                 }
 
-                $Ioc = New-CbcIoc -FeedId ABCDEFGHIJKLMNOPQRSTUVWX -ReportId ABCDEFGHIJKLMNOPQRSTUVWX1 -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess")
+                $Ioc = New-CbcIoc -FeedId ABCDEFGHIJKLMNOPQRSTUVWX -ReportId ABCDEFGHIJKLMNOPQRSTUVWX1 -Body $ioc
 
                 $Ioc.Count | Should -Be 1
                 $Ioc[0].MatchType | Should -Be "equality"
@@ -141,21 +147,21 @@ Describe "New-CbcIoc" {
                     ($Body | ConvertFrom-Json).iocs_v2.Count -eq 1
                 }
 
-                $Ioc = New-CbcIoc -FeedId ABCDEFGHIJKLMNOPQRSTUVWX -ReportId ABCDEFGHIJKLMNOPQRSTUVWX1 -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess") -Server $s1
+                $Ioc = New-CbcIoc -FeedId ABCDEFGHIJKLMNOPQRSTUVWX -ReportId ABCDEFGHIJKLMNOPQRSTUVWX1 -Body $ioc -Server $s1
 
                 $Ioc.Count | Should -Be 1
                 $Ioc[0].MatchType | Should -Be "equality"
                 $Ioc[0].Server | Should -Be $s1
             }
 
-            It "Should create ioc for specific connections with custom body" {
+            It "Should create ioc for specific connections - exception" {
                 Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
                     $report1
                 }
 
                 Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
                     @{
-                        StatusCode = 200
+                        StatusCode = 400
                         Content    = ""
                     }
                 } -ParameterFilter {
@@ -165,11 +171,7 @@ Describe "New-CbcIoc" {
                     ($Body | ConvertFrom-Json).iocs_v2.Count -eq 1
                 }
 
-                $Ioc = New-CbcIoc -FeedId ABCDEFGHIJKLMNOPQRSTUVWX -ReportId ABCDEFGHIJKLMNOPQRSTUVWX1 -Body $ioc -Server $s1
-
-                $Ioc.Count | Should -Be 1
-                $Ioc[0].MatchType | Should -Be "equality"
-                $Ioc[0].Server | Should -Be $s1
+                {New-CbcIoc -FeedId ABCDEFGHIJKLMNOPQRSTUVWX -ReportId ABCDEFGHIJKLMNOPQRSTUVWX1 -Body $ioc -Server $s1 -ErrorAction Stop } | Should -Throw
             }
 
             It "Should create ioc for all connections" {
@@ -194,13 +196,69 @@ Describe "New-CbcIoc" {
                     ($Body | ConvertFrom-Json).iocs_v2.Count -ge 1
                 }
 
-                $Ioc = New-CbcIoc -FeedId ABCDEFGHIJKLMNOPQRSTUVWX -ReportId ABCDEFGHIJKLMNOPQRSTUVWX1 -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess")
+                $Ioc = New-CbcIoc -FeedId ABCDEFGHIJKLMNOPQRSTUVWX -ReportId ABCDEFGHIJKLMNOPQRSTUVWX1 -Body $ioc
 
                 $Ioc.Count | Should -Be 2
                 $Ioc[0].MatchType | Should -Be "equality"
                 $Ioc[0].Server | Should -Be $s1
                 $Ioc[1].MatchType | Should -Be "equality"
                 $Ioc[1].Server | Should -Be $s2
+            }
+
+            It "Should create ioc for CbcReport" {
+                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                    if ($Server -eq $s1) {
+                        $report1
+                    }
+                    else {
+                        $report2
+                    }
+                    
+                }
+
+                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                    @{
+                        StatusCode = 200
+                        Content    = ""
+                    }
+                } -ParameterFilter {
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Report"]["Details"] -and
+                    $Method -eq "PUT" -and
+                    ($Body | ConvertFrom-Json).iocs_v2.Count -ge 1
+                }
+
+                $Ioc = $Ioc = New-CbcIoc -Report $report1, $report2 -Body $ioc
+
+                $Ioc.Count | Should -Be 2
+                $Ioc[0].MatchType | Should -Be "equality"
+                $Ioc[0].Server | Should -Be $s1
+                $Ioc[1].MatchType | Should -Be "equality"
+                $Ioc[1].Server | Should -Be $s2
+            }
+
+            It "Should not create ioc for CbcReport - exception" {
+                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                    if ($Server -eq $s1) {
+                        $report1
+                    }
+                    else {
+                        $report2
+                    }
+                    
+                }
+
+                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                    @{
+                        StatusCode = 500
+                        Content    = ""
+                    }
+                } -ParameterFilter {
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Report"]["Details"] -and
+                    $Method -eq "PUT" -and
+                    ($Body | ConvertFrom-Json).iocs_v2.Count -ge 1
+                }
+
+                {New-CbcIoc -Report $report1, $report2 -Body $ioc -ErrorAction Stop} | Should -Throw
             }
         }
     }
