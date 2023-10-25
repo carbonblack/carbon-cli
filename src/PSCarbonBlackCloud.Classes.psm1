@@ -824,6 +824,7 @@ class CbcIoc {
 	[string[]]$Values
 	[string]$Field
 	[string]$Link
+	[string]$FeedId
 	[string]$ReportId
 	[CbcServer]$Server
 
@@ -833,6 +834,7 @@ class CbcIoc {
 		[string]$Values_,
 		[string]$Field_,
 		[string]$Link_,
+		[string]$FeedId_,
 		[string]$ReportId_,
 		[CbcServer]$Server_
 	) {
@@ -841,6 +843,7 @@ class CbcIoc {
 		$this.Values = $Values_
 		$this.Field = $Field_
 		$this.Link = $Link_
+		$this.FeedId = $FeedId_
 		$this.ReportId = $ReportId_
 		$this.Server = $Server_
 	}

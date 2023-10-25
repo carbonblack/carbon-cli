@@ -33,10 +33,13 @@ function Remove-CbcIoc {
     [CmdletBinding(DefaultParameterSetName = "Default")]
     param(
         [Parameter(ParameterSetName = "Default", Mandatory = $true)]
-        [string[]]$Id,
+        [string]$FeedId,
 
         [Parameter(ParameterSetName = "Default", Mandatory = $true)]
         [string]$ReportId,
+
+        [Parameter(ParameterSetName = "Default", Mandatory = $true)]
+        [string[]]$Id,
 
         [Parameter(ParameterSetName = "Ioc", Mandatory = $true)]
         [CbcIoc[]]$Ioc,
@@ -56,34 +59,79 @@ function Remove-CbcIoc {
         switch ($PSCmdlet.ParameterSetName) {
             "Default" {
                 $ExecuteServers | ForEach-Object {
-                    $CurrentServer = $_
-                    $Id | ForEach-Object {
-                        $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["IOC"]["Details"] `
-                            -Method DELETE `
-                            -Server $CurrentServer `
-                            -Params @($ReportId, $_)
-            
-                        if ($Response.StatusCode -ne 204) {
-                            Write-Error -Message $("Cannot delete ioc(s) for $($CurrentServer)")
+                    $Report = Get-CbcReport -FeedId $FeedId -Id $ReportId -Server $_
+                    $RequestBody = @{}
+                    $UpdatedReport = @{}
+                    $UpdatedReport.title = $Report.Title
+                    $UpdatedReport.description = $Report.Description
+                    $UpdatedReport.severity = $Report.Severity
+                    $UpdatedReport.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
+                    $UpdatedReport.id = $Report.Id
+                    $UpdatedReport.iocs_v2 = @()
+                    if ($Report.IocsV2.Count -gt 1) {
+                        $Report.IocsV2 | ForEach-Object {
+                            if (!$Id.Contains($_.id)) {
+                                $UpdatedReport.iocs_v2 += $_
+                            }
+                        }
+                        $RequestBody = $UpdatedReport        
+                        $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
+        
+                        $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
+                            -Method PUT `
+                            -Server $_ `
+                            -Params @($FeedId, $ReportId) `
+                            -Body $RequestBody
+        
+                        if ($Response.StatusCode -ne 200) {
+                            Write-Error -Message $("Cannot remove iocs for $($_)")
                         }
                         else {
-                            Write-Debug -Message $("Ioc deleted $($_)")
+                            Write-Debug -Message $("Ioc(s) successfully deleted.")
                         }
                     }
                 }
             }
             "Ioc" {
-                $Ioc | ForEach-Object {
-                    $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["IOC"]["Details"] `
-                        -Method DELETE `
-                        -Server $_.Server `
-                        -Params ($_.ReportId, $_.Id)
-
-                    if ($Response.StatusCode -ne 204) {
-                        Write-Error -Message $("Cannot delete ioc(s) for $($_.Server)")
+                $IocGroups = $Ioc | Group-Object -Property Server, ReportId
+                foreach ($Group in $IocGroups) {
+                    $IocsToDelete = @()
+                    foreach ($CurrIoc in $Group.Group) {
+                        $IocsToDelete += $CurrIoc.Id
+                        $CurrentServer = $CurrIoc.Server
+                        $CurrentReportId = $CurrIoc.ReportId
+                        $CurrentFeedId = $CurrIoc.FeedId
                     }
-                    else {
-                        Write-Debug -Message $("Ioc deleted $($_.Id)")
+                    $RequestBody = @{}
+                    $Report = Get-CbcReport -FeedId $CurrentFeedId -Id $CurrentReportId -Server $CurrentServer
+                    $UpdatedReport = @{}
+                    $UpdatedReport.title = $Report.Title
+                    $UpdatedReport.description = $Report.Description
+                    $UpdatedReport.severity = $Report.Severity
+                    $UpdatedReport.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
+                    $UpdatedReport.id = $Report.Id
+                    $UpdatedReport.iocs_v2 = @()
+                    if ($Report.IocsV2.Count -gt 1) {
+                        $Report.IocsV2 | ForEach-Object {
+                            if (!$IocsToDelete.Contains($_.id)) {
+                                $UpdatedReport.iocs_v2 += $_
+                            }
+                        }
+                        $RequestBody = $UpdatedReport        
+                        $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
+        
+                        $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
+                            -Method PUT `
+                            -Server $CurrentServer `
+                            -Params @($CurrentFeedId, $CurrentReportId) `
+                            -Body $RequestBody
+        
+                        if ($Response.StatusCode -ne 200) {
+                            Write-Error -Message $("Cannot remove iocs for $($CurrentServer)")
+                        }
+                        else {
+                            Write-Debug -Message $("Ioc(s) successfully deleted.")
+                        }
                     }
                 }
             }

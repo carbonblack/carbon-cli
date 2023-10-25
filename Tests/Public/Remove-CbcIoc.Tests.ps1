@@ -21,21 +21,49 @@ Describe "Remove-CbcIoc" {
 			    $s1 = [CbcServer]::new($Uri1, $Org1, $secureToken1)
                 $global:DefaultCbcServers = [System.Collections.ArrayList]@()
                 $global:DefaultCbcServers.Add($s1) | Out-Null
+                $ioc1 = @{
+                    "id" = "id123"
+                    "match_type" = "equality"
+                    "values" = @("SHA256HashOfAProcess")
+                    "field" = "process_sha256"
+                }
+                $ioc2 = @{
+                    "id" = "id1234"
+                    "match_type" = "equality"
+                    "values" = @("SHA256HashOfAProcess")
+                    "field" = "process_sha256"
+                }
+                $report1 = [CbcReport]::new(
+                    "xxx",
+                    "yara",
+                    "description",
+                    5,
+                    "google.com",
+                    @($ioc1, $ioc2),
+                    "visible",
+                    "ABCDEFGHIJKLMNOPQRSTUVWX1",
+                    $s1
+                )
             }
 
             It "Should remove ioc" {
+                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                    $report1
+                }
+
                 Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
                     if ($Server -eq $s1) {
                         @{
-                            StatusCode = 204
+                            StatusCode = 200
                         }
                     }
                 } -ParameterFilter {
-                    $Endpoint -eq $global:CBC_CONFIG.endpoints["IOC"]["Details"] -and
-                    $Method -eq "DELETE" -and
-                    ($Server -eq $s1)
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Report"]["Details"] -and
+                    $Method -eq "PUT" -and
+                    ($Server -eq $s1) -and
+                    ($Body | ConvertFrom-Json).iocs_v2.Count -eq 1
                 }
-                { Remove-CbcIoc -Id iocid -ReportId ABCDEFGHIJKLMNOPQRSTUVWX -ErrorAction Stop } | Should -Not -Throw
+                { Remove-CbcIoc -Id id1234 -FeedId ABCDEFGHIJKLMNOPQRSTUVWX1 -ReportId ABCDEFGHIJKLMNOPQRSTUVWX -ErrorAction Stop } | Should -Not -Throw
             }
         }
 
@@ -52,80 +80,156 @@ Describe "Remove-CbcIoc" {
                 $global:DefaultCbcServers = [System.Collections.ArrayList]@()
                 $global:DefaultCbcServers.Add($s1) | Out-Null
                 $global:DefaultCbcServers.Add($s2) | Out-Null
-                $ioc = [CbcIoc]::new(
-                    "iocid",
+                $ioc1 = @{
+                    "id" = "id123"
+                    "match_type" = "equality"
+                    "values" = @("SHA256HashOfAProcess")
+                    "field" = "process_sha256"
+                }
+                $ioc2 = @{
+                    "id" = "id1234"
+                    "match_type" = "equality"
+                    "values" = @("SHA256HashOfAProcess")
+                    "field" = "process_sha256"
+                }
+                $report1 = [CbcReport]::new(
+                    "xxx",
+                    "yara",
+                    "description",
+                    5,
+                    "google.com",
+                    @($ioc1, $ioc2),
+                    "visible",
+                    "ABCDEFGHIJKLMNOPQRSTUVWX1",
+                    $s1
+                )
+                $report2 = [CbcReport]::new(
+                    "xxx",
+                    "yara",
+                    "description",
+                    5,
+                    "google.com",
+                    @($ioc1),
+                    "visible",
+                    "ABCDEFGHIJKLMNOPQRSTUVWX1",
+                    $s2
+                )
+                $iocObj = [CbcIoc]::new(
+                    "id123",
                     "equality",
                     @("xxx"),
                     "process_hash",
                     "",
+                    "ABCDEFGHIJKLMNOPQRSTUVWX1",
                     "ABCDEFGHIJKLMNOPQRSTUVWX",
                     $s1
                 )
             }
 
             It "Should delete ioc for specific connections" {
+                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                    $report1
+                }
+
                 Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
                     if ($Server -eq $s1) {
                         @{
-                            StatusCode = 204
+                            StatusCode = 200
                         }
                     }
                 } -ParameterFilter {
-                    $Endpoint -eq $global:CBC_CONFIG.endpoints["IOC"]["Details"] -and
-                    $Method -eq "DELETE" -and
-                    ($Server -eq $s1)
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Report"]["Details"] -and
+                    $Method -eq "PUT" -and
+                    ($Server -eq $s1) -and
+                    ($Body | ConvertFrom-Json).iocs_v2.Count -eq 1
                 }
-                { Remove-CbcIoc -Id iocid -ReportId ABCDEFGHIJKLMNOPQRSTUVWX -Server $s1 -ErrorAction Stop } | Should -Not -Throw
+                { Remove-CbcIoc -Id id1234 -FeedId ABCDEFGHIJKLMNOPQRSTUVWX1 -ReportId ABCDEFGHIJKLMNOPQRSTUVWX -Server $s1 -ErrorAction Stop } | Should -Not -Throw
             }
 
             It "Should delete ioc for all connections" {
+                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                    if ($Server -eq $s1) {
+                        $report1
+                    }
+                    else {
+                        $report2
+                    }
+                }
+
                 Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
                     @{
-                        StatusCode = 204
+                        StatusCode = 200
                     }
                 } -ParameterFilter {
-                    $Endpoint -eq $global:CBC_CONFIG.endpoints["IOC"]["Details"] -and
-                    $Method -eq "DELETE"
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Report"]["Details"] -and
+                    $Method -eq "PUT" -and
+                    ($Server -eq $s1) -and
+                    ($Body | ConvertFrom-Json).iocs_v2.Count -eq 1
                 }
-                { Remove-CbcIoc -Id iocid -ReportId ABCDEFGHIJKLMNOPQRSTUVWX -ErrorAction Stop } | Should -Not -Throw
+                { Remove-CbcIoc -Id id1234 -FeedId ABCDEFGHIJKLMNOPQRSTUVWX1 -ReportId ABCDEFGHIJKLMNOPQRSTUVWX -ErrorAction Stop } | Should -Not -Throw
             }
 
             It "Should try to delete ioc for all connections - exception" {
+                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                    if ($Server -eq $s1) {
+                        $report1
+                    }
+                    else {
+                        $report2
+                    }
+                }
+
                 Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
                     @{
                         StatusCode = 500
                     }
                 } -ParameterFilter {
-                    $Endpoint -eq $global:CBC_CONFIG.endpoints["IOC"]["Details"] -and
-                    $Method -eq "DELETE"
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Report"]["Details"] -and
+                    $Method -eq "PUT"
                 }
-                { Remove-CbcIoc -Id iocid -ReportId ABCDEFGHIJKLMNOPQRSTUVWX -ErrorAction Stop } | Should -Throw
+                { Remove-CbcIoc -Id id1234 -FeedId ABCDEFGHIJKLMNOPQRSTUVWX1 -ReportId ABCDEFGHIJKLMNOPQRSTUVWX -ErrorAction Stop } | Should -Throw
             }
 
             It "Should delete ioc - CbcIoc" {
+                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                    if ($Server -eq $s1) {
+                        $report1
+                    }
+                    else {
+                        $report2
+                    }
+                }
+
                 Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
                     @{
-                        StatusCode = 204
+                        StatusCode = 200
                     }
                 } -ParameterFilter {
-                    $Endpoint -eq $global:CBC_CONFIG.endpoints["IOC"]["Details"] -and
-                    $Method -eq "DELETE" -and
-                    ($Server -eq $s1)
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Report"]["Details"] -and
+                    $Method -eq "PUT"
                 }
-                { Remove-CbcIoc -Ioc $ioc -ErrorAction Stop } | Should -Not -Throw
+                { Remove-CbcIoc -Ioc $iocObj -ErrorAction Stop } | Should -Not -Throw
             }
 
             It "Should delete ioc CbcIoc - exception" {
+                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                    if ($Server -eq $s1) {
+                        $report1
+                    }
+                    else {
+                        $report2
+                    }
+                }
+
                 Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
                     @{
                         StatusCode = 500
                     }
                 } -ParameterFilter {
-                    $Endpoint -eq $global:CBC_CONFIG.endpoints["IOC"]["Details"] -and
-                    $Method -eq "DELETE" -and
-                    ($Server -eq $s1)
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Report"]["Details"] -and
+                    $Method -eq "PUT"
                 }
-                { Remove-CbcIoc -Ioc $ioc -ErrorAction Stop } | Should -Throw
+                { Remove-CbcIoc -Ioc $iocObj -ErrorAction Stop } | Should -Throw
             }
         }
     }

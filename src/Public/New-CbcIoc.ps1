@@ -29,16 +29,16 @@ CbcIoc
 .NOTES
 Permissions needed: CREATE org.feeds
 .EXAMPLE
-PS > New-CbcIoc -FeedId JuXVurDTFmszw93it0Gvw -Id 59ac2095-c663-44cd-99cb-4ce83e7aa894 -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess")
+PS > New-CbcIoc -FeedId JuXVurDTFmszw93it0Gvw -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894 -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess")
 
 If you have multiple connections and you want alerts from a specific connection
 you can add the `-Server` param.
 
-PS > New-CbcIoc -FeedId JuXVurDTFmszw93it0Gvw -Id 59ac2095-c663-44cd-99cb-4ce83e7aa894 -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess") -Server $SpecifiedServer
+PS > New-CbcIoc -FeedId JuXVurDTFmszw93it0Gvw -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894 -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess") -Server $SpecifiedServer
 
 .EXAMPLE
 PS > $Feed = Get-CbcFeed -Id JuXVurDTFmszw93it0Gvw
-PS > New-CbcIoc -Feed $Feed -Id 59ac2095-c663-44cd-99cb-4ce83e7aa894 -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess")
+PS > New-CbcIoc -Feed $Feed -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894 -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess")
 
 .EXAMPLE
 PS > $Feed = Get-CbcFeed -Id JuXVurDTFmszw93it0Gvw
@@ -46,10 +46,10 @@ PS > $Body = @{"MatchType" = "equality"
 >    "Field" =  "process_sha256"
 >    "Values" = @("SHA256HashOfAProcess")
 > }
-PS > New-CbcIoc -Feed $Feed -Id 59ac2095-c663-44cd-99cb-4ce83e7aa894 -Body $Body
+PS > New-CbcIoc -Feed $Feed -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894 -Body $Body
 
 .EXAMPLE
-PS > $Report = Get-CbcReport -FeedId JuXVurDTFmszw93it0Gvw -Id 59ac2095-c663-44cd-99cb-4ce83e7aa894
+PS > $Report = Get-CbcReport -FeedId JuXVurDTFmszw93it0Gvw -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894
 PS > New-CbcIoc -Report $Report -MatchType equality -Field process_sha256 -Values @("SHA256HashOfAProcess")
 #>
 
@@ -106,7 +106,6 @@ function New-CbcIoc {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
-        Write-Host $PSCmdlet.ParameterSetName
         if ($PSBoundParameters.ContainsKey("FeedId") -and $PSBoundParameters.ContainsKey("ReportId")) {
             $ExecuteServers | ForEach-Object {
                 $CurrentServer = $_
@@ -150,14 +149,14 @@ function New-CbcIoc {
                     $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
                         -Method PUT `
                         -Server $_ `
-                        -Params @($FeedId, $Id) `
+                        -Params @($FeedId, $ReportId) `
                         -Body $RequestBody
     
                     if ($Response.StatusCode -ne 200) {
                         Write-Error -Message $("Cannot update reports for $($_)")
                     }
                     else {
-                        return Initialize-CbcIoc $IOC $ReportId $CurrentServer
+                        return Initialize-CbcIoc $IOC $FeedId $ReportId $CurrentServer
                     }
                 }
             }
@@ -203,14 +202,14 @@ function New-CbcIoc {
                 $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
                     -Method PUT `
                     -Server $Feed.Server `
-                    -Params @($Feed.Id, $Id) `
+                    -Params @($Feed.Id, $ReportId) `
                     -Body $RequestBody
 
                 if ($Response.StatusCode -ne 200) {
                     Write-Error -Message $("Cannot update reports for $($Feed.Server)")
                 }
                 else {
-                    return Initialize-CbcIoc $IOC $Report.Id $CurrentServer
+                    return Initialize-CbcIoc $IOC $FeedId $Report.Id $CurrentServer
                 }
             }
         }
@@ -254,14 +253,14 @@ function New-CbcIoc {
                 $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
                     -Method PUT `
                     -Server $Report.Server `
-                    -Params @($Report.FeedId, $Id) `
+                    -Params @($Report.FeedId, $ReportId) `
                     -Body $RequestBody
 
                 if ($Response.StatusCode -ne 200) {
                     Write-Error -Message $("Cannot update reports for $($Report.Server)")
                 }
                 else {
-                    return Initialize-CbcIoc $IOC $Report.Id $CurrentServer
+                    return Initialize-CbcIoc $IOC $FeedId $Report.Id $CurrentServer
                 }
             }
         }

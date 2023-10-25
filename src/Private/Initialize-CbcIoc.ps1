@@ -6,9 +6,13 @@ function Initialize-CbcIoc {
 
         [Parameter(Mandatory = $true,Position = 1)]
 		[ValidateNotNullOrEmpty()]
-		[string]$ReportId,
+		[string]$FeedId,
 
         [Parameter(Mandatory = $true,Position = 2)]
+		[ValidateNotNullOrEmpty()]
+		[string]$ReportId,
+
+        [Parameter(Mandatory = $true,Position = 3)]
 		[ValidateNotNullOrEmpty()]
 		[CbcServer]$Server
 	)
@@ -18,6 +22,7 @@ function Initialize-CbcIoc {
         $Response.values,
         $Response.field,
         $Response.link,
+        $FeedId,
         $ReportId,
         $Server
     )

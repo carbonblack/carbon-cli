@@ -82,11 +82,11 @@ function Get-CbcIoc {
                         $JsonContent.report.iocs_v2 | ForEach-Object {
                             if ($PSBoundParameters.ContainsKey("Id")) {
                                 if ($_.id -eq $Id) {
-                                    return Initialize-CbcIoc $_ $ReportId $CurrentServer
+                                    return Initialize-CbcIoc $_ $FeedId $ReportId $CurrentServer
                                 }
                             }
                             else {
-                                return Initialize-CbcIoc $_ $ReportId $CurrentServer
+                                return Initialize-CbcIoc $_ $FeedId $ReportId $CurrentServer
                             }
                         }
                         
@@ -107,11 +107,11 @@ function Get-CbcIoc {
                     $JsonContent.report.iocs_v2 | ForEach-Object {
                         if ($PSBoundParameters.ContainsKey("Id")) {
                             if ($_.id -eq $Id) {
-                                return Initialize-CbcIoc $_ $Report.Id $Report.Server
+                                return Initialize-CbcIoc $_ $Report.FeedId $Report.Id $Report.Server
                             }
                         }
                         else {
-                            return Initialize-CbcIoc $_ $Report.Id $Report.Server
+                            return Initialize-CbcIoc $_ $Report.FeedId $Report.Id $Report.Server
                         }
                     }
                     
