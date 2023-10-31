@@ -27,7 +27,7 @@ Describe "New-CbcFeed" {
                 Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
                     @{
                         StatusCode = 200
-                        Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/specific_feed.json"
+                        Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/create_feed.json"
                     }
                 } -ParameterFilter {
                     $Endpoint -eq $global:CBC_CONFIG.endpoints["Feed"]["Search"] -and
@@ -87,7 +87,7 @@ Describe "New-CbcFeed" {
                 Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
                     @{
                         StatusCode = 200
-                        Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/specific_feed.json"
+                        Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/create_feed.json"
                     }
                 } -ParameterFilter {
                     $Endpoint -eq $global:CBC_CONFIG.endpoints["Feed"]["Search"] -and
@@ -111,7 +111,7 @@ Describe "New-CbcFeed" {
                 Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
                     @{
                         StatusCode = 200
-                        Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/specific_feed.json"
+                        Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/create_feed.json"
                     }
                 } -ParameterFilter {
                     $Endpoint -eq $global:CBC_CONFIG.endpoints["Feed"]["Search"] -and
@@ -135,7 +135,7 @@ Describe "New-CbcFeed" {
                 Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
                     @{
                         StatusCode = 200
-                        Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/specific_feed.json"
+                        Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/create_feed.json"
                     }
                 } -ParameterFilter {
                     $Endpoint -eq $global:CBC_CONFIG.endpoints["Feed"]["Search"] -and
@@ -154,6 +154,7 @@ Describe "New-CbcFeed" {
                         "category" = "test"
                         "alertable" = $true
                     }
+                    "reports" = @()
                 }
                 $Feed = New-CbcFeed -Body $RequestBody
 

@@ -1,0 +1,11 @@
+{
+    "name": "My Feed",
+    "owner": "ABCD1234",
+    "provider_url": "https://example.com",
+    "summary": "Summary for my feed",
+    "category": "external_threat_intel",
+    "source_label": "Label for threat intel source",
+    "access": "private",
+    "id": "ABCDEFGHIJKLMNOPQRSTUVWX",
+    "alertable": true
+}

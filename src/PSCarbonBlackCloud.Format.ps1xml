@@ -572,22 +572,17 @@
         <TableHeaders>
           <TableColumnHeader>
             <Label>Id</Label>
-            <Width>30</Width>
+            <Width>25</Width>
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
             <Label>Name</Label>
-            <Width>50</Width>
-            <Alignment>Left</Alignment>
-          </TableColumnHeader>
-          <TableColumnHeader>
-            <Label>Owner</Label>
-            <Width>10</Width>
+            <Width>20</Width>
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
             <Label>ProviderUrl</Label>
-            <Width>30</Width>
+            <Width>20</Width>
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
@@ -598,6 +593,11 @@
           <TableColumnHeader>
             <Label>Access</Label>
             <Width>7</Width>
+            <Alignment>Left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Reports</Label>
+            <Width>30</Width>
             <Alignment>Left</Alignment>
           </TableColumnHeader>
         </TableHeaders>
@@ -612,9 +612,6 @@
                 <PropertyName>Name</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>Owner</PropertyName>
-              </TableColumnItem>
-              <TableColumnItem>
                 <PropertyName>ProviderUrl</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
@@ -622,6 +619,9 @@
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>Access</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Reports</PropertyName>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>
@@ -739,6 +739,11 @@
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
+            <Label>Field</Label>
+            <Width>20</Width>
+            <Alignment>Left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
             <Label>MatchType</Label>
             <Width>15</Width>
             <Alignment>Left</Alignment>
@@ -755,6 +760,9 @@
             <TableColumnItems>
               <TableColumnItem>
                 <PropertyName>Id</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Field</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>MatchType</PropertyName>

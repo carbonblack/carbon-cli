@@ -227,7 +227,7 @@ Describe "New-CbcIoc" {
                     ($Body | ConvertFrom-Json).iocs_v2.Count -ge 1
                 }
 
-                $Ioc = $Ioc = New-CbcIoc -Report $report1, $report2 -Body $ioc
+                $Ioc = New-CbcIoc -Report $report1, $report2 -Body $ioc
 
                 $Ioc.Count | Should -Be 2
                 $Ioc[0].MatchType | Should -Be "equality"

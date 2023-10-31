@@ -6,8 +6,12 @@ This cmdlet returns all feeds or specific feed from all valid connections.
 https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet returns all feeds or specific feed from all valid connections.
+
+A feed contains reports which have been gathered by a single source. They resemble "potential watchlists."
+A watchlist may be easily subscribed to a feed, so that any reports in the feed act as if they were in the watchlist itself,
+triggering logs or alerts as appropriate.
 .PARAMETER Id
-Filter param: Specify the Id of the feed to retrieve.
+Filter param: Specify the Id of the feeds to retrieve.
 .PARAMETER Name
 Filter param: Specify the Name of the feeds to retrieve.
 .PARAMETER Access
@@ -29,11 +33,11 @@ PS > Get-CbcFeed -Server $SpecifiedServer
 .EXAMPLE
 PS > Get-CbcFeed -Id 5hBIvXltQqy0oAAqdEh0A, jwUoZu1WRBujSoCcYNa6fA
 
-Returns the feed with specified Ids.
+Returns the feeds with specified Ids.
 .EXAMPLE
 PS > Get-CbcFeed -Name "myfeed", "otherfeed" -Access "private", "public"
 
-Returns the feed with specified Name and Access.
+Returns the feeds with specified Name and Access.
 #>
 
 function Get-CbcFeed {
@@ -64,13 +68,10 @@ function Get-CbcFeed {
        
         $ExecuteServers | ForEach-Object {
             $CurrentServer = $_
-            $Endpoint = $null
-            $Params = ""
   
             $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Feed"]["Search"] `
                 -Method GET `
                 -Server $_ `
-                -Params $Params `
 
             if ($Response.StatusCode -ne 200) {
                 Write-Error -Message $("Cannot get feed(s) for $($_)")

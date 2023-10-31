@@ -6,6 +6,10 @@ This cmdlet removes watchlist from all valid connections.
 https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet removes watchlist from all valid connections.
+
+A watchlist contains reports (either directly or through a feed)
+that the Carbon Black Cloud is matching against events coming from the endpoints. A positive match will trigger a "hit",
+which may be logged or result in an alert.
 .PARAMETER Id
 Filter param: Specify the Id of the watchlist to remove.
 .PARAMETER Watchlist

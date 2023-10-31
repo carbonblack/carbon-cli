@@ -6,12 +6,15 @@ This cmdlet returns all reports or specific report from all valid connections.
 https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet returns all reports or specific report from all valid connections.
+
+A report groups one or more IOCs together, which may reflect a number of possible conditions to look for, or a number
+of conditions related to a particular target program or type of malware. Reports can be used to organize IOCs.
 .PARAMETER FeedId
-Id of the Feed
+Filter param: Id of the Feed containing the report.
 .PARAMETER Feed
-CbcFeed object
+CbcFeed object containing the report to be retrieved.
 .PARAMETER Id
-Specify the Id of the report to retrieve.
+Filter param: Specify the Id of the report to be retrieved.
 .OUTPUTS
 CbcReport[]
 .NOTES
@@ -53,7 +56,6 @@ function Get-CbcReport {
 
         [Parameter(ParameterSetName = "Default", Position = 1)]
         [Parameter(ParameterSetName = "Feed", Position = 1)]
-        [Parameter(ParameterSetName = "Id", Position = 1)]
         [string[]]$Id,
 
         [Parameter(ParameterSetName = "Default")]
@@ -100,7 +102,7 @@ function Get-CbcReport {
             }
             "Feed" {
                 $Feed | ForEach-Object {
-                    $FeedId = $_.id
+                    $FeedId = $_.Id
                     $CurrentServer = $_.Server
                     $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Search"] `
                         -Method GET `

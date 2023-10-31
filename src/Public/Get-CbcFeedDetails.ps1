@@ -1,13 +1,19 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
-This cmdlet returns specific feeds from all valid connections.
+This cmdlet returns specific feed details from all valid connections.
 .LINK  
 https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
-This cmdlet returns specific feed from all valid connections.
+This cmdlet returns specific feed details from all valid connections.
+
+A feed contains reports which have been gathered by a single source. They resemble "potential watchlists."
+A watchlist may be easily subscribed to a feed, so that any reports in the feed act as if they were in the watchlist itself,
+triggering logs or alerts as appropriate.
 .PARAMETER Id
-Filter param: Specify the Ids of the feeds to retrieve.
+Filter param: Specify the Ids of the feed details to retrieve.
+.PARAMETER Feed
+Filter param: Specify the CbcFeed of the feed details to retrieve.
 .PARAMETER Server
 Sets a specified Cbc Server from the current connections to execute the cmdlet with.
 .OUTPUTS
@@ -17,7 +23,7 @@ Permissions needed: READ org.feeds
 .EXAMPLE
 PS > Get-CbcFeedDetails -Id 5hBIvXltQqy0oAAqdEh0A, jwUoZu1WRBujSoCcYNa6fA
 
-Returns the feed with specified Id.
+Returns the feed details with specified Id.
 
 .EXAMPLE
 PS > $Feed = Get-CbcFeed -Id 5hBIvXltQqy0oAAqdEh0A

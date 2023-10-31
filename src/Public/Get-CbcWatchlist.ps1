@@ -6,8 +6,12 @@ This cmdlet returns watchlist from all valid connections.
 https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet returns watchlist from all valid connections.
+
+A watchlist contains reports (either directly or through a feed)
+that the Carbon Black Cloud is matching against events coming from the endpoints. A positive match will trigger a "hit",
+which may be logged or result in an alert.
 .PARAMETER Id
-Filter param: Specify the Id of the watchlist to retrieve.
+Filter param: Specify the Id(s) of the watchlist to retrieve.
 .PARAMETER Name
 Filter param: Specify the Name(s) of the watchlist to retrieve.
 .PARAMETER Server
@@ -19,7 +23,7 @@ Permissions needed: READ org.watchlists
 .EXAMPLE
 PS > Get-CbcWatchlist
 
-Returns watchlist from all connections. 
+Returns all watchlist from all connections. 
 If you have multiple connections and you want watchlist from a specific connection
 you can add the `-Server` param.
 
@@ -28,6 +32,10 @@ PS > Get-CbcWatchlist -Server $SpecifiedServer
 PS > Get-CbcWatchlist -Id 5hBIvXltQqy0oAAqdEh0A, jwUoZu1WRBujSoCcYNa6fA
 
 Returns the watchlist with specified Ids.
+.EXAMPLE
+PS > Get-CbcWatchlist -Name demo, demo2
+
+Returns the watchlist with specified names.
 #>
 
 function Get-CbcWatchlist {
@@ -37,9 +45,10 @@ function Get-CbcWatchlist {
         [Parameter(ParameterSetName = "Default")]
         [string[]]$Id,
 
-        [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Name")]
         [string[]]$Name,
 
+        [Parameter(ParameterSetName = "Name")]
         [Parameter(ParameterSetName = "Default")]
         [CbcServer[]]$Server
     )
