@@ -59,6 +59,7 @@ Describe "Remove-CbcWatchlist" {
                     $true,
                     $true,
                     $true,
+                    "ABCDEFGHIJKLMNOPQRSTUVWX",
                     $s1
                 )
             }

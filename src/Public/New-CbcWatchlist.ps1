@@ -110,7 +110,7 @@ function New-CbcWatchlist {
                     }
                     else {
                         $JsonContent = $Response.Content | ConvertFrom-Json
-                        return Initialize-CbcWatchlist $JsonContent $CurrentServer
+                        return Initialize-CbcWatchlist $JsonContent $CurrentServer $Feed.Id
                     }
                 }
             }
@@ -136,7 +136,7 @@ function New-CbcWatchlist {
                 }
                 else {
                     $JsonContent = $Response.Content | ConvertFrom-Json
-                    return Initialize-CbcWatchlist $JsonContent $Feed.Server
+                    return Initialize-CbcWatchlist $JsonContent $Feed.Server $Feed.Id
                 }
                 
             }

@@ -6,7 +6,10 @@ function Initialize-CbcWatchlist {
 
         [Parameter(Mandatory = $true,Position = 1)]
 		[ValidateNotNullOrEmpty()]
-		[CbcServer]$Server
+		[CbcServer]$Server,
+
+        [Parameter(Position = 2)]
+		[PSCustomObject]$FeedId
 	)
     [CbcWatchlist]::new(
         $Response.id,
@@ -15,6 +18,7 @@ function Initialize-CbcWatchlist {
         $Response.alerts_enabled,
         $Response.tags_enabled,
         $Response.alert_classification_enabled,
+        $FeedId,
         $Server
     )
 }

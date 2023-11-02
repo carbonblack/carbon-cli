@@ -13,6 +13,7 @@
         "Search" = "threathunter/feedmgr/v2/orgs/{0}/feeds"
         "Details" = "threathunter/feedmgr/v2/orgs/{0}/feeds/{1}"
         "Subscribe" = "threathunter/watchlistmgr/v3/orgs/{0}/watchlists"
+        "FeedInfo" = "threathunter/feedmgr/v2/orgs/{0}/feeds/{1}/feedinfo"
     }
     "Watchlist" = @{
         "Search" = "threathunter/watchlistmgr/v3/orgs/{0}/watchlists"

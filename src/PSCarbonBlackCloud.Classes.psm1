@@ -797,6 +797,7 @@ class CbcWatchlist {
 	[bool]$AlertsEnabled
 	[bool]$TagsEnabled
 	[bool]$AlertClassificationEnabled
+	[string]$FeedId
 	[CbcServer]$Server
 
 	CbcWatchlist (
@@ -806,6 +807,7 @@ class CbcWatchlist {
 		[bool]$AlertsEnabled_,
 		[bool]$TagsEnabled_,
 		[bool]$AlertClassificationEnabled_,
+		[string]$FeedId_,
 		[CbcServer]$Server_
 	) {
 		$this.Id = $Id_
@@ -814,6 +816,7 @@ class CbcWatchlist {
 		$this.AlertsEnabled = $AlertsEnabled_
 		$this.TagsEnabled = $TagsEnabled_
 		$this.AlertClassificationEnabled = $AlertClassificationEnabled_
+		$this.FeedId = $FeedId_
 		$this.Server = $Server_
 	}
 }

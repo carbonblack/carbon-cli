@@ -76,16 +76,16 @@ function Get-CbcWatchlist {
                 $JsonContent.results | ForEach-Object {
                     if ($PSBoundParameters.ContainsKey("Id")) {
                         if ($Id.Contains($_.id)) {
-                            return Initialize-CbcWatchlist $_ $CurrentServer
+                            return Initialize-CbcWatchlist $_ $CurrentServer $_.classifier.value
                         }
                     }
                     elseif ($PSBoundParameters.ContainsKey("Name")) {
                         if ($Name.Contains($_.name)) {
-                            return Initialize-CbcWatchlist $_ $CurrentServer
+                            return Initialize-CbcWatchlist $_ $CurrentServer $_.classifier.value
                         }
                     }
                     else {
-                        return Initialize-CbcWatchlist $_ $CurrentServer
+                        return Initialize-CbcWatchlist $_ $CurrentServer $_.classifier.value
                     }
                 }
             }
