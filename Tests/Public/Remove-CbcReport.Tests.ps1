@@ -31,7 +31,7 @@ Describe "Remove-CbcReport" {
                         }
                     }
                 } -ParameterFilter {
-                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Watchlist"]["Report"] -and
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Report"]["Details"] -and
                     $Method -eq "DELETE" -and
                     ($Server -eq $s1)
                 }
@@ -73,7 +73,7 @@ Describe "Remove-CbcReport" {
                         }
                     }
                 } -ParameterFilter {
-                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Watchlist"]["Report"] -and
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Report"]["Details"] -and
                     $Method -eq "DELETE" -and
                     ($Server -eq $s1)
                 }
@@ -86,7 +86,7 @@ Describe "Remove-CbcReport" {
                         StatusCode = 204
                     }
                 } -ParameterFilter {
-                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Watchlist"]["Report"] -and
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Report"]["Details"] -and
                     $Method -eq "DELETE"
                 }
                 { Remove-CbcReport -FeedId "xxx" -Id ABCDEFGHIJKLMNOPQRSTUVWX -ErrorAction Stop } | Should -Not -Throw
@@ -98,7 +98,7 @@ Describe "Remove-CbcReport" {
                         StatusCode = 500
                     }
                 } -ParameterFilter {
-                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Watchlist"]["Report"] -and
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Report"]["Details"] -and
                     $Method -eq "DELETE"
                 }
                 { Remove-CbcReport -FeedId "xxx" -Id ABCDEFGHIJKLMNOPQRSTUVWX -ErrorAction Stop } | Should -Throw
@@ -110,7 +110,7 @@ Describe "Remove-CbcReport" {
                         StatusCode = 204
                     }
                 } -ParameterFilter {
-                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Watchlist"]["Report"] -and
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Report"]["Details"] -and
                     $Method -eq "DELETE" -and
                     ($Server -eq $s1)
                 }
@@ -123,7 +123,7 @@ Describe "Remove-CbcReport" {
                         StatusCode = 500
                     }
                 } -ParameterFilter {
-                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Watchlist"]["Report"] -and
+                    $Endpoint -eq $global:CBC_CONFIG.endpoints["Report"]["Details"] -and
                     $Method -eq "DELETE" -and
                     ($Server -eq $s1)
                 }

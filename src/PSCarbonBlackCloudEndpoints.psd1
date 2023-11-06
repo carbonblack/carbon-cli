@@ -18,7 +18,6 @@
     "Watchlist" = @{
         "Search" = "threathunter/watchlistmgr/v3/orgs/{0}/watchlists"
         "Details" = "threathunter/watchlistmgr/v3/orgs/{0}/watchlists/{1}"
-        "Report" = "threathunter/watchlistmgr/v3/orgs/{0}/reports/{1}"
     }
     "IOC" = @{
         "Details" = "api/watchlistmgr/v3/orgs/{0}/reports/{1}/iocs/{2}"

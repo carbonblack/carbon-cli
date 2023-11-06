@@ -63,11 +63,10 @@ function Remove-CbcReport {
                 $ExecuteServers | ForEach-Object {
                     $CurrentServer = $_
                     $Id | ForEach-Object {
-                        # currently using Watchlist API, because Feed Manager API is not working
-                        $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Watchlist"]["Report"] `
+                        $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
                             -Method DELETE `
                             -Server $CurrentServer `
-                            -Params @($FeedId + "-" + $_)
+                            -Params @($FeedId, $_)
             
                         if ($Response.StatusCode -ne 204) {
                             Write-Error -Message $("Cannot delete report(s) for $($CurrentServer)")
@@ -80,10 +79,10 @@ function Remove-CbcReport {
             }
             "Report" {
                 $Report | ForEach-Object {
-                    $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Watchlist"]["Report"] `
+                    $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
                         -Method DELETE `
                         -Server $_.Server `
-                        -Params @($_.FeedId + "-" + $_.Id)
+                        -Params @($_.FeedId, $_.Id)
 
                     if ($Response.StatusCode -ne 204) {
                         Write-Error -Message $("Cannot delete report(s) for $($_.Server)")
