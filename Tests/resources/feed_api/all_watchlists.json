@@ -1,0 +1,31 @@
+{
+  "results": [
+      {
+          "name": "My Watchlist",
+          "description": "Watchlist subscribed to Reports",
+          "id": "5LKpHr2SHiaE2QprfPhQ",
+          "tags_enabled": true,
+          "alerts_enabled": true,
+          "alert_classification_enabled": false,
+          "create_timestamp": 1553542270,
+          "last_update_timestamp": 1553542270,
+          "report_ids": null,
+          "classifier": null
+      },
+      {
+          "name": "My Other Watchlist",
+          "description": "Watchlist subscribed to a Feed",
+          "id": "R4cMgFIhRaakgk749MRr6Q",
+          "tags_enabled": true,
+          "alerts_enabled": true,
+          "alert_classification_enabled": false,
+          "create_timestamp": 1578078507,
+          "last_update_timestamp": 1599574461,
+          "report_ids": null,
+          "classifier": {
+            "key": "feed_id",
+            "value": "ABCDEFGHIJKLMNOPQRSTU"
+          }
+      }
+  ]
+}

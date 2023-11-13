@@ -34,7 +34,9 @@ PS > Get-CbcJob -Job $JobObject
 
 Returns the job for specific id.
 .LINK
-API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/observations-api
+API Documentation Observations: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/observations-api
+.LINK
+API Documentation Processes: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/platform-search-api-processes
 #>
 
 function Get-CbcJob {

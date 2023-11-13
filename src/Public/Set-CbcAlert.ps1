@@ -12,6 +12,8 @@ To dismiss an alert.
 The Id of specific alert to be dismissed.
 .OUTPUTS
 CbcAlert[]
+.NOTES
+Permissions needed: EXECUTE org.alerts.dismiss
 .EXAMPLE
 # This is going to execute Set-CbcAlert for all the alerts at once
 PS > Set-CbcAlert -Alert (Get-CbcAlert -Include @{"device_id"= @("123"); "type"= @("CB_ANALYTICS")}) -Dismiss $true
@@ -27,7 +29,7 @@ you can add the `-Server` param.
 PS > Set-CbcAlert -Id "07e1c1e9-d73f-18c7-c511-b9e83e482d89" -Dismiss $true -Server $SpecificServer
 
 .LINK
-API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api#bulk-create-workflows
+API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api
 #>
 
 function Set-CbcAlert {

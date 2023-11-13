@@ -8,6 +8,8 @@ Returns the processes with the specified process guids.
 Returns the process details based on a CbcProcess object
 .OUTPUTS
 CbcProcessDetails[]
+.NOTES
+Permissions needed: CREATE, READ org.search.events
 .EXAMPLE
 PS > Get-CbcProcessDetails -Id "95016925089911ee9568b74cff311:23f4c71a-e350-8576-f832-0b0968f"
 

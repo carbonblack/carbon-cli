@@ -12,6 +12,8 @@ Returns the observation details for the specified CbcAlert.
 Returns the observation details for the specified CbcObservation.
 .OUTPUTS
 CbcObservationDetails[]
+.NOTES
+Permissions needed: READ, CREATE org.search.events
 .EXAMPLE
 PS > Get-CbcObservationDetails -Id "95016925089911ee9568b74cff311:23f4c71a-e350-8576-f832-0b0968f"
 

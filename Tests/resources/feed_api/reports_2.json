@@ -1,0 +1,48 @@
+{
+    "results": [
+        {
+            "id": "1",
+            "timestamp": 1571083459,
+            "title": "yara2",
+            "description": "microsoft:microsoft",
+            "severity": 5,
+            "link": null,
+            "tags": null,
+            "iocs": null,
+            "iocs_v2": [
+                {
+                    "id": "1",
+                    "match_type": "equality",
+                    "values": [
+                        "TQBpAGMAcgBvAHMAbwBmAHQA"
+                    ],
+                    "field": "$microsoft",
+                    "link": null
+                }
+            ],
+            "visibility": null
+        },
+        {
+            "id": "2",
+            "timestamp": 1571083459,
+            "title": "yara3",
+            "description": "microsoft:microsoft",
+            "severity": 5,
+            "link": null,
+            "tags": null,
+            "iocs": null,
+            "iocs_v2": [
+                {
+                    "id": "1",
+                    "match_type": "equality",
+                    "values": [
+                        "TQBpAGMAcgBvAHMAbwBmAHQA"
+                    ],
+                    "field": "$microsoft",
+                    "link": null
+                }
+            ],
+            "visibility": null
+        }
+    ]
+}

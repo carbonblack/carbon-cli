@@ -1,0 +1,26 @@
+{
+    "report": {
+        "id": "Report_ID_1",
+        "timestamp": 1604950037,
+        "title": "Report Title",
+        "description": "Report Description",
+        "severity": 2,
+        "link": "https://google.com",
+        "tags": [
+            "false_positive"
+        ],
+        "iocs": null,
+        "iocs_v2": [
+            {
+                "id": "IOC_ID_1",
+                "match_type": "equality",
+                "values": [
+                    "SHA256HashOfAProcess"
+                ],
+                "field": "process_sha256",
+                "link": null
+            }
+        ],
+        "visibility": "visible"
+    }
+}

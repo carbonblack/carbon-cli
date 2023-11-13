@@ -9,6 +9,23 @@
         "Search" = "policyservice/v1/orgs/{0}/policies/summary"
         "Details" = "policyservice/v1/orgs/{0}/policies/{1}"
     }
+    "Feed"  = @{
+        "Search" = "threathunter/feedmgr/v2/orgs/{0}/feeds"
+        "Details" = "threathunter/feedmgr/v2/orgs/{0}/feeds/{1}"
+        "Subscribe" = "threathunter/watchlistmgr/v3/orgs/{0}/watchlists"
+        "FeedInfo" = "threathunter/feedmgr/v2/orgs/{0}/feeds/{1}/feedinfo"
+    }
+    "Watchlist" = @{
+        "Search" = "threathunter/watchlistmgr/v3/orgs/{0}/watchlists"
+        "Details" = "threathunter/watchlistmgr/v3/orgs/{0}/watchlists/{1}"
+    }
+    "IOC" = @{
+        "Details" = "api/watchlistmgr/v3/orgs/{0}/reports/{1}/iocs/{2}"
+    }
+    "Report"  = @{
+        "Search" = "threathunter/feedmgr/v2/orgs/{0}/feeds/{1}/reports"
+        "Details" = "threathunter/feedmgr/v2/orgs/{0}/feeds/{1}/reports/{2}"
+    }
     "Alerts" = @{
         "Search" = "api/alerts/v7/orgs/{0}/alerts/_search"
         "Details" = "api/alerts/v7/orgs/{0}/alerts/{1}"

@@ -1,0 +1,15 @@
+{
+    "results": [
+        {
+            "name": "My Feed2",
+            "owner": "ABCD1234",
+            "provider_url": "https://example.com",
+            "summary": "Example Feed",
+            "category": "None",
+            "source_label": null,
+            "access": "private",
+            "id": "ABCDEFGHIJKLMNOPQRSTUVWX",
+            "alertable": true
+        }
+    ]
+}

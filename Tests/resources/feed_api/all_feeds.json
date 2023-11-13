@@ -1,0 +1,26 @@
+{
+    "results": [
+        {
+            "name": "My Feed",
+            "owner": "ABCD1234",
+            "provider_url": "https://example.com",
+            "summary": "Example Feed",
+            "category": "None",
+            "source_label": null,
+            "access": "private",
+            "id": "ABCDEFGHIJKLMNOPQRSTUVWX",
+            "alertable": true
+        },
+        {
+            "name": "Other Feed",
+            "owner": "AlienVault",
+            "provider_url": "https://www.alienvault.com/",
+            "summary": "This watchlist contains intelligence provided by AlienVault's Open Threat Exchange (OTX). It leverages insights into attacks across the community and will show you hostile scanning hosts, malware hosts, and other targeting and security event information.",
+            "category": "Partner",
+            "source_label": "AlienVault",
+            "access": "public",
+            "id": "wuDcrLFVRUOBIn1g3er9tQ",
+            "alertable": true
+        }
+    ]
+}
