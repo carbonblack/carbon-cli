@@ -3,7 +3,7 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 .DESCRIPTION
 This cmdlet subscribes to feed in all valid connections.
 .LINK  
-https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
+API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 Watchlists are powerful feature that allows organization to focus on specific rules, for which alerts to be created.
 However to take advantage of that functionality, an organization needs to have EEDR product enabled and do execute a flow that creates the 

@@ -3,7 +3,7 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 .DESCRIPTION
 This cmdlet returns all ioc in a specific report from all valid connections.
 .LINK  
-https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
+API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet returns all ioc in a specific report from all valid connections.
 

@@ -25,6 +25,15 @@ To uninstall the sensor of the device.
 
 .OUTPUTS
 CbcDevice[]
+.NOTES
+Permissions needed: Depending on the action different permission is needed
+* EXECUTE device.quarantine
+* EXECUTE device.bypass
+* EXECUTE device.bg-scan
+* UPDATE device.policy
+* EXECUTE org.kits
+* EXECUTE device.uninstall
+* DELETE device.deregistered
 .EXAMPLE
 PS > Get-CbcDevice -Id 9187873 | Set-CbcDevice -ScanEnabled $true
 

@@ -2,8 +2,8 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet returns all reports or specific report from all valid connections.
-.LINK  
-https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
+.LINK
+API Documentation https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet returns all reports or specific report from all valid connections.
 

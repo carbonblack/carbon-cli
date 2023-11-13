@@ -26,6 +26,8 @@ Specifies the Target priority to match.
 Supported Target priority values: LOW, MEDIUM, HIGH, MISSION_CRITICAL.
 .OUTPUTS
 CbcDevice[]
+.NOTES
+Permissions needed: READ device
 .EXAMPLE
 PS > Get-CbcDevice
 

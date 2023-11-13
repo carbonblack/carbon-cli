@@ -8,7 +8,9 @@ The Id property is unique within the boundaries of a single Cbc Server connectio
 .PARAMETER Server
 Sets a specified Cbc Server from the current connections to execute the cmdlet against.
 .OUTPUTS
-CbcPolicyDetails
+CbcPolicyDetails[]
+.NOTES
+Permissions needed: READ org.policies
 .EXAMPLE
 PS > Get-CbcPolicyDetails -Id 234567, 12345
 
@@ -24,7 +26,7 @@ API Documentation: https://developer.carbonblack.com/reference/carbon-black-clou
 #>
 function Get-CbcPolicyDetails {
     [CmdletBinding()]
-    [OutputType([CbcPolicyDetails])]
+    [OutputType([CbcPolicyDetails[]])]
     param(
         [Parameter(
             ValueFromPipeline = $true,

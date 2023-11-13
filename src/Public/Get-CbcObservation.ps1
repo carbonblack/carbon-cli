@@ -26,6 +26,8 @@ Returns the observations with the specified ObservationTypes.
 Set the query - query is in lucene syntax and/or including value searches. Either query or criteria/exclusions must be included.
 .OUTPUTS
 CbcObservation[]
+.NOTES
+Permissions needed: READ, CREATE org.search.events
 .EXAMPLE
 PS > Get-CbcObservation -Id "95016925089911ee9568b74cff311:23f4c71a-e350-8576-f832-0b0968f", "95016925089911ee9568b74cff311:23f4c71a-e350-8576-f832-0b0968f"
 

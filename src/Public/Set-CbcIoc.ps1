@@ -3,7 +3,7 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 .DESCRIPTION
 This cmdlet updates existing ioc from all valid connections - the properties that could be updated are match type, field and values.
 .LINK  
-https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
+API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet updates existing ioc from all valid connections - the properties that could be updated are match type, field and values.
 

@@ -3,7 +3,7 @@ using module ../PSCarbonBlackCloud.Classes.psm1
 .DESCRIPTION
 This cmdlet returns specific feed details from all valid connections.
 .LINK  
-https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
+API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet returns specific feed details from all valid connections.
 

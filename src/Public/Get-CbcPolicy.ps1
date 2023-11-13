@@ -6,6 +6,8 @@ This cmdlet returns an overview of the available policies.
 Sets a specified Cbc Server from the current connections to execute the cmdlet against.
 .OUTPUTS
 CbcPolicy[]
+.NOTES
+Permissions needed: READ org.policies
 .EXAMPLE
 PS > Get-CbcPolicy
 
