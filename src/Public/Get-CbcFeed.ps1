@@ -26,7 +26,7 @@ Permissions needed: READ org.feeds
 PS > Get-CbcFeed
 
 Returns all feeds from all connections. 
-If you have multiple connections and you want alerts from a specific connection
+If you have multiple connections and you want feeds from a specific connection
 you can add the `-Server` param.
 
 PS > Get-CbcFeed -Server $SpecifiedServer

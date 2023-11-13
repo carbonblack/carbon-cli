@@ -28,7 +28,7 @@ Permissions needed: READ org.feeds
 PS > Get-CbcIoc -FeedId 5hBIvXltQqy0oAAqdEh0A -ReportId 11a1a1a1-b22b-3333-44cc-dd5555d5d5fd
 
 Returns all iocs under specific feed id and report id for specific feed from all connections. 
-If you have multiple connections and you want alerts from a specific connection
+If you have multiple connections and you want iocs from a specific connection
 you can add the `-Server` param.
 
 PS > Get-CbcIoc -FeedId 5hBIvXltQqy0oAAqdEh0A -ReportId 11a1a1a1-b22b-3333-44cc-dd5555d5d5fd -Server $SpecifiedServer

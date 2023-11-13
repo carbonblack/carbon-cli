@@ -23,7 +23,7 @@ Permissions needed: READ org.feeds
 PS > Get-CbcReport -FeedId 5hBIvXltQqy0oAAqdEh0A, jwUoZu1WRBujSoCcYNa6fA
 
 Returns all reports for specific feed from all connections. 
-If you have multiple connections and you want alerts from a specific connection
+If you have multiple connections and you want reports from a specific connection
 you can add the `-Server` param.
 
 PS > Get-CbcReport -FeedId 5hBIvXltQqy0oAAqdEh0A, jwUoZu1WRBujSoCcYNa6fA -Server $SpecifiedServer

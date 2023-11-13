@@ -53,6 +53,8 @@ Summary of the Feed (required). Custom summary provided by the user.
 Category of the Feed (required). Custom category provided by the user.
 .PARAMETER Alertable
 Optional indicator whether you would like to be alerted for IOCs included in the Feed. Provide $false to supress noisy feeds.
+.PARAMETER Body
+The data for the feed can be provided as hashtable custom body
 .PARAMETER Server
 Sets a specified Cbc Server from the current connections to execute the cmdlet with.
 .OUTPUTS
@@ -62,7 +64,7 @@ Permissions needed: CREATE org.feeds
 .EXAMPLE
 PS > New-CbcFeed -Name myfeed -ProviderUrl http://test.test/ -Summary summary -Category category -Alertable $true
 
-If you have multiple connections and you want alerts from a specific connection
+If you have multiple connections and you want feeds from a specific connection.
 you can add the `-Server` param.
 
 PS > New-CbcFeed -Name myfeed -ProviderUrl http://test.test/ -Summary summary -Category category -Alertable $true -Server $SpecifiedServer
@@ -74,6 +76,18 @@ PS > $CustomBody = @{"feedinfo" =
 >>                      "category" = "category" 
 >>                      "alertable" = $true}
 >>                   "reports"= @()}
+PS > New-CbcFeed -Body $CustomBody
+
+Create a feed by providing the full request body - feedinfo and reports.
+.EXAMPLE
+PS > $CustomBody = @{}
+PS > $CustomBody.feedinfo = @{}
+PS > $CustomBody.reports = @()
+PS > $CustomBody.feedinfo.name = "myfeed"
+PS > $CustomBody.feedinfo.provider_url = "http://test.test/"
+PS > $CustomBody.feedinfo.summary = "summary"
+PS > $CustomBody.feedinfo.category = "category"
+PS > $CustomBody.feedinfo.alertable = $true
 PS > New-CbcFeed -Body $CustomBody
 
 Create a feed by providing the full request body - feedinfo and reports.

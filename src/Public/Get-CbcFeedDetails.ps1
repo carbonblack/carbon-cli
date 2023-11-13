@@ -1,11 +1,11 @@
 using module ../PSCarbonBlackCloud.Classes.psm1
 <#
 .DESCRIPTION
-This cmdlet returns specific feed details from all valid connections.
+This cmdlet retrieves detailed information about specific feed specified by its id or the feed object itself.
 .LINK  
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
-This cmdlet returns specific feed details from all valid connections.
+This cmdlet retrieves detailed information about specific feed specified by its id or the feed object itself.
 
 A feed contains reports which have been gathered by a single source. They resemble "potential watchlists."
 A watchlist may be easily subscribed to a feed, so that any reports in the feed act as if they were in the watchlist itself,

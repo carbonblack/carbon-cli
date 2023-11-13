@@ -56,7 +56,7 @@ PS > New-CbcWatchlist -Feed (Get-CbcFeed -Id JuXVurDTFmszw93it0Gvw)
 .EXAMPLE
 PS > New-CbcWatchlist -FeedId JuXVurDTFmszw93it0Gvw
 
-If you have multiple connections and you want alerts from a specific connection
+If you have multiple connections and you want watchlists from a specific connection
 you can add the `-Server` param.
 
 PS > New-CbcWatchlist -FeedId JuXVurDTFmszw93it0Gvw -Server $SpecificServer

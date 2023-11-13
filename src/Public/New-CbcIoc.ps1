@@ -57,16 +57,23 @@ CbcIoc[]
 .NOTES
 Permissions needed: CREATE org.feeds
 .EXAMPLE
-PS > $Body = @{"MatchType" = "equality"
->>    "Field" =  "process_sha256"
->>    "Values" = @("SHA256HashOfAProcess")
+PS > $Body = @{"match_type" = "equality"
+>>    "field" =  "process_sha256"
+>>    "values" = @("SHA256HashOfAProcess")
 >>   }
 PS > New-CbcIoc -FeedId JuXVurDTFmszw93it0Gvw -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894 -Body $Body
 
-If you have multiple connections and you want alerts from a specific connection
+If you have multiple connections and you want iocs from a specific connection
 you can add the `-Server` param.
 
 PS > New-CbcIoc -FeedId JuXVurDTFmszw93it0Gvw -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894 -Body $Body -Server $SpecifiedServer
+
+.EXAMPLE
+PS > $Body = @{}
+PS > $Body.match_type = "equality"
+PS > $Body.field = "process_sha256"
+PS > $Body.values = @("SHA256HashOfAProcess")
+PS > New-CbcIoc -FeedId JuXVurDTFmszw93it0Gvw -ReportId 59ac2095-c663-44cd-99cb-4ce83e7aa894 -Body $Body
 
 .EXAMPLE
 PS > $Feed = Get-CbcFeed -Id JuXVurDTFmszw93it0Gvw

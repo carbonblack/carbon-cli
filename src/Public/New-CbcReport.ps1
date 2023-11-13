@@ -50,7 +50,7 @@ Title of the Report
 .PARAMETER Description
 Description of the Report
 .PARAMETER Severity
-Severity of the Report
+Severity of the Report (valid values: [1, 10])
 .PARAMETER Body
 Full request body for the creation of the report (either Title, Description and Severity or Body needs to be provided).
 .PARAMETER Server
@@ -67,11 +67,19 @@ you can add the `-Server` param.
 
 PS > New-CbcReport -FeedId JuXVurDTFmszw93it0Gvw -Title myreport -Description description -Severity 5 -Server $SpecifiedServer
 .EXAMPLE
-PS > $reportBody = @{
+PS > $CustomBody = @{
 >>        "title" = "myreport"
 >>        "description" = "description"
 >>        "severity" = 5
 }
+PS > New-CbcReport -FeedId JuXVurDTFmszw93it0Gvw -Body $reportBody
+
+Creating report with custom body.
+.EXAMPLE
+PS > $CustomBody = @{}
+PS > $CustomBody.title = "myreport"
+PS > $CustomBody.description = "description"
+PS > $CustomBody.severity = 5
 PS > New-CbcReport -FeedId JuXVurDTFmszw93it0Gvw -Body $reportBody
 
 Creating report with custom body.
