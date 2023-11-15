@@ -95,12 +95,12 @@ function Set-CbcDevice {
 		[ValidateNotNullOrEmpty()]
 		[Parameter(ParameterSetName = "Device")]
 		[Parameter(ParameterSetName = "Id")]
-		[CbcPolicy[]]$Policy,
+		[CbcPolicy]$Policy,
 
 		[ValidateNotNullOrEmpty()]
 		[Parameter(ParameterSetName = "Device")]
 		[Parameter(ParameterSetName = "Id")]
-		[array]$PolicyId,
+		[string]$PolicyId,
 
 		[ValidateNotNullOrEmpty()]
 		[Parameter(ParameterSetName = "Device")]
@@ -139,7 +139,6 @@ function Set-CbcDevice {
 			$RequestBody = @{}
 			$RequestBody.device_id = @()
 			foreach ($CurrDevice in $Group.Group) {
-				Write-Warning "$($CurrDevice.Id) $($CurrDevice.Server) $($CurrDevice.SensorKitType)"
 				$RequestBody.device_id += $CurrDevice.Id
 				$CurrentServer = $CurrDevice.Server
 				# get the sensorkittype for random device - they should be of the same sensorkittype
@@ -177,7 +176,7 @@ function Set-CbcDevice {
 			elseif ($PSBoundParameters.ContainsKey("Policy")) {
 				$RequestBody.action_type = "UPDATE_POLICY"
 				$RequestBody.options = @{
-					policy_id = ($Policy | ForEach-Object { $_.Id })
+					policy_id = $Policy.Id
 				}
 			}
 			elseif ($PSBoundParameters.ContainsKey("PolicyId")) {
