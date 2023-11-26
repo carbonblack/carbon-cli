@@ -195,4 +195,64 @@ Describe "Connect-CbcServer" {
 			{ Connect-CbcServer -Menu -ErrorAction Stop } | Should -Throw
 		}
 	}
+
+	Context "When using the 'credential' parameter set" {
+		BeforeAll {
+			Mock Invoke-CBCRequest -ModuleName PSCarbonBlackCloud {
+				@{
+					StatusCode = 200
+				}
+			}
+		}
+		<#
+		TODO: Uncomment when figure out how to mock the behaviour of -Credentail param when provided with a string argument for userName
+		It 'Should assign org, read the token from host input and connect to a server successfully' {
+			
+			Mock Read-Host -MockWith {
+				"testToken"
+			}
+			$Org = "test"
+			Mock Get-Credential -MockWith {
+				$password = ConvertTo-SecureString 'testToken' -AsPlainText -Force
+				$credential = New-Object System.Management.Automation.PSCredential ($Org, $password)
+				$credential
+			}
+			$Uri = "https://t.te/"
+			$Notes = " Test server"
+			$server = Connect-CbcServer -Server $Uri -Credential $org -Notes $Notes
+
+			$server.GetType() | Should -Be "CbcServer"
+			$server.Uri | Should -Be $Uri
+			$server.Org | Should -Be $Org
+			$server.Notes | Should -Be $Notes
+
+			$global:defaultCbcServers.Count | Should -Be 1
+			$global:defaultCbcServers.Uri | Should -Be $server.Uri
+			$global:defaultCbcServers.Org | Should -Be $server.Org
+			$global:defaultCbcServers.Notes | Should -Be $server.Notes
+		}
+		#>
+		It 'Shoud connect to server successfully with provided $PSCredential' {
+			$Uri = "https://t.te/"
+			$Org = "test"
+			Mock Get-Credential -MockWith {
+				$password = ConvertTo-SecureString 'testToken' -AsPlainText -Force
+				$credential = New-Object System.Management.Automation.PSCredential ($Org, $password)
+				$credential
+			}
+
+			$Uri = "https://t.te/"
+			$cred = Get-Credential
+			$server = Connect-CbcServer -Server $Uri -Credential $cred
+
+			$server.GetType() | Should -Be "CbcServer"
+			$server.Uri | Should -Be $Uri
+			$server.Org | Should -Be $Org
+			
+
+			$global:defaultCbcServers.Count | Should -Be 1
+			$global:defaultCbcServers.Uri | Should -Be $server.Uri
+			$global:defaultCbcServers.Org | Should -Be $server.Org
+		}
+	}
 }
