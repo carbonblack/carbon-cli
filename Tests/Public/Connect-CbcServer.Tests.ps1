@@ -204,22 +204,18 @@ Describe "Connect-CbcServer" {
 				}
 			}
 		}
-		<#
-		TODO: Uncomment when figure out how to mock the behaviour of -Credentail param when provided with a string argument for userName
+		
 		It 'Should assign org, read the token from host input and connect to a server successfully' {
-			
-			Mock Read-Host -MockWith {
-				"testToken"
-			}
 			$Org = "test"
-			Mock Get-Credential -MockWith {
-				$password = ConvertTo-SecureString 'testToken' -AsPlainText -Force
-				$credential = New-Object System.Management.Automation.PSCredential ($Org, $password)
+			$password = ConvertTo-SecureString 'testToken' -AsPlainText -Force
+			$credential = New-Object System.Management.Automation.PSCredential ($Org, $password)
+			Mock Get-Credential -MockWith {	
 				$credential
 			}
 			$Uri = "https://t.te/"
 			$Notes = " Test server"
-			$server = Connect-CbcServer -Server $Uri -Credential $org -Notes $Notes
+			
+			$server = Connect-CbcServer -Server $Uri -Credential $credential -Notes $Notes
 
 			$server.GetType() | Should -Be "CbcServer"
 			$server.Uri | Should -Be $Uri
@@ -231,7 +227,7 @@ Describe "Connect-CbcServer" {
 			$global:defaultCbcServers.Org | Should -Be $server.Org
 			$global:defaultCbcServers.Notes | Should -Be $server.Notes
 		}
-		#>
+
 		It 'Shoud connect to server successfully with provided $PSCredential' {
 			$Uri = "https://t.te/"
 			$Org = "test"
