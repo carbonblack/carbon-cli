@@ -27,6 +27,11 @@ This effectively means that only the same user account on the same computer will
 NB: On the rest of the platforms the token is not encrypted rather than obduscated. 
 .PARAMETER Menu
 Switch parameter. Lists all available connections from the local connection store.
+.PARAMETER Credential
+You could provide atuhentication details such as Org Id and the X-AUTH token as a PSCredential object. 
+The Org Id should be provided to the PSCredential.UserName property and the X-AUTH token to the PSCredentail.Password property.
+In case a string is provided for an argument of the Credential parameter it will be treated as an Org Id and you will be prompted for the corresponding token. 
+See the provided examples. 
 
 .OUTPUTS
 CbcServer
@@ -43,7 +48,29 @@ Store the connection in the local store for reuse across multiple Powershell ses
 .EXAMPLE
 PS > Connect-CbcServer -Menu
 
-List all connections from the local connection store. 
+List all connections from the local connection store.
+
+.EXAMPLE
+PS > $cred = Get-Credential
+
+PowerShell credential request
+Enter your credentials.
+User: MyOrg
+Password for user MyOrg: ****
+
+PS > Connect-CbcServer -Server "http://cbcserver.cbc" -Credential $cred
+
+Connects with the specified Server, Org, Token and returns a CbcServer Object.
+
+.EXAMPLE
+
+PS > Connect-CbcServer -Server "http://cbcserver.cbc" -Credential "MyOrg"
+
+PowerShell credential request
+Enter your credentials.
+Password for user MyOrg:
+
+Connects with the specified Server, Org, Token and returns a CbcServer Object.
 
 .EXAMPLE
 PS > $prodServer = Connect-CbcServer -Server "http://prod.cbc" -Org "MyOrg1" -Token "MyProdToken" -Notes "ProdEnv"
@@ -83,6 +110,7 @@ function Connect-CbcServer {
 	param(
 		
 		[Parameter(ParameterSetName = "default", Mandatory = $true, Position = 0)]
+		[Parameter(ParameterSetName = "credentials", Mandatory = $true)]
 		[Alias("Server")]
 		[string]$Uri,
 
@@ -93,14 +121,19 @@ function Connect-CbcServer {
 		[string]$Token, 
 
 		[Parameter(ParameterSetName = "default", Position = 3)]
+		[Parameter(ParameterSetName = "credentials")]
 		[string]$Notes,
 
 		[Parameter(ParameterSetName = "default")]
+		[Parameter(ParameterSetName = "credentials")]
 		[switch]$SaveConnection,
 
 		[Parameter(ParameterSetName = "menu")]
-		[switch]$Menu
+		[switch]$Menu,
 
+		[Parameter(ParameterSetName = "credentials", Mandatory = $true)]
+		[System.Management.Automation.Credential()]
+		[System.Management.Automation.PSCredential] $Credential
 	)
 
 	begin {
@@ -130,6 +163,37 @@ function Connect-CbcServer {
 				Write-Verbose "[$($MyInvocation.MyCommand.Name)] Processing (default) [$Uri, $Org, $Token]"
 				$secureStringToken  = $Token | ConvertTo-SecureString -AsPlainText
 				$CbcServerObject = [CbcServer]::new($Uri, $Org, $secureStringToken, $Notes)
+				if ($CbcServerObject.IsConnected($global:DefaultCbcServers)) {
+					if ($PSBoundParameters.ContainsKey("Notes")) {
+						Write-Warning 'You are already connected to this server and organization. Updating notes. No additional connection established.'
+						$global:DefaultCbcServers | where {($_.URI -ieq $Uri) -and ($_.Org -ieq $Org)} | foreach {$_.Notes = $Notes}
+					} else {
+						Write-Error 'You are already connected to this server and organization. No additional connection established.' -ErrorAction 'Stop'
+					}
+				} else {
+					$TestConnection = Invoke-CBCRequest -Server $CbcServerObject -Endpoint "/" -Method Get
+					if ($TestConnection.StatusCode -ne 200) {
+						Write-Error "Cannot connect to the server" -ErrorAction Stop
+					}
+					$global:DefaultCbcServers.Add($CbcServerObject) | Out-Null
+					if ($SaveConnection.IsPresent) {
+						if (($global:CBC_CONFIG.savedConnections.IsInFile($CbcServerObject)) -and $PSBoundParameters.ContainsKey("Notes")) {
+							# UpdateNotes
+							Write-Warning "Connection is already saved. Updating Notes for the saved connection."
+							$global:CBC_CONFIG.sessionConnections | where {($_.URI -ieq $Uri) -and ($_.Org -ieq $Org)} | foreach {$_.Notes = $Notes}
+						} elseif ($global:CBC_CONFIG.savedConnections.IsInFile($CbcServerObject)) {
+							Write-Warning "The connection is already saved!. No updates to it."
+						} else {
+							$global:CBC_CONFIG.sessionConnections.Add($CbcServerObject) | Out-Null
+							$global:CBC_CONFIG.savedConnections.SaveToFile($CbcServerObject)
+						}
+					}
+				}
+			}
+			"credentials" {
+				Write-Verbose "[$($MyInvocation.MyCommand.Name)] Processing (credentials)"
+				
+				$CbcServerObject = [CbcServer]::new($Uri, $Credential.UserName, $Credential.Password, $Notes)
 				if ($CbcServerObject.IsConnected($global:DefaultCbcServers)) {
 					if ($PSBoundParameters.ContainsKey("Notes")) {
 						Write-Warning 'You are already connected to this server and organization. Updating notes. No additional connection established.'
@@ -188,8 +252,8 @@ function Connect-CbcServer {
 					}
 					$global:DefaultCbcServers.Add($CbcServerObject) | Out-Null
 				}
-
 			}
+			
 		}
 		return $CbcServerObject
 	}
