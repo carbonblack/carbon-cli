@@ -11,6 +11,8 @@ Depending on the job type:
 * CbcObservationDetails[] 
 * CbcProcess[]
 * CbcProcessDetails[]
+.NOTES
+Permissions needed: READ, CREATE org.search.events
 .EXAMPLE
 PS > $criteria = @{"alert_category" = @("THREAT")}
 PS > $job = Get-CbcObservation -Include $Criteria -AsJob

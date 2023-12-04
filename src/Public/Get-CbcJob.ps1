@@ -10,6 +10,8 @@ This cmdlet returns the status of a job for async operation - currently supporte
 Sets the job id
 .OUTPUTS
 CbcJob[]
+.NOTES
+Permissions needed: READ, CREATE org.search.events
 .EXAMPLE
 PS > $criteria = @{"alert_category" = @("THREAT")}
 PS > $job = Get-CbcObservation -Include $Criteria -AsJob
