@@ -1,15 +1,15 @@
-# PSCarbonBlackCloud
+# CarbonCLI
 
-[![Codeship Status for carbonblack/PSCarbonBlackCloud](https://app.codeship.com/projects/a2c8442f-fc13-4f81-9980-ad1413074d3d/status?branch=main)](https://app.codeship.com/projects/462505)
+[![Codeship Status for carbonblack/CarbonCLI](https://app.codeship.com/projects/a2c8442f-fc13-4f81-9980-ad1413074d3d/status?branch=main)](https://app.codeship.com/projects/462505)
 
 A set of PowerShell Cmdlets to interact with Carbon Black Cloud.
 
 ## Getting Started
 
 ```powershell
-PS > git clone https://github.com/carbonblack/PSCarbonBlackCloud.git
-PS > cd ./PSCarbonBlackCloud
-PS > Import-Module ./src/PSCarbonBlackCloud.psm1
+PS > git clone https://github.com/carbonblack/CarbonCLI.git
+PS > cd ./CarbonCLI
+PS > Import-Module ./src/CarbonCLI.psm1
 ```
 
 Now we can start using the cmdlets.
@@ -24,7 +24,7 @@ PS > Connect-CbcServer -CbcServer "http://cbcserver.cbc" -Org "MyOrg" -Token "My
 Build the project:
 
 ```powershell
-PS > ./Build-PSCarbonBlackCloud.ps1
+PS > ./Build-CarbonCLI.ps1
 ```
 
 Install `pre-commit`

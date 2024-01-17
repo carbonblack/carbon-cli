@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
     $ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-    Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-    Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+    Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+    Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-    Remove-Module -Name PSCarbonBlackCloud -Force
+    Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "Get-CbcPolicyDetails" {
@@ -24,7 +24,7 @@ Describe "Get-CbcPolicyDetails" {
             }
 
             It "Should return concrete policy id" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/policies_api/details_policy.json"
@@ -43,7 +43,7 @@ Describe "Get-CbcPolicyDetails" {
             }
 
             It "Should not return concrete policy, but exception" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 500
                         Content    = ""
@@ -74,7 +74,7 @@ Describe "Get-CbcPolicyDetails" {
             }
 
             It "Should return all policies" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         @{
                             StatusCode = 200
@@ -103,7 +103,7 @@ Describe "Get-CbcPolicyDetails" {
             }
 
             It "Should return all policies for specific server" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/policies_api/details_policy.json"

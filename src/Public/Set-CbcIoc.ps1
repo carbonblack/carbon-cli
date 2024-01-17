@@ -1,4 +1,4 @@
-using module ../PSCarbonBlackCloud.Classes.psm1
+using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet updates existing ioc from all valid connections - the properties that could be updated are match type, field and values.

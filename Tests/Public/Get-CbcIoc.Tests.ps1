@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
     $ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-    Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-    Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+    Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+    Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-    Remove-Module -Name PSCarbonBlackCloud -Force
+    Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "Get-CbcIoc" {
@@ -41,7 +41,7 @@ Describe "Get-CbcIoc" {
             }
 
             It "Should return all ioc for a report" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/report.json"
@@ -60,7 +60,7 @@ Describe "Get-CbcIoc" {
             }
 
             It "Should return all ioc for a feedid and reportid" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/report.json"
@@ -112,7 +112,7 @@ Describe "Get-CbcIoc" {
             }
 
             It "Should return all ioc for a report - exception" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 400
                         Content    = ""
@@ -126,7 +126,7 @@ Describe "Get-CbcIoc" {
             }
 
             It "Should return all ioc for a report" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/report.json"
@@ -145,7 +145,7 @@ Describe "Get-CbcIoc" {
             }
 
             It "Should return all ioc for a report and id" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/report.json"
@@ -162,7 +162,7 @@ Describe "Get-CbcIoc" {
             }
 
             It "Should return all ioc for a report and id - none" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/report.json"
@@ -178,7 +178,7 @@ Describe "Get-CbcIoc" {
             }
 
             It "Should not return ioc for feedid and reportid - exception" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 400
                         Content    = ""
@@ -192,7 +192,7 @@ Describe "Get-CbcIoc" {
             }
 
             It "Should return all ioc for a feedid and reportid for all connections with id" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/report.json"
@@ -212,7 +212,7 @@ Describe "Get-CbcIoc" {
             }
 
             It "Should return all ioc for a feedid and reportid for all connections" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/report.json"
@@ -232,7 +232,7 @@ Describe "Get-CbcIoc" {
             }
 
             It "Should return all ioc for a feedid and reportid for specific connection" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/report.json"

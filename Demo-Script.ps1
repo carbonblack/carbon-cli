@@ -1,12 +1,12 @@
-Import-Module ./src/PSCarbonBlackCloud.psd1 
+Import-Module ./src/CarbonCLI.psd1 
 # $DebugPreference = 'Continue'
 # Set-PsDebug -Trace 2
 
 # List all available cmdlets 
-Get-Command -Module PSCarbonBlackCloud  
+Get-Command -Module CarbonCLI  
 
 # Count the number of Carbon Black Cloud cmdlets
-Get-Command -Module PSCarbonBlackCloud | Measure-Object | Select Count
+Get-Command -Module CarbonCLI | Measure-Object | Select Count
 
 # Establish a connection to a Carbon Black Cloud Endpoint
 # Create a PSCredential object. Specify OrgId as a value for User and Token as a value for password when prompted.

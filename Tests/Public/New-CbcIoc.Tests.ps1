@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
     $ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-    Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-    Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+    Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+    Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-    Remove-Module -Name PSCarbonBlackCloud -Force
+    Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "New-CbcIoc" {
@@ -52,11 +52,11 @@ Describe "New-CbcIoc" {
             }
 
             It "Should create ioc" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -131,11 +131,11 @@ Describe "New-CbcIoc" {
             }
 
             It "Should create ioc for specific connections" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -155,11 +155,11 @@ Describe "New-CbcIoc" {
             }
 
             It "Should create ioc for specific connections - exception" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 400
                         Content    = ""
@@ -175,7 +175,7 @@ Describe "New-CbcIoc" {
             }
 
             It "Should create ioc for all connections" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         $report1
                     }
@@ -185,7 +185,7 @@ Describe "New-CbcIoc" {
                     
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -206,7 +206,7 @@ Describe "New-CbcIoc" {
             }
 
             It "Should create ioc for CbcReport" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         $report1
                     }
@@ -216,7 +216,7 @@ Describe "New-CbcIoc" {
                     
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -237,7 +237,7 @@ Describe "New-CbcIoc" {
             }
 
             It "Should not create ioc for CbcReport - exception" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         $report1
                     }
@@ -247,7 +247,7 @@ Describe "New-CbcIoc" {
                     
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 500
                         Content    = ""

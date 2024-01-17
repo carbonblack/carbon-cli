@@ -1,4 +1,4 @@
-using module ../PSCarbonBlackCloud.Classes.psm1
+using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet updates feed info from all valid connections.

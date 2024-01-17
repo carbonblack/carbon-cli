@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
 	$ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-	Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-	Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+	Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+	Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-	Remove-Module -Name PSCarbonBlackCloud -Force
+	Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "Set-CbcAlert" {
@@ -45,7 +45,7 @@ Describe "Set-CbcAlert" {
 	
 	Context "When using a `CbcAlert` object" {
 		It "Should dismiss alert" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 200
 					Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
@@ -60,7 +60,7 @@ Describe "Set-CbcAlert" {
 				)
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 200
 					Content    = ""
@@ -80,7 +80,7 @@ Describe "Set-CbcAlert" {
 
 	Context "When using `Id` " {
 		It "Should dismiss alert by Id" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -103,7 +103,7 @@ Describe "Set-CbcAlert" {
 				)
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 200
 					Content    = ""
@@ -122,7 +122,7 @@ Describe "Set-CbcAlert" {
 		}
 
 		It "Should dismiss alert by Id for specific server" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 200
 					Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
@@ -137,7 +137,7 @@ Describe "Set-CbcAlert" {
 				)
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 200
 					Content    = ""
@@ -154,7 +154,7 @@ Describe "Set-CbcAlert" {
 		}
 
 		It "Should dismiss alert by Id for specific server error" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 200
 					Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
@@ -169,7 +169,7 @@ Describe "Set-CbcAlert" {
 				)
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 500
 					Content    = ""

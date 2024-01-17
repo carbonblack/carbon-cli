@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
 	$ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-	Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-	Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+	Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+	Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-	Remove-Module -Name PSCarbonBlackCloud -Force
+	Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "Disconnect-CbcServer" {

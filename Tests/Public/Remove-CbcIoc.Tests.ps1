@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
     $ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-    Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-    Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+    Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+    Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-    Remove-Module -Name PSCarbonBlackCloud -Force
+    Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "Remove-CbcIoc" {
@@ -47,11 +47,11 @@ Describe "Remove-CbcIoc" {
             }
 
             It "Should remove ioc" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         @{
                             StatusCode = 200
@@ -127,11 +127,11 @@ Describe "Remove-CbcIoc" {
             }
 
             It "Should delete ioc for specific connections" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         @{
                             StatusCode = 200
@@ -147,7 +147,7 @@ Describe "Remove-CbcIoc" {
             }
 
             It "Should delete ioc for all connections" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         $report1
                     }
@@ -156,7 +156,7 @@ Describe "Remove-CbcIoc" {
                     }
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                     }
@@ -170,7 +170,7 @@ Describe "Remove-CbcIoc" {
             }
 
             It "Should try to delete ioc for all connections - exception" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         $report1
                     }
@@ -179,7 +179,7 @@ Describe "Remove-CbcIoc" {
                     }
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 500
                     }
@@ -191,7 +191,7 @@ Describe "Remove-CbcIoc" {
             }
 
             It "Should delete ioc - CbcIoc" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         $report1
                     }
@@ -200,7 +200,7 @@ Describe "Remove-CbcIoc" {
                     }
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                     }
@@ -212,7 +212,7 @@ Describe "Remove-CbcIoc" {
             }
 
             It "Should delete ioc CbcIoc - exception" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         $report1
                     }
@@ -221,7 +221,7 @@ Describe "Remove-CbcIoc" {
                     }
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 500
                     }

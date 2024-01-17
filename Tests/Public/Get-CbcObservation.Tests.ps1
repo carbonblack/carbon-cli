@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
 	$ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-	Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-	Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+	Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+	Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-	Remove-Module -Name PSCarbonBlackCloud -Force
+	Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "Get-CbcObservation" {
@@ -25,7 +25,7 @@ Describe "Get-CbcObservation" {
 
             It "Should set the HTTP Request Body accordingly" {
                 $global:called = $false
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/start_search_job.json"
@@ -36,7 +36,7 @@ Describe "Get-CbcObservation" {
                     $Server -eq $s1
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     if (!$global:called) {
                         $global:called = $true
                         @{
@@ -76,7 +76,7 @@ Describe "Get-CbcObservation" {
             }
 
             It "Should set the HTTP Request Body accordingly" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/start_search_job.json"
@@ -89,7 +89,7 @@ Describe "Get-CbcObservation" {
                     ($Body | ConvertFrom-Json).criteria.observation_id -eq "8fbccc2da75f11ed937ae3cb089984c6:be6ff259-88e3-6286-789f-74defa192d2e"
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/results_search_job.json"
@@ -105,7 +105,7 @@ Describe "Get-CbcObservation" {
             }
 
             It "Should set the HTTP Request Body accordingly - Alert" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/start_search_job.json"
@@ -118,7 +118,7 @@ Describe "Get-CbcObservation" {
                     ($Body | ConvertFrom-Json).criteria.alert_id -eq "1"
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/results_search_job.json"
@@ -129,7 +129,7 @@ Describe "Get-CbcObservation" {
                     $Server -eq $s1
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 					@{
 						StatusCode = 200
 						Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
@@ -145,7 +145,7 @@ Describe "Get-CbcObservation" {
             }
 
             It "Should set the filter parameters as criteria accordingly" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/start_search_job.json"
@@ -161,7 +161,7 @@ Describe "Get-CbcObservation" {
                     ($Body | ConvertFrom-Json).criteria.device_id -eq "16801738"
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/results_search_job.json"
@@ -177,7 +177,7 @@ Describe "Get-CbcObservation" {
             }
 
             It "Should set the query parameter accordingly" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/start_search_job.json"
@@ -190,7 +190,7 @@ Describe "Get-CbcObservation" {
                     ($Body | ConvertFrom-Json).query -eq "alert_id:b01dad69-09e8-71ba-6542-60f5a8d58030"
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/results_search_job.json"
@@ -206,7 +206,7 @@ Describe "Get-CbcObservation" {
             }
 
             It "Should return job object" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/start_search_job.json"
@@ -236,7 +236,7 @@ Describe "Get-CbcObservation" {
 			    $global:DefaultCbcServers.Add($s1) | Out-Null
             }
             It "Should fail upon creating job" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 500
                         Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/start_search_job.json"

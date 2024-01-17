@@ -1,4 +1,4 @@
-using module ../PSCarbonBlackCloud.Classes.psm1
+using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet returns results of a async job for a cmdlet that was started as -AsJob. Once the job status is Completed, results

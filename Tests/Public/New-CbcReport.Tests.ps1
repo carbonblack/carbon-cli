@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
     $ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-    Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-    Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+    Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+    Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-    Remove-Module -Name PSCarbonBlackCloud -Force
+    Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "New-CbcReport" {
@@ -46,7 +46,7 @@ Describe "New-CbcReport" {
             }
 
             It "Should create report" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/specific_feed.json"
@@ -57,11 +57,11 @@ Describe "New-CbcReport" {
                     $Server -eq $s1
                 }
 
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -81,7 +81,7 @@ Describe "New-CbcReport" {
             }
 
             It "Should create report using CbcFeed" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/specific_feed.json"
@@ -92,13 +92,13 @@ Describe "New-CbcReport" {
                     $Server -eq $s1
                 }
 
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 } -ParameterFilter {
                     $Feed -eq $feed1
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -156,7 +156,7 @@ Describe "New-CbcReport" {
             }
 
             It "Should create feed for specific connections" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/specific_feed.json"
@@ -167,13 +167,13 @@ Describe "New-CbcReport" {
                     $Server -eq $s1
                 }
 
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 } -ParameterFilter {
                     $FeedId -eq "ABCDEFGHIJKLMNOPQRSTUVWX"
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -193,7 +193,7 @@ Describe "New-CbcReport" {
             }
 
             It "Should create report for all connections" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/specific_feed.json"
@@ -203,13 +203,13 @@ Describe "New-CbcReport" {
                     $Method -eq "GET"
                 }
 
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 } -ParameterFilter {
                     $FeedId -eq "ABCDEFGHIJKLMNOPQRSTUVWX"
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -228,7 +228,7 @@ Describe "New-CbcReport" {
             }
 
             It "Should create report for all connections - exception" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/specific_feed.json"
@@ -238,13 +238,13 @@ Describe "New-CbcReport" {
                     $Method -eq "GET"
                 }
 
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 } -ParameterFilter {
                     $FeedId -eq "ABCDEFGHIJKLMNOPQRSTUVWX"
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         @{
                             StatusCode = 200
@@ -271,7 +271,7 @@ Describe "New-CbcReport" {
             }
 
             It "Should create report for all connections with custom body" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/specific_feed.json"
@@ -281,13 +281,13 @@ Describe "New-CbcReport" {
                     $Method -eq "GET"
                 }
 
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 } -ParameterFilter {
                     $FeedId -eq "ABCDEFGHIJKLMNOPQRSTUVWX"
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -311,7 +311,7 @@ Describe "New-CbcReport" {
             }
 
             It "Should create report for all connections with custom body from CbcFeed" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/specific_feed.json"
@@ -321,13 +321,13 @@ Describe "New-CbcReport" {
                     $Method -eq "GET"
                 }
 
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 } -ParameterFilter {
                     $Feed -eq $feed1
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -351,7 +351,7 @@ Describe "New-CbcReport" {
             }
 
             It "Should create report for all connections with custom body from CbcFeed - exception" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/specific_feed.json"
@@ -361,13 +361,13 @@ Describe "New-CbcReport" {
                     $Method -eq "GET"
                 }
 
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 } -ParameterFilter {
                     $Feed -eq $feed1
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 500
                         Content    = ""

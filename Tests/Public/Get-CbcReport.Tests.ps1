@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
     $ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-    Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-    Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+    Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+    Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-    Remove-Module -Name PSCarbonBlackCloud -Force
+    Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "Get-CbcReport" {
@@ -35,7 +35,7 @@ Describe "Get-CbcReport" {
             }
 
             It "Should return all reports for a feed" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/reports.json"
@@ -54,7 +54,7 @@ Describe "Get-CbcReport" {
             }
 
             It "Should not return reports, but exception" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 500
                         Content    = ""
@@ -69,7 +69,7 @@ Describe "Get-CbcReport" {
             }
 
             It "Should not return reports by CbcFeed, but exception" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 500
                         Content    = ""
@@ -122,7 +122,7 @@ Describe "Get-CbcReport" {
             }
 
             It "Should return all reports for specific server" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/reports.json"
@@ -141,7 +141,7 @@ Describe "Get-CbcReport" {
             }
 
             It "Should return all reports" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         @{
                             StatusCode = 200
@@ -172,7 +172,7 @@ Describe "Get-CbcReport" {
             }
 
             It "Should return all reports with specific id" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         @{
                             StatusCode = 200
@@ -201,7 +201,7 @@ Describe "Get-CbcReport" {
             }
 
             It "Should return all reports with specific id for specific server" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = Get-Content "$ProjectRoot/Tests/resources/feed_api/reports_2.json"
@@ -220,7 +220,7 @@ Describe "Get-CbcReport" {
             }
 
             It "Should return all reports by CbcFeed" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         @{
                             StatusCode = 200
@@ -251,7 +251,7 @@ Describe "Get-CbcReport" {
             }
 
             It "Should return all reports with specific id by CbcFeed" {
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         @{
                             StatusCode = 200
