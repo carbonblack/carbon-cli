@@ -17,7 +17,7 @@ foreach ($File in @($Public + $Private + $Classes)) {
 Export-ModuleMember -Function $Public.BaseName
 
 # Load Endpoints
-$Endpoints = Import-PowerShellDataFile -Path $PSScriptRoot/PSCarbonBlackCloudEndpoints.psd1
+$Endpoints = Import-PowerShellDataFile -Path $PSScriptRoot/CarbonCLI.Endpoints.psd1
 
 # Setting the Configuration Variables
 $ConnectionsPath = "${Home}/.carbonblack/PSConnections.xml"

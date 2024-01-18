@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
 	$ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-	Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-	Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+	Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+	Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-	Remove-Module -Name PSCarbonBlackCloud -Force
+	Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "Get-CbcAlert" {
@@ -25,7 +25,7 @@ Describe "Get-CbcAlert" {
 
 			Context "When raising exception from get alerts" {
 				It "Should write an error based on the exception that is returned" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 500
 							Content    = ""
@@ -43,7 +43,7 @@ Describe "Get-CbcAlert" {
 
 			Context "When not using any params" {
 				It "Should return all the alerts within the current connection" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 200
 							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
@@ -63,7 +63,7 @@ Describe "Get-CbcAlert" {
 
 			Context "When using the -DeviceId parameter" {
 				It "Should return the alerts according to the deviceid" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 200
 							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
@@ -87,7 +87,7 @@ Describe "Get-CbcAlert" {
 
 			Context "When using the -DevicePolicy, -ThreatId, -Type, -Severity parameter" {
 				It "Should return the alerts according to the params" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 200
 							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
@@ -112,7 +112,7 @@ Describe "Get-CbcAlert" {
 
 			Context "When using the -Include parameter" {
 				It "Should return the alerts according to the inclusion" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 200
 							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
@@ -137,7 +137,7 @@ Describe "Get-CbcAlert" {
 				}
 
 				It "Should not return alerts, but exception" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 500
 							Content    = ""
@@ -161,7 +161,7 @@ Describe "Get-CbcAlert" {
 
 			Context "When using the -Include -MaxResults params" {
 				It "Should return the alerts according to the inclusion and max results" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 200
 							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
@@ -203,7 +203,7 @@ Describe "Get-CbcAlert" {
 
 			Context "When not using any params" {
 				It "Should return all the alerts" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						if ($Server -eq $s1) {
 							@{
 								StatusCode = 200
@@ -234,7 +234,7 @@ Describe "Get-CbcAlert" {
 
 			Context "When using the -Include parameter" {
 				It "Should return the alerts according to the inclusion" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						if ($Server -eq $s1) {
 							@{
 								StatusCode = 200
@@ -272,7 +272,7 @@ Describe "Get-CbcAlert" {
 
 			Context "When using the -Include -MaxResults params" {
 				It "Should return the alerts according to the inclusion and max results" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						if ($Server -eq $s1) {
 							@{
 								StatusCode = 200
@@ -309,7 +309,7 @@ Describe "Get-CbcAlert" {
 
 			Context "When not using Server" {
 				It "Should return all the alerts for specific Server" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 200
 							Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
@@ -342,7 +342,7 @@ Describe "Get-CbcAlert" {
 			}
 
 			It "Should return alerts with the same id" {
-				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+				Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 					@{
 						StatusCode = 200
 						Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
@@ -362,7 +362,7 @@ Describe "Get-CbcAlert" {
 			}
 
 			It "Should not return alerts but exception" {
-				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+				Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 					@{
 						StatusCode = 500
 						Content    = ""
@@ -378,7 +378,7 @@ Describe "Get-CbcAlert" {
 			}
 
 			It "Should return alerts with the same id without '-Id' param" {
-				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+				Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 					@{
 						StatusCode = 200
 						Content    = Get-Content "$ProjectRoot/Tests/resources/alerts_api/all_alerts.json"
@@ -414,7 +414,7 @@ Describe "Get-CbcAlert" {
 			}
 
 			It "Should return alerts with the same id from multiple servers" {
-				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+				Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 					if ($Server -eq $s1) {
 						@{
 							StatusCode = 200
@@ -445,7 +445,7 @@ Describe "Get-CbcAlert" {
 			}
 
 			It "Should return alert from one server when connected to multiple servers" {
-				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+				Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 					if ($Server -eq $s1) {
 						@{
 							StatusCode = 200
@@ -472,7 +472,7 @@ Describe "Get-CbcAlert" {
 			}
 
 			It "Should return alerts with the same id without '-Id' param from multiple servers" {
-				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+				Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 					if ($Server -eq $s1) {
 						@{
 							StatusCode = 200

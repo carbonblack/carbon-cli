@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
 	$ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-	Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-	Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+	Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+	Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-	Remove-Module -Name PSCarbonBlackCloud -Force
+	Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "Connect-CbcServer" {
@@ -18,7 +18,7 @@ Describe "Connect-CbcServer" {
 
 	Context "When using the 'default' parameter set - exception" {
 		BeforeAll {
-			Mock Invoke-CBCRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CBCRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 500
 				}
@@ -32,7 +32,7 @@ Describe "Connect-CbcServer" {
 
 	Context "When using the 'default' parameter set" {
 		BeforeAll {
-			Mock Invoke-CBCRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CBCRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 200
 				}
@@ -73,7 +73,7 @@ Describe "Connect-CbcServer" {
 		}
 
 		It 'Should connect to a second server successfully' {
-			Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
+			Mock -ModuleName "CarbonCLI" -CommandName "Read-Host" -MockWith {
 				""
 			}
 
@@ -89,7 +89,7 @@ Describe "Connect-CbcServer" {
 		}
 
 		It 'Should not connect to a second server if you try to connect to the same server and no -Notes provided' {
-			Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
+			Mock -ModuleName "CarbonCLI" -CommandName "Read-Host" -MockWith {
 				""
 			}
 
@@ -105,7 +105,7 @@ Describe "Connect-CbcServer" {
 		}
 
 		It 'Should update the notes if you try to connect to the same server and -Notes param provided' {
-			Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
+			Mock -ModuleName "CarbonCLI" -CommandName "Read-Host" -MockWith {
 				""
 			}
 
@@ -119,7 +119,7 @@ Describe "Connect-CbcServer" {
 		}
 
 		It 'Should exit (on the warning) when connecting to a second server' {
-			Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
+			Mock -ModuleName "CarbonCLI" -CommandName "Read-Host" -MockWith {
 				 "Q"
 			}
 
@@ -133,7 +133,7 @@ Describe "Connect-CbcServer" {
 
 	Context "When using the 'menu' parameter set" {
 		BeforeAll {
-			Mock Invoke-CBCRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CBCRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 200
 				}
@@ -141,7 +141,7 @@ Describe "Connect-CbcServer" {
 		}
 
 		It 'Should choose a server and connect to it successfully' {
-			Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
+			Mock -ModuleName "CarbonCLI" -CommandName "Read-Host" -MockWith {
 				"1"
 			}
 
@@ -157,7 +157,7 @@ Describe "Connect-CbcServer" {
 		}
 
 		It 'Should choose the second server and connect to it successfully' {
-			Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
+			Mock -ModuleName "CarbonCLI" -CommandName "Read-Host" -MockWith {
 				"2"
 			}
 
@@ -177,7 +177,7 @@ Describe "Connect-CbcServer" {
 		}
 
 		It 'Should not choose any server and throw error' {
-			Mock -ModuleName "PSCarbonBlackCloud" -CommandName "Read-Host" -MockWith {
+			Mock -ModuleName "CarbonCLI" -CommandName "Read-Host" -MockWith {
 				"q"
 			}
 
@@ -198,7 +198,7 @@ Describe "Connect-CbcServer" {
 
 	Context "When using the 'credential' parameter set" {
 		BeforeAll {
-			Mock Invoke-CBCRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CBCRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 200
 				}

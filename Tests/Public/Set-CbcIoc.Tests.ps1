@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
     $ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-    Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-    Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+    Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+    Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-    Remove-Module -Name PSCarbonBlackCloud -Force
+    Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "Set-CbcIoc" {
@@ -41,11 +41,11 @@ Describe "Set-CbcIoc" {
             }
 
             It "Should update ioc" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -132,11 +132,11 @@ Describe "Set-CbcIoc" {
             }
 
             It "Should update ioc for specific connections" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -159,11 +159,11 @@ Describe "Set-CbcIoc" {
             }
 
             It "Should update ioc for specific connections - exception" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     $report1
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 500
                         Content    = ""
@@ -182,7 +182,7 @@ Describe "Set-CbcIoc" {
             }
 
             It "Should update ioc for all connections - no updates" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         $report1
                     }
@@ -197,7 +197,7 @@ Describe "Set-CbcIoc" {
             }
 
             It "Should update ioc for all connections - no iocs to update" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         $report1
                     }
@@ -207,7 +207,7 @@ Describe "Set-CbcIoc" {
                     
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -226,7 +226,7 @@ Describe "Set-CbcIoc" {
             }
 
             It "Should update ioc for all connections" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         $report1
                     }
@@ -236,7 +236,7 @@ Describe "Set-CbcIoc" {
                     
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -260,13 +260,13 @@ Describe "Set-CbcIoc" {
             }
 
             It "Should update ioc by providing CbcIoc" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         $report1
                     }
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -289,13 +289,13 @@ Describe "Set-CbcIoc" {
             }
 
             It "Should update ioc by providing CbcIoc - no iocs to update" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         $report1
                     }
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 200
                         Content    = ""
@@ -316,7 +316,7 @@ Describe "Set-CbcIoc" {
             }
 
             It "Should update ioc by providing CbcIoc - no updates" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         $report1
                     }
@@ -327,13 +327,13 @@ Describe "Set-CbcIoc" {
             }
 
             It "Should not update ioc for CbcReport - exception" {
-                Mock Get-CbcReport -ModuleName PSCarbonBlackCloud {
+                Mock Get-CbcReport -ModuleName CarbonCLI {
                     if ($Server -eq $s1) {
                         $report1
                     }
                 }
 
-                Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+                Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                     @{
                         StatusCode = 500
                         Content    = ""

@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
 	$ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-	Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-	Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+	Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+	Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-	Remove-Module -Name PSCarbonBlackCloud -Force
+	Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "Get-CbcJob" {
@@ -29,7 +29,7 @@ Describe "Get-CbcJob" {
 		}
 
 		It "Should return jobs (running) only from the specific server" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 200
 					Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/results_search_job_running.json"
@@ -48,7 +48,7 @@ Describe "Get-CbcJob" {
 		}
 
 		It "Should return process job (running) only from the specific server" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 200
 					Content    = Get-Content "$ProjectRoot/Tests/resources/process_api/results_search_job_running.json"
@@ -68,7 +68,7 @@ Describe "Get-CbcJob" {
 		}
 
 		It "Should return process details job (running) only from the specific server" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 200
 					Content    = Get-Content "$ProjectRoot/Tests/resources/process_api/results_search_job_running.json"
@@ -88,7 +88,7 @@ Describe "Get-CbcJob" {
 		}
 
         It "Should return jobs (running) only from the specific server by job object" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 200
 					Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/results_search_job_running.json"
@@ -107,7 +107,7 @@ Describe "Get-CbcJob" {
 		}
 
         It "Should not return jobs due to error" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                 @{
                     StatusCode = 400
                     Content    = Get-Content "$ProjectRoot/Tests/resources/observations_api/results_search_job_running.json"
@@ -141,7 +141,7 @@ Describe "Get-CbcJob" {
 		}
 
 		It "Should return jobs (running)" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                 if ($Endpoint -eq $global:CBC_CONFIG.endpoints["Observations"]["Results"]) {
                     @{
                         StatusCode = 200
@@ -178,7 +178,7 @@ Describe "Get-CbcJob" {
 		}
 
         It "Should return jobs (running) from one server" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
                 if ($Endpoint -eq $global:CBC_CONFIG.endpoints["Observations"]["Results"]) {
                     @{
                         StatusCode = 200

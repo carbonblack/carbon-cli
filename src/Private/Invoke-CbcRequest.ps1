@@ -1,4 +1,4 @@
-using module ../PSCarbonBlackCloud.Classes.psm1
+using module ../CarbonCLI.Classes.psm1
 function Invoke-CbcRequest {
 	[CmdletBinding()]
 	param(
@@ -26,7 +26,7 @@ function Invoke-CbcRequest {
 		$Headers = @{
 			"X-AUTH-TOKEN" = $Server.Token | ConvertFrom-SecureString -AsPlainText
 			"Content-Type" = "application/json"
-			"User-Agent" = "PSCarbonBlackCloud"
+			"User-Agent" = "CarbonCLI"
 		}
 		$Params =,$Server.Org + $Params
 		$FormattedUri = $Endpoint -f $Params

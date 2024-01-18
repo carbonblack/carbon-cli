@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
 	$ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-	Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-	Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+	Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+	Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-	Remove-Module -Name PSCarbonBlackCloud -Force
+	Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "Get-CbcDevice" {
@@ -27,7 +27,7 @@ Describe "Get-CbcDevice" {
 		}
 
 		It "Should return devices only from the specific server" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 200
 					Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/all_devices.json"
@@ -64,7 +64,7 @@ Describe "Get-CbcDevice" {
 
 			Context "When not using any params" {
 				It "Should return all the devices within the current connection" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 200
 							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/all_devices.json"
@@ -90,7 +90,7 @@ Describe "Get-CbcDevice" {
 
 			Context "When returning error from the API" {
 				It "Should not return any devices but an error" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 500
 							Content    = ""
@@ -124,7 +124,7 @@ Describe "Get-CbcDevice" {
 
 			Context "When not using any params" {
 				It "Should return all the devices from multiple servers" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						if ($Server -eq $s1) {
 							@{
 								StatusCode = 200
@@ -172,7 +172,7 @@ Describe "Get-CbcDevice" {
 
 			Context "When using the -Exclude parameter" {
 				It "Should return the devices according to the exclusion" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 200
 							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/exclusions_devices.json"
@@ -200,7 +200,7 @@ Describe "Get-CbcDevice" {
 
 			Context "When using the -Exclude parameter - exception" {
 				It "Should return the devices according to the exclusion - exception" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 500
 							Content    = ""
@@ -224,7 +224,7 @@ Describe "Get-CbcDevice" {
 
 			Context "When using the -Include parameter" {
 				It "Should return the devices according to the inclusion" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 200
 							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/criteria_devices.json"
@@ -259,7 +259,7 @@ Describe "Get-CbcDevice" {
 
 			Context "When using the -Include -Exclude and -MaxResults params" {
 				It "Should return the devices according to the inclusion and exclusion" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 200
 							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/exclusions_criteria_devices.json"
@@ -295,7 +295,7 @@ Describe "Get-CbcDevice" {
 
 			Context "When using the Os, OsVersion, Status, Priority params" {
 				It "Should return the devices according to the provided filters" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 200
 							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
@@ -339,7 +339,7 @@ Describe "Get-CbcDevice" {
 
 			Context "When using the -Exclude parameter" {
 				It "Should return the devices according to the exclusion from multiple servers" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						if ($Server -eq $s1) {
 							@{
 								StatusCode = 200
@@ -379,7 +379,7 @@ Describe "Get-CbcDevice" {
 
 			Context "When using the -Include parameter" {
 				It "Should return the devices according to the inclusion from multiple servers" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						if ($Server -eq $s1) {
 							@{
 								StatusCode = 200
@@ -422,7 +422,7 @@ Describe "Get-CbcDevice" {
 
 			Context "When using the -Include and -Exclude params" {
 				It "Should return the devices according to the inclusion and exclusion from multiple servers" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						if ($Server -eq $s1) {
 							@{
 								StatusCode = 200
@@ -468,7 +468,7 @@ Describe "Get-CbcDevice" {
 
 			Context "When using the Os, OsVersion, Status, Priority params with multiple connections" {
 				It "Should return the devices according to the provided filters" {
-					Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 						@{
 							StatusCode = 200
 							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
@@ -510,7 +510,7 @@ Describe "Get-CbcDevice" {
 			}
 
 			It "Should return device with the same id" {
-				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+				Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 					@{
 						StatusCode = 200
 						Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
@@ -533,7 +533,7 @@ Describe "Get-CbcDevice" {
 			}
 
 			It "Should return device with the same id without '-Id' param" {
-				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+				Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 					@{
 						StatusCode = 200
 						Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
@@ -572,7 +572,7 @@ Describe "Get-CbcDevice" {
 			}
 
 			It "Should return devices with the same id from multiple servers" {
-				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+				Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 					@{
 						StatusCode = 200
 						Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
@@ -599,7 +599,7 @@ Describe "Get-CbcDevice" {
 			}
 
 			It "Should return devices with the same id without '-Id' param from multiple servers" {
-				Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+				Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 					@{
 						StatusCode = 200
 						Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"

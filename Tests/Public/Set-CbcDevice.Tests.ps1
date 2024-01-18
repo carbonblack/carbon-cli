@@ -1,13 +1,13 @@
-using module ..\..\src\PSCarbonBlackCloud.Classes.psm1
+using module ..\..\src\CarbonCLI.Classes.psm1
 
 BeforeAll {
 	$ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-	Remove-Module -Name PSCarbonBlackCloud -ErrorAction 'SilentlyContinue' -Force
-	Import-Module $ProjectRoot\src\PSCarbonBlackCloud.psm1 -Force
+	Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
+	Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
 }
 
 AfterAll {
-	Remove-Module -Name PSCarbonBlackCloud -Force
+	Remove-Module -Name CarbonCLI -Force
 }
 
 Describe "Set-CbcDevice" {
@@ -120,7 +120,7 @@ Describe "Set-CbcDevice" {
 
 	Context "When using a `CbcDevice` object" {
 		It "Should quarantine the device - error" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -133,7 +133,7 @@ Describe "Set-CbcDevice" {
 				($Body | ConvertFrom-Json).criteria.id[0] -eq $device1.Id
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 500
 					Content    = ""
@@ -153,7 +153,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should quarantine the device" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -166,7 +166,7 @@ Describe "Set-CbcDevice" {
 				($Body | ConvertFrom-Json).criteria.id[0] -eq $device1.Id
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -188,7 +188,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should quarantine the devices" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -210,7 +210,7 @@ Describe "Set-CbcDevice" {
 				)
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -237,7 +237,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should unquarantine the device" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -250,7 +250,7 @@ Describe "Set-CbcDevice" {
 				($Body | ConvertFrom-Json).criteria.id[0] -eq $device1.Id
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -273,7 +273,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should unquarantine the devices" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -295,7 +295,7 @@ Describe "Set-CbcDevice" {
 				)
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -322,7 +322,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should scan the device" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -335,7 +335,7 @@ Describe "Set-CbcDevice" {
 				($Body | ConvertFrom-Json).criteria.id[0] -eq $device1.Id
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -358,7 +358,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should scan the devices" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -380,7 +380,7 @@ Describe "Set-CbcDevice" {
 				)
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				return @{
 					StatusCode = 204
 					Content    = ""
@@ -407,7 +407,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should pause the scan on the device" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -420,7 +420,7 @@ Describe "Set-CbcDevice" {
 				($Body | ConvertFrom-Json).criteria.id[0] -eq $device1.Id
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -442,7 +442,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should pause the scan on the devices" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -464,7 +464,7 @@ Describe "Set-CbcDevice" {
 				)
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -491,7 +491,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should update the sensor of the device" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -504,7 +504,7 @@ Describe "Set-CbcDevice" {
 				($Body | ConvertFrom-Json).criteria.id[0] -eq $device1.Id
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -526,7 +526,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should update the sensor of the devices" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -548,7 +548,7 @@ Describe "Set-CbcDevice" {
 				)
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				return @{
 					StatusCode = 204
 					Content    = ""
@@ -579,7 +579,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should uninstall the sensor of the device" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -592,7 +592,7 @@ Describe "Set-CbcDevice" {
 				($Body | ConvertFrom-Json).criteria.id[0] -eq $device1.Id
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -613,7 +613,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should uninstall the sensor of the devices" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -635,7 +635,7 @@ Describe "Set-CbcDevice" {
 				)
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -663,7 +663,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should enable bypass the device" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -676,7 +676,7 @@ Describe "Set-CbcDevice" {
 				($Body | ConvertFrom-Json).criteria.id[0] -eq $device1.Id
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -698,7 +698,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should enable bypass the devices" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -720,7 +720,7 @@ Describe "Set-CbcDevice" {
 				)
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -750,7 +750,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should disable bypass the device" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -763,7 +763,7 @@ Describe "Set-CbcDevice" {
 				($Body | ConvertFrom-Json).criteria.id[0] -eq $device1.Id
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -785,7 +785,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should disable bypass the devices" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -807,7 +807,7 @@ Describe "Set-CbcDevice" {
 				)
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -837,7 +837,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should update the policy of the device using PolicyId" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -850,7 +850,7 @@ Describe "Set-CbcDevice" {
 				($Body | ConvertFrom-Json).criteria.id[0] -eq $device1.Id
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -873,7 +873,7 @@ Describe "Set-CbcDevice" {
 		}
 
 		It "Should update the policy of the device using Policy object" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -886,7 +886,7 @@ Describe "Set-CbcDevice" {
 				($Body | ConvertFrom-Json).criteria.id[0] -eq $device1.Id
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""
@@ -920,7 +920,7 @@ Describe "Set-CbcDevice" {
 
 	Context "When using `DeviceId` param" {
 		It "Should quarantine the device" {
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				if ($Server -eq $s1) {
 					@{
 						StatusCode = 200
@@ -939,7 +939,7 @@ Describe "Set-CbcDevice" {
 				($Body | ConvertFrom-Json).criteria.id -eq 3
 			}
 
-			Mock Invoke-CbcRequest -ModuleName PSCarbonBlackCloud {
+			Mock Invoke-CbcRequest -ModuleName CarbonCLI {
 				@{
 					StatusCode = 204
 					Content    = ""

@@ -13,4 +13,4 @@ RUN apt-get install -y powershell
 
 SHELL ["pwsh", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
-RUN ./Build-PSCarbonBlackCloud.ps1
+RUN ./Build-CarbonCLI.ps1
