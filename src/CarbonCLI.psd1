@@ -12,7 +12,7 @@
     RootModule        = 'CarbonCLI.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.0.1'
+    ModuleVersion     = '1.0.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -98,10 +98,10 @@
             # Tags = @()
 
             # A URL to the license for this module.
-            # LicenseUri = ''
+            LicenseUri = 'https://github.com/carbonblack/CarbonCLI/blob/main/LICENSE'
 
             # A URL to the main website for this project.
-            # ProjectUri = ''
+            ProjectUri = 'https://github.com/carbonblack/CarbonCLI'
 
             # A URL to an icon representing this module.
             # IconUri = ''
