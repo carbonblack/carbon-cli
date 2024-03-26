@@ -19,7 +19,7 @@ $RequiredModules = Import-PowerShellDataFile -Path "./build.requirements.psd1"
 Write-Output "Installing..."
 foreach ($Module in $RequiredModules["requirements"]) {
     if ( -not (Get-Module -ListAvailable -Name $Module.ModuleName)) {
-        Write-Host $Module.ModuleName
+        Write-Output $Module.ModuleName
         Install-Module -Name $Module.ModuleName -Scope AllUsers -RequiredVersion $Module.RequiredVersion -Force -SkipPublisherCheck
     }
 }
