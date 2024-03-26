@@ -1,4 +1,4 @@
-Import-Module CarbonCLI
+Import-Module ./CarbonCLI/CarbonCLI.psm1
 # $DebugPreference = 'Continue'
 # Set-PsDebug -Trace 2
 
