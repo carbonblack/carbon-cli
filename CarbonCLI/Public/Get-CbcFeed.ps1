@@ -2,7 +2,7 @@ using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet returns all feeds or specific feed from all valid connections.
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet returns all feeds or specific feed from all valid connections.
@@ -25,7 +25,7 @@ Permissions needed: READ org.feeds
 .EXAMPLE
 PS > Get-CbcFeed
 
-Returns all feeds from all connections. 
+Returns all feeds from all connections.
 If you have multiple connections and you want feeds from a specific connection
 you can add the `-Server` param.
 
@@ -65,10 +65,10 @@ function Get-CbcFeed {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
-       
+
         $ExecuteServers | ForEach-Object {
             $CurrentServer = $_
-  
+
             $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Feed"]["Search"] `
                 -Method GET `
                 -Server $_ `

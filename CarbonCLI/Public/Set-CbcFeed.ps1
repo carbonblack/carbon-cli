@@ -2,7 +2,7 @@ using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet updates feed info from all valid connections.
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet updates feed info from all valid connections.
@@ -31,7 +31,7 @@ Permissions needed: UPDATE org.feeds
 .EXAMPLE
 PS > Set-CbcFeed -Id R4cMgFIhRaakgk749MRr6Q -Name demo -summary summary -Category category -Alertable $true -ProviderUrl http://test.test/
 
-Update feed details with specific ids from all connections. 
+Update feed details with specific ids from all connections.
 If you have multiple connections and you want watchlist from a specific connection
 you can add the `-Server` param.
 
@@ -83,7 +83,7 @@ function Set-CbcFeed {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
-       
+
         switch ($PSCmdlet.ParameterSetName) {
             "Default" {
                 $ExecuteServers | ForEach-Object {

@@ -1,15 +1,15 @@
-using module ../CarbonCLI.Classes.psm1
+﻿using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet creates a report in all valid connections - up to 10K reports can be added in a single feed.
 
 A report groups one or more IOCs together, which may reflect a number of possible conditions to look for, or a number
 of conditions related to a particular target program or type of malware. Reports can be used to organize IOCs.
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 Watchlists are powerful feature that allows organization to focus on specific rules, for which alerts to be created.
-However to take advantage of that functionality, an organization needs to have EEDR product enabled and do execute a flow that creates the 
+However to take advantage of that functionality, an organization needs to have EEDR product enabled and do execute a flow that creates the
 necessary objects.
 
 The steps to do that are:

@@ -2,7 +2,7 @@ using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet updates report for all valid connections.
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet updates report for all valid connections.
@@ -28,7 +28,7 @@ Permissions needed: CREATE, UPDATE org.feeds
 .EXAMPLE
 PS > Set-CbcReport -FeedId R4cMgFIhRaakgk749MRr6Q -Id R4cMgFIhRaakgk749MRr6Q -Title demo -Severity 6
 
-Update report title and severity with specific ids from all connections. 
+Update report title and severity with specific ids from all connections.
 If you have multiple connections and you want watchlist from a specific connection
 you can add the `-Server` param.
 

@@ -44,7 +44,7 @@ PS > Get-CbcObservation -Include @{"alert_category" = @("THREAT")}
 
 Returning all the observations that are in the THREAT alert category.
 .EXAMPLE
-PS > Get-CbcObservation -AlertId "b01dad69-09e8-71ba-6542-60f5a8d58030" -ObservationType "CB_ANALYTICS" -EventType "childproc" -DeviceId 1111111 
+PS > Get-CbcObservation -AlertId "b01dad69-09e8-71ba-6542-60f5a8d58030" -ObservationType "CB_ANALYTICS" -EventType "childproc" -DeviceId 1111111
 
 You can filter by AlertId, DeviceId, EventType, ObservationType
 .EXAMPLE

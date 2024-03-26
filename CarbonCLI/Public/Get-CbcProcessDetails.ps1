@@ -15,7 +15,7 @@ PS > Get-CbcProcessDetails -Id "95016925089911ee9568b74cff311:23f4c71a-e350-8576
 
 Returns the processes with specified Ids.
 .EXAMPLE
-PS > $criteria = @{"device_name" = @("Win7x64")} 
+PS > $criteria = @{"device_name" = @("Win7x64")}
 PS > Get-CbcProcess -Include $criteria | Get-CbcProcessDetails
 
 Returns the process details for all processes that matches the criteria.

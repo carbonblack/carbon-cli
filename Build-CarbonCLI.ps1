@@ -24,4 +24,4 @@ foreach ($Module in $RequiredModules["requirements"]) {
     }
 }
 
-Invoke-ScriptAnalyzer -Path $PSScriptRoot\src\ -Recurse -ExcludeRule PSUseOutputTypeCorrectly, PSReviewUnusedParameter, PSAvoidGlobalVars, PSUseShouldProcessForStateChangingFunctions, PSUseToExportFieldsInManifest, PSUseSingularNouns
+Invoke-ScriptAnalyzer -Path $PSScriptRoot\CarbonCLI\ -Recurse -ExcludeRule PSUseOutputTypeCorrectly, PSReviewUnusedParameter, PSAvoidGlobalVars, PSUseShouldProcessForStateChangingFunctions, PSUseToExportFieldsInManifest, PSUseSingularNouns

@@ -2,7 +2,7 @@ using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet retrieves detailed information about specific feed specified by its id or the feed object itself.
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet retrieves detailed information about specific feed specified by its id or the feed object itself.
@@ -57,13 +57,13 @@ function Get-CbcFeedDetails {
         if ($PSCmdlet.ParameterSetName -eq "Id") {
             $ExecuteServers | ForEach-Object {
                 $CurrentServer = $_
-      
+
                 $Id | ForEach-Object {
                     $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Feed"]["Details"] `
                         -Method GET `
                         -Server  $CurrentServer `
                         -Params $_ `
-    
+
                     if ($Response.StatusCode -ne 200) {
                         Write-Error -Message $("Cannot get feed(s) for $($CurrentServer)")
                     }

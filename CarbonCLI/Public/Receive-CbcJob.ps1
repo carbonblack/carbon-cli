@@ -8,7 +8,7 @@ Sets the job id
 .OUTPUTS
 Depending on the job type:
 * CbcObservation[]
-* CbcObservationDetails[] 
+* CbcObservationDetails[]
 * CbcProcess[]
 * CbcProcessDetails[]
 .NOTES
@@ -61,7 +61,6 @@ function Receive-CbcJob {
         [Parameter(ParameterSetName = "Id")]
         [CbcServer[]]$Server
     )
-    
     begin {
         Write-Debug "[$($MyInvocation.MyCommand.Name)] function started"
     }
@@ -107,7 +106,7 @@ function Receive-CbcJob {
                     $Endpoint = $global:CBC_CONFIG.endpoints["ProcessDetails"]
                 }
             }
-            
+
             if ($Endpoint) {
                 $Response = Invoke-CbcRequest -Endpoint $Endpoint["Results"] `
                     -Method GET `
@@ -121,7 +120,7 @@ function Receive-CbcJob {
                     $JsonContent = $Response.Content | ConvertFrom-Json
                     $Contacted = $JsonContent.contacted
                     $Completed = $JsonContent.completed
-                    
+
                     if ($Contacted -ne $Completed) {
                         Write-Error "Not ready to retrieve."
                     }

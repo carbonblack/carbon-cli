@@ -17,7 +17,7 @@ function Update-CbcFeed {
     $RequestBody.category = $FeedObj.Category
     $RequestBody.alertable = $FeedObj.Alertable
     $RequestBody.provider_url = $FeedObj.ProviderUrl
-    
+
     if ($PSBoundParameters.ContainsKey("Name")) {
         $RequestBody.name = $PSBoundParameters["Name"]
     }

@@ -24,7 +24,6 @@ class CbcServer {
 
 	}
 
-	
 	[bool] IsConnected ($defaultServers) {
 		foreach ($defaultServer in $defaultServers) {
 			if (($this.Uri -eq $defaultServer.Uri) -and

@@ -22,7 +22,7 @@ Permissions needed: READ org.feeds
 .EXAMPLE
 PS > Get-CbcReport -FeedId 5hBIvXltQqy0oAAqdEh0A, jwUoZu1WRBujSoCcYNa6fA
 
-Returns all reports for specific feed from all connections. 
+Returns all reports for specific feed from all connections.
 If you have multiple connections and you want reports from a specific connection
 you can add the `-Server` param.
 
@@ -73,7 +73,7 @@ function Get-CbcReport {
             "Default" {
                 $ExecuteServers | ForEach-Object {
                     $CurrentServer = $_
-     
+
                     $FeedId | ForEach-Object {
                         $CurrentFeedId = $_
                         $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Search"] `

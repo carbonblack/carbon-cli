@@ -2,7 +2,7 @@ using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet removes report from all valid connections.
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet removes report from all valid connections.
@@ -22,7 +22,7 @@ Permissions needed: DELETE org.feeds
 .EXAMPLE
 PS > Remove-CbcReport -FeedId 5hBIvXltQqy0oAAqdEh0A -Id R4cMgFIhRaakgk749MRr6Q, R4cMgFIhRaakgk749MRr62
 
-Removes report with specific ids from all connections. 
+Removes report with specific ids from all connections.
 If you have multiple connections and you want report from a specific connection
 you can add the `-Server` param.
 
@@ -57,7 +57,7 @@ function Remove-CbcReport {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
-       
+
         switch ($PSCmdlet.ParameterSetName) {
             "Default" {
                 $ExecuteServers | ForEach-Object {
@@ -67,7 +67,7 @@ function Remove-CbcReport {
                             -Method DELETE `
                             -Server $CurrentServer `
                             -Params @($FeedId, $_)
-            
+
                         if ($Response.StatusCode -ne 204) {
                             Write-Error -Message $("Cannot delete report(s) for $($CurrentServer)")
                         }

@@ -2,7 +2,7 @@ using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet returns all ioc in a specific report from all valid connections.
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet returns all ioc in a specific report from all valid connections.
@@ -27,7 +27,7 @@ Permissions needed: READ org.feeds
 .EXAMPLE
 PS > Get-CbcIoc -FeedId 5hBIvXltQqy0oAAqdEh0A -ReportId 11a1a1a1-b22b-3333-44cc-dd5555d5d5fd
 
-Returns all iocs under specific feed id and report id for specific feed from all connections. 
+Returns all iocs under specific feed id and report id for specific feed from all connections.
 If you have multiple connections and you want iocs from a specific connection
 you can add the `-Server` param.
 
@@ -99,7 +99,6 @@ function Get-CbcIoc {
                                 return Initialize-CbcIoc $_ $FeedId $ReportId $CurrentServer
                             }
                         }
-                        
                     }
                 }
             }
@@ -124,7 +123,6 @@ function Get-CbcIoc {
                             return Initialize-CbcIoc $_ $Report.FeedId $Report.Id $Report.Server
                         }
                     }
-                    
                 }
             }
         }

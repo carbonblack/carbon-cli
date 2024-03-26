@@ -1,17 +1,17 @@
-using module ../CarbonCLI.Classes.psm1
+﻿using module ../CarbonCLI.Classes.psm1
 
 <#
 .SYNOPSIS
 This cmdlet establishes a connection to the specified CBC Sever endpoint and corresponding organization
 .DESCRIPTION
-Establish a connection to a CBC Sever endpoint and corresponding organization by providing arguments for hte  
-`-Server, -Org and -Token` parameters. To disconnect from a server, you can use the Disconnect-CbcServer cmdlet. 
-CarbonCLI supports working with multiple default connections. Unique connections are determined from the Uri/Org pair. Multiple connections to the same 
-Uri/Org are not allowed (even with different tokens). Every time when you establish a different connection by using the Connect-CbcServer cmdlet, 
-the new connection is stored in a global array variable together with the previously established connections. This variable is named $DefaultCbcServers and its initial value is an empty array. 
-When you run a cmdlet and the target servers cannot be determined from the context of the specified parameters or the -Server parameter itself, 
-the cmdlet runs against all connections stored in the $DefaultCbcServers array variable. Disconnect-CbcServer does remove the coresponding server from $DefaultCbcServers. 
-You could also manipulate the $DefaultCbcServers array manually. 
+Establish a connection to a CBC Sever endpoint and corresponding organization by providing arguments for the
+`-Server, -Org and -Token` parameters. To disconnect from a server, you can use the Disconnect-CbcServer cmdlet.
+CarbonCLI supports working with multiple default connections. Unique connections are determined from the Uri/Org pair. Multiple connections to the same
+Uri/Org are not allowed (even with different tokens). Every time when you establish a different connection by using the Connect-CbcServer cmdlet,
+the new connection is stored in a global array variable together with the previously established connections. This variable is named $DefaultCbcServers and its initial value is an empty array.
+When you run a cmdlet and the target servers cannot be determined from the context of the specified parameters or the -Server parameter itself,
+the cmdlet runs against all connections stored in the $DefaultCbcServers array variable. Disconnect-CbcServer does remove the coresponding server from $DefaultCbcServers.
+You could also manipulate the $DefaultCbcServers array manually.
 
 .PARAMETER Uri
 Specifies the IP or HTTP addresses of the Cbc Server you want to connect to.
@@ -20,30 +20,30 @@ Specifies the Organization that is going to be used in the authentication proces
 .PARAMETER Token
 Specifies the X-Auth token that is going to be used in the authentication process.
 .PARAMETER SaveConnection
-Indicates that you want to save the specified connection in the local connection store. 
+Indicates that you want to save the specified connection in the local connection store.
 This includes storing Uri, Org and Token. Saved connections can be used with Connect-CbcServer -Menu option.
-On Windows machines the Token is stored as an encrypted string using the Windows Data Protection API for encryption. 
+On Windows machines the Token is stored as an encrypted string using the Windows Data Protection API for encryption.
 This effectively means that only the same user account on the same computer will be able to use this encrypted string.
-NB: On the rest of the platforms the token is not encrypted rather than obduscated. 
+NB: On the rest of the platforms the token is not encrypted rather than obduscated.
 .PARAMETER Menu
 Switch parameter. Lists all available connections from the local connection store.
 .PARAMETER Credential
-You could provide atuhentication details such as Org Id and the X-AUTH token as a PSCredential object. 
+You could provide atuhentication details such as Org Id and the X-AUTH token as a PSCredential object.
 The Org Id should be provided to the PSCredential.UserName property and the X-AUTH token to the PSCredentail.Password property.
-In case a string is provided for an argument of the Credential parameter it will be treated as an Org Id and you will be prompted for the corresponding token. 
-See the provided examples. 
+In case a string is provided for an argument of the Credential parameter it will be treated as an Org Id and you will be prompted for the corresponding token.
+See the provided examples.
 
 .OUTPUTS
 CbcServer
 .EXAMPLE
 PS > Connect-CbcServer -Server "http://cbcserver.cbc" -Org "MyOrg" -Token "MyToken" -Notes "ProdEnv"
 
-Connects with the specified Server, Org, Token and returns a CbcServer Object. 
+Connects with the specified Server, Org, Token and returns a CbcServer Object.
 
 .EXAMPLE
-PS > Connect-CbcServer -Server "http://cbcserver.cbc" -Org "MyOrg" -Token "MyToken" -Notes "ProdEnv" -SaveConnection 
+PS > Connect-CbcServer -Server "http://cbcserver.cbc" -Org "MyOrg" -Token "MyToken" -Notes "ProdEnv" -SaveConnection
 
-Store the connection in the local store for reuse across multiple Powershell sesssions. 
+Store the connection in the local store for reuse across multiple Powershell sesssions.
 
 .EXAMPLE
 PS > Connect-CbcServer -Menu
@@ -83,12 +83,12 @@ PS > Get-CbcAlert
 Retrieves all alerts from both the Prod and Dev environments.
 
 PS > Get-CbcAlert -Server $prodServer
-Retrieves only alerts from prod env. 
+Retrieves only alerts from prod env.
 
 PS > $prodAlert234 = Get-CbcAlert -Id "2434" -Server $prodServer
 PS > Set-CbcAlert -Alert $prodAlert234 -Dismiss
 Retrieves a CBC Alert with id = 234 from the prod environment and then dismisses it.
-Same as: 
+Same as:
 PS > Get-CbcAlert -Id "2434" -Server $prodServer | Set-CbcAlert -Dismiss
 
 .EXAMPLE
@@ -98,7 +98,7 @@ Connects to the specified two environments.
 PS > $IncludeCriteria = @{}
 PS > $IncludeCriteria.type = @("CB_ANALYTICS")
 PS > $IncludeCriteria.minimum_severity = 3
-PS > Get-CbcAlert -Include $IncludeCriteria -Server $prodServer | foreach { Set-CbcDevice -Id $_.DeviceID -QuarantineEnabled $true }
+PS > Get-CbcAlert -Include $IncludeCriteria -Server $prodServer | ForEach-Object { Set-CbcDevice -Id $_.DeviceID -QuarantineEnabled $true }
 Retrieves all alerts with the specified criteria from the prod env and quarantines all devices ( on the prod env as infered from the Alerts objects passed throug the pipeline)
 that contain that alert
 
@@ -108,7 +108,7 @@ API Documentation: https://developer.carbonblack.com/reference/carbon-black-clou
 function Connect-CbcServer {
 	[CmdletBinding(DefaultParameterSetName = "default")]
 	param(
-		
+
 		[Parameter(ParameterSetName = "default", Mandatory = $true, Position = 0)]
 		[Parameter(ParameterSetName = "credentials", Mandatory = $true)]
 		[Alias("Server")]
@@ -118,7 +118,7 @@ function Connect-CbcServer {
 		[string]$Org,
 
 		[Parameter(ParameterSetName = "default", Mandatory = $true, Position = 2)]
-		[string]$Token, 
+		[string]$Token,
 
 		[Parameter(ParameterSetName = "default", Position = 3)]
 		[Parameter(ParameterSetName = "credentials")]
@@ -144,7 +144,7 @@ function Connect-CbcServer {
 
 		# Show the currently connected Cbc servers warning
 		if ($global:DefaultCbcServers.Count -ge 1) {
-			
+
 			Write-Warning -Message "You are currently connected to: "
 			$global:DefaultCbcServers | ForEach-Object {
 				$OutputMessage = $_.Uri + " Organization: " + $_.Org
@@ -166,7 +166,7 @@ function Connect-CbcServer {
 				if ($CbcServerObject.IsConnected($global:DefaultCbcServers)) {
 					if ($PSBoundParameters.ContainsKey("Notes")) {
 						Write-Warning 'You are already connected to this server and organization. Updating notes. No additional connection established.'
-						$global:DefaultCbcServers | where {($_.URI -ieq $Uri) -and ($_.Org -ieq $Org)} | foreach {$_.Notes = $Notes}
+						$global:DefaultCbcServers | Where-Object {($_.URI -ieq $Uri) -and ($_.Org -ieq $Org)} | ForEach-Object {$_.Notes = $Notes}
 					} else {
 						Write-Error 'You are already connected to this server and organization. No additional connection established.' -ErrorAction 'Stop'
 					}
@@ -180,7 +180,7 @@ function Connect-CbcServer {
 						if (($global:CBC_CONFIG.savedConnections.IsInFile($CbcServerObject)) -and $PSBoundParameters.ContainsKey("Notes")) {
 							# UpdateNotes
 							Write-Warning "Connection is already saved. Updating Notes for the saved connection."
-							$global:CBC_CONFIG.sessionConnections | where {($_.URI -ieq $Uri) -and ($_.Org -ieq $Org)} | foreach {$_.Notes = $Notes}
+							$global:CBC_CONFIG.sessionConnections | Where-Object {($_.URI -ieq $Uri) -and ($_.Org -ieq $Org)} | ForEach-Object {$_.Notes = $Notes}
 						} elseif ($global:CBC_CONFIG.savedConnections.IsInFile($CbcServerObject)) {
 							Write-Warning "The connection is already saved!. No updates to it."
 						} else {
@@ -192,12 +192,12 @@ function Connect-CbcServer {
 			}
 			"credentials" {
 				Write-Verbose "[$($MyInvocation.MyCommand.Name)] Processing (credentials)"
-				
+
 				$CbcServerObject = [CbcServer]::new($Uri, $Credential.UserName, $Credential.Password, $Notes)
 				if ($CbcServerObject.IsConnected($global:DefaultCbcServers)) {
 					if ($PSBoundParameters.ContainsKey("Notes")) {
 						Write-Warning 'You are already connected to this server and organization. Updating notes. No additional connection established.'
-						$global:DefaultCbcServers | where {($_.URI -ieq $Uri) -and ($_.Org -ieq $Org)} | foreach {$_.Notes = $Notes}
+						$global:DefaultCbcServers | Where-Object {($_.URI -ieq $Uri) -and ($_.Org -ieq $Org)} | ForEach-Object {$_.Notes = $Notes}
 					} else {
 						Write-Error 'You are already connected to this server and organization. No additional connection established.' -ErrorAction 'Stop'
 					}
@@ -211,7 +211,7 @@ function Connect-CbcServer {
 						if (($global:CBC_CONFIG.savedConnections.IsInFile($CbcServerObject)) -and $PSBoundParameters.ContainsKey("Notes")) {
 							# UpdateNotes
 							Write-Warning "Connection is already saved. Updating Notes for the saved connection."
-							$global:CBC_CONFIG.sessionConnections | where {($_.URI -ieq $Uri) -and ($_.Org -ieq $Org)} | foreach {$_.Notes = $Notes}
+							$global:CBC_CONFIG.sessionConnections | Where-Object {($_.URI -ieq $Uri) -and ($_.Org -ieq $Org)} | ForEach-Object {$_.Notes = $Notes}
 						} elseif ($global:CBC_CONFIG.savedConnections.IsInFile($CbcServerObject)) {
 							Write-Warning "The connection is already saved!. No updates to it."
 						} else {
@@ -253,7 +253,6 @@ function Connect-CbcServer {
 					$global:DefaultCbcServers.Add($CbcServerObject) | Out-Null
 				}
 			}
-			
 		}
 		return $CbcServerObject
 	}

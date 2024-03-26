@@ -2,7 +2,7 @@ using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet removes watchlist from all valid connections.
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/watchlist-api
 .SYNOPSIS
 This cmdlet removes watchlist from all valid connections.
@@ -21,7 +21,7 @@ Permissions needed: DELETE org.watchlists
 .EXAMPLE
 PS > Remove-CbcWatchlist -Id R4cMgFIhRaakgk749MRr6Q
 
-Removes watchlist with specific ids from all connections. 
+Removes watchlist with specific ids from all connections.
 If you have multiple connections and you want watchlist from a specific connection
 you can add the `-Server` param.
 
@@ -53,7 +53,7 @@ function Remove-CbcWatchlist {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
-       
+
         switch ($PSCmdlet.ParameterSetName) {
             "Default" {
                 $ExecuteServers | ForEach-Object {
@@ -63,7 +63,7 @@ function Remove-CbcWatchlist {
                             -Method DELETE `
                             -Server $CurrentServer `
                             -Params $_
-            
+
                         if ($Response.StatusCode -ne 204) {
                             Write-Error -Message $("Cannot delete watchlist(s) for $($CurrentServer)")
                         }

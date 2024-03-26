@@ -6,11 +6,11 @@ This cmdlet is created to add ioc to existing report.
 An indicator of compromise (IOC) is a query, list of strings, or list of regular expressions which constitutes
 actionable threat intelligence that the Carbon Black Cloud is set up to watch for. Any activity that matches one of these may
 indicate a compromise of an endpoint.
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 Watchlists are powerful feature that allows organization to focus on specific rules, for which alerts to be created.
-However to take advantage of that functionality, an organization needs to have EEDR product enabled and do execute a flow that creates the 
+However to take advantage of that functionality, an organization needs to have EEDR product enabled and do execute a flow that creates the
 necessary objects.
 
 The steps to do that are:
@@ -138,21 +138,21 @@ function New-CbcIoc {
                         if ($Report.IocsV2) {
                             $UpdatedReport.iocs_v2 += $Report.IocsV2
                             $UpdatedReport.iocs_v2 += $IOC
-                           
+
                         }
                         else {
                             $UpdatedReport.iocs_v2 += $IOC
                         }
 
-                        $RequestBody = $UpdatedReport        
+                        $RequestBody = $UpdatedReport
                         $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
-        
+
                         $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
                             -Method PUT `
                             -Server $_ `
                             -Params @($FeedId, $ReportId) `
                             -Body $RequestBody
-        
+
                         if ($Response.StatusCode -ne 200) {
                             Write-Error -Message $("Cannot update reports for $($_)")
                         }
@@ -189,15 +189,15 @@ function New-CbcIoc {
                             $UpdatedReport.iocs_v2 = @($IOC)
                         }
 
-                        $RequestBody = $UpdatedReport        
+                        $RequestBody = $UpdatedReport
                         $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
-        
+
                         $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
                             -Method PUT `
                             -Server $CurrentReport.Server `
                             -Params @($CurrentReport.FeedId, $CurrentReport.Id) `
                             -Body $RequestBody
-        
+
                         if ($Response.StatusCode -ne 200) {
                             Write-Error -Message $("Cannot update reports for $($CurrentReport.Server)")
                         }

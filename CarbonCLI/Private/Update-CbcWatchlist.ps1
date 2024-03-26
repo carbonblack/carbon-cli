@@ -21,7 +21,7 @@ function Update-CbcWatchlist {
         "key" = "feed_id"
         "value" = $WatchlistObj.FeedId
     }
-    
+
     if ($PSBoundParameters.ContainsKey("Name")) {
         $RequestBody.name = $PSBoundParameters["Name"]
     }

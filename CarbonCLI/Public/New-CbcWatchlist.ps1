@@ -2,11 +2,11 @@ using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet subscribes to feed in all valid connections.
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/watchlist-api
 .SYNOPSIS
 Watchlists are powerful feature that allows organization to focus on specific rules, for which alerts to be created.
-However to take advantage of that functionality, an organization needs to have EEDR product enabled and do execute a flow that creates the 
+However to take advantage of that functionality, an organization needs to have EEDR product enabled and do execute a flow that creates the
 necessary objects.
 
 The steps to do that are:
@@ -83,7 +83,7 @@ function New-CbcWatchlist {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
-       
+
         switch ($PSCmdlet.ParameterSetName) {
             "Default" {
                 $ExecuteServers | ForEach-Object {
@@ -97,7 +97,7 @@ function New-CbcWatchlist {
                         "key"   = "feed_id"
                         "value" = $Feed.Id
                     }
-                    
+
                     $RequestBody = $RequestBody | ConvertTo-Json
 
                     $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Feed"]["Subscribe"] `
@@ -123,7 +123,7 @@ function New-CbcWatchlist {
                     "key"   = "feed_id"
                     "value" = $Feed.Id
                 }
-                
+
                 $RequestBody = $RequestBody | ConvertTo-Json
 
                 $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Feed"]["Subscribe"] `
@@ -138,7 +138,6 @@ function New-CbcWatchlist {
                     $JsonContent = $Response.Content | ConvertFrom-Json
                     return Initialize-CbcWatchlist $JsonContent $Feed.Server $Feed.Id
                 }
-                
             }
         }
     }

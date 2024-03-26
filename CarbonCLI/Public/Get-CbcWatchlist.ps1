@@ -2,7 +2,7 @@ using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet returns watchlist from all valid connections.
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/watchlist-api
 .SYNOPSIS
 This cmdlet returns watchlist from all valid connections.
@@ -23,7 +23,7 @@ Permissions needed: READ org.watchlists
 .EXAMPLE
 PS > Get-CbcWatchlist
 
-Returns all watchlist from all connections. 
+Returns all watchlist from all connections.
 If you have multiple connections and you want watchlist from a specific connection
 you can add the `-Server` param.
 
@@ -60,7 +60,7 @@ function Get-CbcWatchlist {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
-       
+
         $ExecuteServers | ForEach-Object {
             $CurrentServer = $_
 

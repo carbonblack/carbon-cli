@@ -2,7 +2,7 @@ using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet removes ioc from all valid connections.
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet removes ioc from all valid connections.
@@ -25,7 +25,7 @@ Permissions needed: CREATE, UPDATE org.feeds
 .EXAMPLE
 PS > Remove-CbcIoc -FeedId 5hBIvXltQqy0oAAqdEh0A -ReportId 11a1a1a1-b22b-3333-44cc-dd5555d5d5fd -Id R4cMgFIhRaakgk749MRr6Q, R4cMgFIhRaakgk749MRr62
 
-Removes ioc with specific ids from all connections. 
+Removes ioc with specific ids from all connections.
 If you have multiple connections and you want ioc from a specific connection
 you can add the `-Server` param.
 
@@ -63,7 +63,7 @@ function Remove-CbcIoc {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
-       
+
         switch ($PSCmdlet.ParameterSetName) {
             "Default" {
                 $ExecuteServers | ForEach-Object {
@@ -82,15 +82,15 @@ function Remove-CbcIoc {
                                 $UpdatedReport.iocs_v2 += $_
                             }
                         }
-                        $RequestBody = $UpdatedReport        
+                        $RequestBody = $UpdatedReport
                         $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
-        
+
                         $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
                             -Method PUT `
                             -Server $_ `
                             -Params @($FeedId, $ReportId) `
                             -Body $RequestBody
-        
+
                         if ($Response.StatusCode -ne 200) {
                             Write-Error -Message $("Cannot remove iocs for $($_)")
                         }
@@ -125,15 +125,15 @@ function Remove-CbcIoc {
                                 $UpdatedReport.iocs_v2 += $_
                             }
                         }
-                        $RequestBody = $UpdatedReport        
+                        $RequestBody = $UpdatedReport
                         $RequestBody = $RequestBody | ConvertTo-Json -Depth 100
-        
+
                         $Response = Invoke-CbcRequest -Endpoint $global:CBC_CONFIG.endpoints["Report"]["Details"] `
                             -Method PUT `
                             -Server $CurrentServer `
                             -Params @($CurrentFeedId, $CurrentReportId) `
                             -Body $RequestBody
-        
+
                         if ($Response.StatusCode -ne 200) {
                             Write-Error -Message $("Cannot remove iocs for $($CurrentServer)")
                         }

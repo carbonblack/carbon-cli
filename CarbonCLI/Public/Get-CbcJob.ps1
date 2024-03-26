@@ -65,7 +65,7 @@ function Get-CbcJob {
         [Parameter(ParameterSetName = "Id")]
         [CbcServer[]]$Server
     )
-    
+
     begin {
         Write-Debug "[$($MyInvocation.MyCommand.Name)] function started"
     }

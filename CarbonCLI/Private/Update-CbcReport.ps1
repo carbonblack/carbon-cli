@@ -19,7 +19,7 @@ function Update-CbcReport {
     $RequestBody.visibility = $ReportObj.visibility
     $RequestBody.iocs_v2 = $ReportObj.IocsV2
     $RequestBody.timestamp = [int](Get-Date -UFormat %s -Millisecond 0)
-    
+
     if ($PSBoundParameters.ContainsKey("Title")) {
         $RequestBody.title = $PSBoundParameters["Title"]
     }

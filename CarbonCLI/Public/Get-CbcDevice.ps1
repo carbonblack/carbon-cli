@@ -255,7 +255,7 @@ function Get-CbcDevice {
 						-Method POST `
 						-Server $_ `
 						-Body $RequestBody
-					
+
 					if ($Response.StatusCode -ne 200) {
 						Write-Error -Message $("Cannot get devices for $($_)")
 					}

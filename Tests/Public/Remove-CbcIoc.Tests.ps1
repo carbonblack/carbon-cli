@@ -1,9 +1,9 @@
-using module ..\..\src\CarbonCLI.Classes.psm1
+using module ..\..\CarbonCLI\CarbonCLI.Classes.psm1
 
 BeforeAll {
     $ProjectRoot = (Resolve-Path "$PSScriptRoot/../..").Path
     Remove-Module -Name CarbonCLI -ErrorAction 'SilentlyContinue' -Force
-    Import-Module $ProjectRoot\src\CarbonCLI.psm1 -Force
+    Import-Module $ProjectRoot\CarbonCLI\CarbonCLI.psm1 -Force
 }
 
 AfterAll {

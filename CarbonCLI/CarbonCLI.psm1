@@ -36,7 +36,7 @@ $CBCConfigObject = @{
 Select-Xml -Path $ConnectionsPath -XPath '/CBCServers/CBCServer' | ForEach-Object {
 	$SecureStringToken = $_.Node.Token | ConvertTo-SecureString
 	$CBCConfigObject.sessionConnections.Add(
-		@{	
+		@{
 			Uri = $_.Node.Uri
 			Token = $secureStringToken
 			Org = $_.Node.Org

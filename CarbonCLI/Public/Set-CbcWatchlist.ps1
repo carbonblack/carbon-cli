@@ -2,7 +2,7 @@ using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet updates watchlist from all valid connections.
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/watchlist-api
 .SYNOPSIS
 This cmdlet updates watchlist from all valid connections.
@@ -31,7 +31,7 @@ Permissions needed: UPDATE org.watchlists
 .EXAMPLE
 PS > Set-CbcWatchlist -Id R4cMgFIhRaakgk749MRr6Q -Name demo -AlertsEnabled $true
 
-Update watchlist name and alerts_enabled with specific ids from all connections. 
+Update watchlist name and alerts_enabled with specific ids from all connections.
 If you have multiple connections and you want watchlist from a specific connection
 you can add the `-Server` param.
 
@@ -83,7 +83,7 @@ function Set-CbcWatchlist {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
-       
+
         switch ($PSCmdlet.ParameterSetName) {
             "Default" {
                 $ExecuteServers | ForEach-Object {

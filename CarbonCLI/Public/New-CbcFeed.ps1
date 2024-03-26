@@ -1,4 +1,4 @@
-using module ../CarbonCLI.Classes.psm1
+﻿using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet creates a feed in all valid connections.
@@ -7,11 +7,11 @@ A feed contains reports which have been gathered by a single source. They resemb
 A watchlist may be easily subscribed to a feed, so that any reports in the feed act as if they were in the watchlist itself
 triggering logs or alerts as appropriate.
 
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 Watchlists are powerful feature that allows organization to focus on specific rules, for which alerts to be created.
-However to take advantage of that functionality, an organization needs to have EEDR product enabled and do execute a flow that creates the 
+However to take advantage of that functionality, an organization needs to have EEDR product enabled and do execute a flow that creates the
 necessary objects.
 
 The steps to do that are:
@@ -73,7 +73,7 @@ PS > $CustomBody = @{"feedinfo" =
 >>                    @{"name"= "myfeed"
 >>                      "provider_url"  = "http://test.test/"
 >>                      "summary" = "summary"
->>                      "category" = "category" 
+>>                      "category" = "category"
 >>                      "alertable" = $true}
 >>                   "reports"= @()}
 PS > New-CbcFeed -Body $CustomBody
@@ -127,7 +127,7 @@ function New-CbcFeed {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
-       
+
         $ExecuteServers | ForEach-Object {
             $CurrentServer = $_
             if ($PSCmdlet.ParameterSetName -eq "Default") {

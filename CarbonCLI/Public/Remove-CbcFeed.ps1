@@ -1,8 +1,8 @@
-using module ../CarbonCLI.Classes.psm1
+﻿using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
 This cmdlet removes feed from all valid connections.
-.LINK  
+.LINK
 API Documentation: https://developer.carbonblack.com/reference/carbon-black-cloud/cb-threathunter/latest/feed-api
 .SYNOPSIS
 This cmdlet removes feed from all valid connections.
@@ -21,7 +21,7 @@ Permissions needed: DELETE org.feeds
 .EXAMPLE
 PS > Remove-CbcFeed -Id R4cMgFIhRaakgk749MRr6Q
 
-Removes feed with specific ids from all connections. 
+Removes feed with specific ids from all connections.
 If you have multiple connections and you want feed from a specific connection
 you can add the `-Server` param.
 
@@ -53,7 +53,7 @@ function Remove-CbcFeed {
         else {
             $ExecuteServers = $global:DefaultCbcServers
         }
-       
+
         switch ($PSCmdlet.ParameterSetName) {
             "Default" {
                 $ExecuteServers | ForEach-Object {
@@ -63,7 +63,7 @@ function Remove-CbcFeed {
                             -Method DELETE `
                             -Server $CurrentServer `
                             -Params $_
-            
+
                         if ($Response.StatusCode -ne 204) {
                             Write-Error -Message $("Cannot delete feed(s) for $($CurrentServer)")
                         }

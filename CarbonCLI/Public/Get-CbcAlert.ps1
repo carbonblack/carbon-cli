@@ -1,16 +1,16 @@
-using module ../CarbonCLI.Classes.psm1
+﻿using module ../CarbonCLI.Classes.psm1
 <#
 .DESCRIPTION
-This cmdlet returns all alerts from all valid connections. The returned CbcAlert object is a "base" alert object, 
-common for the different alert types such as CbAnalytics, Device Control, Watchlist, Container Runtime, Host-Based Firewall 
-and is complient with the corrsponding base alert object API schema: 
-.LINK  
+This cmdlet returns all alerts from all valid connections. The returned CbcAlert object is a "base" alert object,
+common for the different alert types such as CbAnalytics, Device Control, Watchlist, Container Runtime, Host-Based Firewall
+and is complient with the corrsponding base alert object API schema:
+.LINK
 https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api/#fields
 .SYNOPSIS
-This cmdlet returns all alerts from all valid connections. The returned CbcAlert object is a "base" alert object, 
+This cmdlet returns all alerts from all valid connections. The returned CbcAlert object is a "base" alert object,
 common for the different alert types such as CbAnalytics, Device Control, Watchlist and is complient with the corrsponding
-base alert object API schema: 
-.LINK  
+base alert object API schema:
+.LINK
 https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api/#fields
 .PARAMETER DeviceId
 Filter param: Specify the Id of the device for which to retrieve alerts.
@@ -27,11 +27,11 @@ Filter param: Specify the name of the policy associated with the device at the t
 .PARAMETER Server
 Sets a specified Cbc Server from the current connections to execute the cmdlet with.
 .PARAMETER ThreatId
-Filter param: Specify the id of the threat belonging to the alerts to retrieve. 
+Filter param: Specify the id of the threat belonging to the alerts to retrieve.
 Threats are comprised of a combination of factors that can be repeated across devices.
 .PARAMETER Type
 Filter param: Specify the Type оf the alerts to retrieve.
-Available values: CB_ANALYTICS, CONTAINER_RUNTIME, DEVICE_CONTROL, HOST_BASED_FIREWALL, WATCHLIST, 
+Available values: CB_ANALYTICS, CONTAINER_RUNTIME, DEVICE_CONTROL, HOST_BASED_FIREWALL, WATCHLIST,
                   INTRUSION_DETECTION_SYSTEM, NETWORK_TRAFFIC_ANALYSIS
 .OUTPUTS
 CbcAlert[]
@@ -40,7 +40,7 @@ Permissions needed: READ org.alerts
 .EXAMPLE
 PS > Get-CbcAlert
 
-Returns all alerts from all connections. 
+Returns all alerts from all connections.
 If you have multiple connections and you want alerts from a specific connection
 you can add the `-Server` param.
 
@@ -224,7 +224,7 @@ function Get-CbcAlert {
                         -Method POST `
                         -Server $CurrentServer `
                         -Body $RequestBody
-                    
+
                     if ($Response.StatusCode -ne 200) {
                         Write-Error -Message $("Cannot get alerts for $($_)")
                     }
@@ -234,7 +234,7 @@ function Get-CbcAlert {
                             return Initialize-CbcAlert $_ $CurrentServer
                         }
                     }
-                } 
+                }
             }
         }
     }
