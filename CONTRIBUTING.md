@@ -13,13 +13,13 @@ Please familiarize yourself with general Powershell cmdlet development principle
 - *Provide meaningful examples following real use case scenarios as close as possible*
 - *Follow style, patterns and wording from already existing cmdlets, so consistency can be preserved as much as possible.*
 ### Testing
-- Each cmdlet should be covered by corresponding Pester tets, under `src/Tests/Public/Cmdlet-Name.Tests.ps1`
+- Each cmdlet should be covered by corresponding Pester tets, under `CarbonCLI/Tests/Public/Cmdlet-Name.Tests.ps1`
 - Make sure each cmdlet ParameterSet and corresponding parameters are covered
 - Make sure you cover with tests cmdlet design contracts such as naming, parameter position, pipeline input, etc. 
 
 ### Object model
-CarbonCLI defines its own object model defined in **./src/CarbonCLI.Classes.psm1 file.**. CarbonCLI objects should closely mimic the semantics and structure of the underlying API resource they are representing. The properties of the objects could be a subset of the API resource properties. Refrain from changing the names of the properties, especially where the semantics are kept the same. It is better to stick with a name which does not perfectly fit in the naming patterns of the rest CarbonCLI, but remain consistent with the API property name and existing documentation.
-Default print formatting is defined for each object type in  **./src/CarbonCLI.Format.ps1xml file.**. Tabular and List formatting should be defined as a minimum.
+CarbonCLI defines its own object model defined in **./CarbonCLI/CarbonCLI.Classes.psm1 file.**. CarbonCLI objects should closely mimic the semantics and structure of the underlying API resource they are representing. The properties of the objects could be a subset of the API resource properties. Refrain from changing the names of the properties, especially where the semantics are kept the same. It is better to stick with a name which does not perfectly fit in the naming patterns of the rest CarbonCLI, but remain consistent with the API property name and existing documentation.
+Default print formatting is defined for each object type in  **./CarbonCLI/CarbonCLI.Format.ps1xml file.**. Tabular and List formatting should be defined as a minimum.
 
 ### Working with multiple CarbonCLI connections in parallel
 A CarbonCLI connection is uniquely identified by the URI\Org pair.Multiple connections to the same 
@@ -35,7 +35,7 @@ You could also manipulate the $DefaultCbcServers array manually.
 -  **Return types:** 
     - *Each get cmdlet should return a strongly typed result, representing the Carbon Black Cloud resources that are retrieved.*
     - *The result from the `Get-Cbc*` cmdlet should be an array of objects of the corresponding type.*
-    - *The type should be defined as a class in* **./src/CarbonCLI.Classes.psm1 file.** *For example: `Get-CBCAlert` cmdlet returns an array of CbcAlert objects -->* `[OutputType([CbcAlert[]])]`
+    - *The type should be defined as a class in* **./CarbonCLI/CarbonCLI.Classes.psm1 file.** *For example: `Get-CBCAlert` cmdlet returns an array of CbcAlert objects -->* `[OutputType([CbcAlert[]])]`
     - *Each type should contain `[String] Id` and `[CbcServer] Server`properties as a minimum*
     - **NB:** *Please refrain from returning `object`, `PSObject` and `PSCustomObject` as this decrease the usability of the cmdlet and makes it hard if not impossible for the consumer to anticipate what properties will be found on the object returned.*
 - **Parameters:**  No mandatory parameters. `Get-Cbc*` cmdlets should work just fine without providing any parameters, retrieving all corresponding resources from all established connections.

@@ -7,9 +7,9 @@ A set of PowerShell Cmdlets to interact with Carbon Black Cloud.
 ## Getting Started
 
 ```powershell
-PS > git clone https://github.com/carbonblack/CarbonCLI.git
+PS > git clone https://github.com/carbonblack/carbon-cli.git
 PS > cd ./CarbonCLI
-PS > Import-Module ./src/CarbonCLI.psm1
+PS > Import-Module ./CarbonCLI/CarbonCLI.psm1
 ```
 
 Now we can start using the cmdlets.
@@ -52,13 +52,13 @@ PS > ./Invoke-Tests.ps1
 If you want to check the test coverage for all of the files
 
 ```powershell
-Invoke-Pester -CodeCoverage ./src/Public/*
+Invoke-Pester -CodeCoverage ./CarbonCLI/Public/*
 ```
 
 or for specific file:
 
 ```powershell
-Invoke-Pester -CodeCoverage ./src/Public/Get-CbcDevice.ps1
+Invoke-Pester -CodeCoverage ./CarbonCLI/Public/Get-CbcDevice.ps1
 ```
 
 If you want to enable debug information
