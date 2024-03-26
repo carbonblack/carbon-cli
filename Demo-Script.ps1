@@ -1,18 +1,17 @@
-Import-Module ./src/CarbonCLI.psd1 
+Import-Module CarbonCLI
 # $DebugPreference = 'Continue'
 # Set-PsDebug -Trace 2
 
-# List all available cmdlets 
-Get-Command -Module CarbonCLI  
+# List all available cmdlets
+Get-Command -Module CarbonCLI
 
 # Count the number of Carbon Black Cloud cmdlets
-Get-Command -Module CarbonCLI | Measure-Object | Select Count
+Get-Command -Module CarbonCLI | Measure-Object | Select-Object Count
 
 # Establish a connection to a Carbon Black Cloud Endpoint
 # Create a PSCredential object. Specify OrgId as a value for User and Token as a value for password when prompted.
 $myCredentials = Get-Credential
 $cbcServerOrg1 = Connect-CBCServer -Server https://defense.conferdeploy.net/ -Credential $myCredentials -Notes Org1
-
 
 # Design principle on focus: Each cmdlet is documented as part of its codebase. Learn Carbon Black leveraging Get-Help cmdlet
 Get-Help Connect-CbcServer -Full
@@ -31,16 +30,17 @@ Get-CbcProcess | Get-Member
 # Design principle on focus: There is a separation between the object model definition and the object presentation layer. Review Format.ps1xml !
 Get-CbcDevice | Select-Object Id, Server, LastShutdownTime
 
-# Design principle on focus: Working against multiple connections. Each connection is defined uniquely by a URI/Org pair. 
+# Design principle on focus: Working against multiple connections. Each connection is defined uniquely by a URI/Org pair.
 $cbcServerOrg2 = Connect-CBCServer -Server https://defense.conferdeploy.net/ -Org ABCD1234 -Token ABCDEFGHIJKLMNO123456789/ABCD123456 -Notes Org2
 
 
 # Retrieve alerts, devices from multiple connections.
+Get-CbcAlerts -Server $cbcServerOrg2
 Get-CbcAlerts
 Get-CbcDevice
 Get-CbcDevice | Select-Object Id, Server, SensorVersion
 
-# Retrieve the Org1 devices only 
+# Retrieve the Org1 devices only
 Get-CbcDevice -Server $cbcServerOrg1
 
 # Create a simple HTML report on LOW priority "Windows 10" devices
@@ -65,14 +65,14 @@ Get-CbcPolicy
 Set-CbcDevice -Id 123456789 -PolicyId 12345
 
 # Working with long running operations ( process search / observations search )
-Get-CbcDevice 
+Get-CbcDevice
 Get-CbcProcess -DeviceId 123456789
-Get-CbcProcess -Query "process_name:power*" 
+Get-CbcProcess -Query "process_name:power*"
 $processSearchJob = Get-CbcProcess -Query "process_name:power*" -AsJob
 Get-CbcJob $processSearchJob
 Receive-CbcJob $processSearchJob
 
-# Observations 
+# Observations
 Get-Help Get-CbcObservation -Full
 Get-CbcObservation -EventType "netconn"
 Get-CbcObservation -Query "event_type:netconn"
