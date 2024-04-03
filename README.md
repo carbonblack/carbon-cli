@@ -8,7 +8,7 @@ A set of PowerShell Cmdlets to interact with Carbon Black Cloud.
 
 ```powershell
 PS > git clone https://github.com/carbonblack/carbon-cli.git
-PS > cd ./CarbonCLI
+PS > cd ./carbon-cli
 PS > Import-Module ./CarbonCLI/CarbonCLI.psm1
 ```
 
