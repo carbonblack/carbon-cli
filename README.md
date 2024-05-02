@@ -16,7 +16,7 @@ Now we can start using the cmdlets.
 
 
 ```powershell
-PS > Connect-CbcServer -CbcServer "http://cbcserver.cbc" -Org "MyOrg" -Token "MyToken"
+PS > Connect-CbcServer -Server "http://cbcserver.cbc" -Org "OrgKey" -Token "MyToken"
 ```
 
 ## Development
