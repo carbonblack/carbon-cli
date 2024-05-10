@@ -36,12 +36,12 @@ See the provided examples.
 .OUTPUTS
 CbcServer
 .EXAMPLE
-PS > Connect-CbcServer -Server "http://cbcserver.cbc" -Org "MyOrg" -Token "MyToken" -Notes "ProdEnv"
+PS > Connect-CbcServer -Server "http://cbcserver.cbc" -Org "MyOrgKey" -Token "MyToken" -Notes "ProdEnv"
 
 Connects with the specified Server, Org, Token and returns a CbcServer Object.
 
 .EXAMPLE
-PS > Connect-CbcServer -Server "http://cbcserver.cbc" -Org "MyOrg" -Token "MyToken" -Notes "ProdEnv" -SaveConnection
+PS > Connect-CbcServer -Server "http://cbcserver.cbc" -Org "MyOrgKey" -Token "MyToken" -Notes "ProdEnv" -SaveConnection
 
 Store the connection in the local store for reuse across multiple Powershell sesssions.
 
@@ -55,8 +55,8 @@ PS > $cred = Get-Credential
 
 PowerShell credential request
 Enter your credentials.
-User: MyOrg
-Password for user MyOrg: ****
+User: MyOrgKey
+Password for user MyOrgKey: ****
 
 PS > Connect-CbcServer -Server "http://cbcserver.cbc" -Credential $cred
 
@@ -64,17 +64,17 @@ Connects with the specified Server, Org, Token and returns a CbcServer Object.
 
 .EXAMPLE
 
-PS > Connect-CbcServer -Server "http://cbcserver.cbc" -Credential "MyOrg"
+PS > Connect-CbcServer -Server "http://cbcserver.cbc" -Credential "MyOrgKey"
 
 PowerShell credential request
 Enter your credentials.
-Password for user MyOrg:
+Password for user MyOrgKey:
 
 Connects with the specified Server, Org, Token and returns a CbcServer Object.
 
 .EXAMPLE
-PS > $prodServer = Connect-CbcServer -Server "http://prod.cbc" -Org "MyOrg1" -Token "MyProdToken" -Notes "ProdEnv"
-PS > $devServer = Connect-CbcServer -Server "http://dev.cbc" -Org "MyOrg1" -Token "MyDevToken" -Notes "DevEnv"
+PS > $prodServer = Connect-CbcServer -Server "http://prod.cbc" -Org "MyOrgKey1" -Token "MyProdToken" -Notes "ProdEnv"
+PS > $devServer = Connect-CbcServer -Server "http://dev.cbc" -Org "MyOrgKey1" -Token "MyDevToken" -Notes "DevEnv"
 Connects to the specified two environments.
 PS > $DefaultCbcServers
 List the two active connections.
@@ -92,8 +92,8 @@ Same as:
 PS > Get-CbcAlert -Id "2434" -Server $prodServer | Set-CbcAlert -Dismiss
 
 .EXAMPLE
-PS > $prodServer = Connect-CbcServer -Server "http://prod.cbc" -Org "MyOrg1" -Token "MyProdToken" -Notes "ProdEnv"
-PS > $devServer = Connect-CbcServer -Server "http://dev.cbc" -Org "MyOrg1" -Token "MyDevToken" -Notes "DevEnv"
+PS > $prodServer = Connect-CbcServer -Server "http://prod.cbc" -Org "MyOrgKey1" -Token "MyProdToken" -Notes "ProdEnv"
+PS > $devServer = Connect-CbcServer -Server "http://dev.cbc" -Org "MyOrgKey1" -Token "MyDevToken" -Notes "DevEnv"
 Connects to the specified two environments.
 PS > $IncludeCriteria = @{}
 PS > $IncludeCriteria.type = @("CB_ANALYTICS")
@@ -141,6 +141,9 @@ function Connect-CbcServer {
 	}
 
 	process {
+		if ($PSBoundParameters.ContainsKey("Uri")) {
+			$Uri = $Uri.Trim("/") + "/"
+		}
 
 		# Show the currently connected Cbc servers warning
 		if ($global:DefaultCbcServers.Count -ge 1) {
