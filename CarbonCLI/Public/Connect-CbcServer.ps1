@@ -142,7 +142,7 @@ function Connect-CbcServer {
 
 	process {
 		if ($PSBoundParameters.ContainsKey("Uri")) {
-			$Uri = $Uri.Trim("/")
+			$Uri = $Uri.Trim("/") + "/"
 		}
 
 		# Show the currently connected Cbc servers warning
