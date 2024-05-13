@@ -70,7 +70,8 @@ Returns all the devices that has contacted Carbon Black Cloud in the last 10 day
 .EXAMPLE
 PS > Get-CbcDevice -LastContactTimeWindow -10d -Threshold 200
 
-Returns all the devices that has contacted Carbon Black Cloud in the last 10 days
+Returns all the devices that has contacted Carbon Black Cloud in the last 10 days,
+but has not sent any events within a certain period of time, the "event threshold."
 
 .EXAMPLE
 $IncludeCriteria = @{
