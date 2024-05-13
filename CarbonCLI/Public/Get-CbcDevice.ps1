@@ -231,7 +231,7 @@ function Get-CbcDevice {
 
 						$JsonContent.results | ForEach-Object {
 							if ($PSBoundParameters.ContainsKey("Threshold")) {
-								if ((New-TimeSpan -Start $_.last_contact_time -End $_.last_reported_time).TotalMinutes -ge $Threshold) {
+								if ((New-TimeSpan -Start $_.last_reported_time -End $_.last_contact_time).TotalMinutes -ge $Threshold) {
 									return Initialize-CbcDevice $_ $CurrentServer
 								}
 							}
