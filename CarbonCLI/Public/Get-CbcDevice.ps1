@@ -27,7 +27,7 @@ Supported Target priority values: LOW, MEDIUM, HIGH, MISSION_CRITICAL.
 .PARAMETER LastContactTimeWindow
 Specifies the checkin window for last contact time for devices (specified as a range - e.g. 1d, 1m, etc - check the documentation for full specification).
 .PARAMETER Threshold
-Specifies event threshold for devices - whether events were sent within x minutes of last_contact_time (specified in minutes)
+Specifies event threshold for devices - whether events were sent within x minutes of last time the device contacted Carbon Black Cloud (specified in minutes)
 .OUTPUTS
 CbcDevice[]
 .NOTES
