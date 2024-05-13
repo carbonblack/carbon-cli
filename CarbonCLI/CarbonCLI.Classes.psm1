@@ -150,6 +150,41 @@ class CbcDevice {
 	[string]$HostBasedFirewallStatus
 	[string]$SensorGatewayUrl
 	[string]$SensorGatewayUuid
+	[string]$CurrentSensorPolicyName
+	[string]$LastUserName
+	[string[]]$SensorStates
+	[string]$ActivationCode
+	[string]$ApplianceName
+	[string]$ApplianceUuid
+	[bool]$BaseDevice
+	[string]$ClusterName
+	[string]$ComplianceStatus
+	[string]$DatacenterName
+	[string]$EsxHostName
+	[string]$EsxHostUuid
+	[bool]$GoldenDevice
+	[int]$GoldenDeviceId
+	[string]$GoldenDeviceStatus
+	[bool]$NsxEnabled
+	[string]$VcenterHostUrl
+	[string]$VcenterName
+	[string]$VcenterUuid
+	[string]$VdiProdvider
+	[bool]$VirtualMachine
+	[string]$VirtualPrivateCloudId
+	[string]$VirtualizationProvider
+	[string]$VmIp
+	[string]$VmName
+	[string]$VmUuid
+	[string]$AutoScalingGroupName
+	[string]$CloudProviderAccountId
+	[string]$CloudProviderResourceId
+	[string[]]$CloudProviderTags
+	[string]$CloudProviderResourceGroup
+	[string]$CloudProviderScaleGroup
+	[string]$CloudProviderNetwork
+	[string]$CloudProviderManagedIdentity
+	[string]$InfrastructureProvider
 	CbcDevice (
 		[string]$Id_,
 		[string]$Status_,
@@ -194,7 +229,42 @@ class CbcDevice {
 		[string]$HostBasedFirewallReasons_,
 		[string]$HostBasedFirewallStatus_,
 		[string]$SensorGatewayUrl_,
-		[string]$SensorGatewayUuid_
+		[string]$SensorGatewayUuid_,
+		[string]$CurrentSensorPolicyName_,
+		[string]$LastUserName_,
+		[string[]]$SensorStates_,
+		[string]$ActivationCode_,
+		[string]$ApplianceName_,
+		[string]$ApplianceUuid_,
+		[bool]$BaseDevice_,
+		[string]$ClusterName_,
+		[string]$ComplianceStatus_,
+		[string]$DatacenterName_,
+		[string]$EsxHostName_,
+		[string]$EsxHostUuid_,
+		[bool]$GoldenDevice_,
+		[int]$GoldenDeviceId_,
+		[string]$GoldenDeviceStatus_,
+		[bool]$NsxEnabled_,
+		[string]$VcenterHostUrl_,
+		[string]$VcenterName_,
+		[string]$VcenterUuid_,
+		[string]$VdiProdvider_,
+		[bool]$VirtualMachine_,
+		[string]$VirtualPrivateCloudId_,
+		[string]$VirtualizationProvider_,
+		[string]$VmIp_,
+		[string]$VmName_,
+		[string]$VmUuid_,
+		[string]$AutoScalingGroupName_,
+		[string]$CloudProviderAccountId_,
+		[string]$CloudProviderResourceId_,
+		[string[]]$CloudProviderTags_,
+		[string]$CloudProviderResourceGroup_,
+		[string]$CloudProviderScaleGroup_,
+		[string]$CloudProviderNetwork_,
+		[string]$CloudProviderManagedIdentity_,
+		[string]$InfrastructureProvider_
 	) {
 		$this.Id = $Id_
 		$this.Status = $Status_
