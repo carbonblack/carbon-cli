@@ -88,6 +88,29 @@ Describe "Get-CbcDevice" {
 				}
 			}
 
+			Context "When using params" {
+				It "Should return all the devices matching the criteria within the current connection" {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
+						@{
+							StatusCode = 200
+							Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/all_devices.json"
+						}
+					} -ParameterFilter {
+						$Server -eq $s1 -and
+						$Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Search"] -and
+						$Method -eq "POST" -and
+						($Body | ConvertFrom-Json).rows -eq 50
+						($Body | ConvertFrom-Json).criteria.last_contact_time.range -eq "-1d"
+					}
+
+					$devices = Get-CbcDevice -LastContactTimeWindow -1d -Threshold 20
+
+					$devices.Count | Should -Be 1
+					$devices[0].Server | Should -Be $s1
+					$devices[0].id | Should -Be 1
+				}
+			}
+
 			Context "When returning error from the API" {
 				It "Should not return any devices but an error" {
 					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
@@ -154,6 +177,35 @@ Describe "Get-CbcDevice" {
 					$devices[2].Server | Should -Be $s1			
 					$devices[3].id | Should -Be 5765373
 					$devices[3].Server | Should -Be $s2
+				}
+			}
+
+			Context "When using params" {
+				It "Should return all the devices matching the criteria within the current connection" {
+					Mock Invoke-CbcRequest -ModuleName CarbonCLI {
+						if ($Server -eq $s1) {
+							@{
+								StatusCode = 200
+								Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/all_devices.json"
+							}
+						}
+						else {
+							@{
+								StatusCode = 200
+								Content    = Get-Content "$ProjectRoot/Tests/resources/device_api/specific_device.json"
+							}
+						}
+					} -ParameterFilter {
+						$Endpoint -eq $global:CBC_CONFIG.endpoints["Devices"]["Search"] -and
+						$Method -eq "POST" -and
+						($Body | ConvertFrom-Json).rows -eq 50
+						($Body | ConvertFrom-Json).criteria.last_contact_time.range -eq "-1d"
+					}
+
+					$devices = Get-CbcDevice -LastContactTimeWindow -1d -Threshold 20
+					$devices.Count | Should -Be 1
+					$devices[0].Server | Should -Be $s1
+					$devices[0].id | Should -Be 1
 				}
 			}
 		}

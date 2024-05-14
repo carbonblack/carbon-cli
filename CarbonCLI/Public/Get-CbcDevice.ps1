@@ -24,6 +24,10 @@ BYPASS, QUARANTINE, SENSOR_OUTOFDATE, DELETED, LIVE.
 .PARAMETER TargetPriority
 Specifies the Target priority to match.
 Supported Target priority values: LOW, MEDIUM, HIGH, MISSION_CRITICAL.
+.PARAMETER LastContactTimeWindow
+Specifies the checkin window for last contact time for devices (specified as a range - e.g. 1d, 1m, etc - check the documentation for full specification).
+.PARAMETER Threshold
+Specifies event threshold for devices - whether events were sent within x minutes of last time the device contacted Carbon Black Cloud (specified in minutes)
 .OUTPUTS
 CbcDevice[]
 .NOTES
@@ -57,6 +61,17 @@ Returns all Windows devices that are in status: REGISTERED.
 PS > Get-CbcDevice -Os Linux -Priority HIGH -Status ERROR
 
 Returns all Linux devices devices that are in status ERROR and have HIGH priority.
+
+.EXAMPLE
+PS > Get-CbcDevice -LastContactTimeWindow -10d
+
+Returns all the devices that has contacted Carbon Black Cloud in the last 10 days.
+
+.EXAMPLE
+PS > Get-CbcDevice -LastContactTimeWindow -10d -Threshold 200
+
+Returns all the devices that has contacted Carbon Black Cloud in the last 10 days,
+but has not sent any events within a certain period of time, the "event threshold."
 
 .EXAMPLE
 $IncludeCriteria = @{
@@ -152,7 +167,13 @@ function Get-CbcDevice {
 		[string[]]$Status,
 
 		[Parameter(ParameterSetName = "Default")]
-		[string[]]$TargetPriority
+		[string[]]$TargetPriority,
+
+		[Parameter(ParameterSetName = "Default")]
+		[string]$LastContactTimeWindow,
+
+		[Parameter(ParameterSetName = "Default")]
+		[int]$Threshold
 	)
 
 	begin {
@@ -173,6 +194,10 @@ function Get-CbcDevice {
 					$CurrentServer = $_
 					$RequestBody = @{}
 					$RequestBody.criteria = @{}
+
+					if ($PSBoundParameters.ContainsKey("LastContactTimeWindow")) {
+						$RequestBody.criteria.last_contact_time = @{"range" = $LastContactTimeWindow}
+					}
 
 					if ($PSBoundParameters.ContainsKey("Os")) {
 						$RequestBody.criteria.os = $Os
@@ -206,7 +231,14 @@ function Get-CbcDevice {
 						$JsonContent = $Response.Content | ConvertFrom-Json
 
 						$JsonContent.results | ForEach-Object {
-							return Initialize-CbcDevice $_ $CurrentServer
+							if ($PSBoundParameters.ContainsKey("Threshold")) {
+								if ((New-TimeSpan -Start $_.last_reported_time -End $_.last_contact_time).TotalMinutes -ge $Threshold) {
+									return Initialize-CbcDevice $_ $CurrentServer
+								}
+							}
+							else {
+								return Initialize-CbcDevice $_ $CurrentServer
+							}
 						}
 					}
 				}
