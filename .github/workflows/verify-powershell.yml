@@ -35,6 +35,8 @@ jobs:
     - run: pwsh ./Invoke-Tests.ps1
 
   sonarqube:
+    # Disable sonarqube until alternative option can be explored that supports powershell
+    if: false
     needs: test
     runs-on: cbre
     container:
