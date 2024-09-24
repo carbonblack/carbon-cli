@@ -1,8 +1,8 @@
 $config = New-PesterConfiguration
-$config.CodeCoverage.OutputFormat = 'CoverageGutters'
-$config.CodeCoverage.OutputPath = 'cov.xml'
-$config.CodeCoverage.OutputEncoding = 'UTF8'
-
 $config.CodeCoverage.Enabled = $true
+$config.Run.Path = ".\Tests\*"
+$config.Output.Verbosity = "Detailed"
+$config.TestResult.Enabled = $true 
+$config.Run.Exit = $true
 
-Invoke-Pester -Configuration $config -Path .\Tests\* -Output Detailed -WarningAction Ignore -CI
+Invoke-Pester -Configuration $config -WarningAction Ignore
