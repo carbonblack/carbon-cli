@@ -28,5 +28,5 @@ jobs:
         apt-get install -y powershell
     - run: |
         pwsh -Command "\$ErrorActionPreference = 'Stop'; \$ProgressPreference = 'SilentlyContinue';"
-        ./Build-CarbonCLI.ps1
+        pwsh ./Build-CarbonCLI.ps1
     - run: pwsh ./Invoke-Tests.ps1
