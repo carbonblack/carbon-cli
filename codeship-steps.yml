@@ -1,3 +1,0 @@
-- name: Tests
-  service: testing
-  command: pwsh ./Invoke-Tests.ps1

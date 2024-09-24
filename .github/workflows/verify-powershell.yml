@@ -1,0 +1,66 @@
+name: verify-powershell
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: cbre
+    container:
+      image: "${{ vars.BDCM_DOCKER_GATEWAY }}/ubuntu:22.04"
+      credentials:
+        username: ${{ vars.CB_ARTIFACTORY_DOCKER_USER }}
+        password: ${{ secrets.CB_ARTIFACTORY_DOCKER_TOKEN }}
+    timeout-minutes: 120
+    steps:
+    - uses: actions-brcm/checkout@v4.1.0
+      with:
+        fetch-depth: 20
+    - run: |
+        apt-get update
+        apt-get install -y wget apt-transport-https software-properties-common
+        wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+        dpkg -i packages-microsoft-prod.deb
+        rm packages-microsoft-prod.deb
+        apt-get update
+        apt-get install -y powershell
+    - run: |
+        pwsh -Command "\$ErrorActionPreference = 'Stop'; \$ProgressPreference = 'SilentlyContinue';"
+        pwsh ./Build-CarbonCLI.ps1
+    - run: pwsh ./Invoke-Tests.ps1
+
+  sonarqube:
+    # Disable sonarqube until alternative option can be explored that supports powershell
+    if: false
+    needs: test
+    runs-on: cbre
+    container:
+      image: "${{ vars.BDCM_DOCKER_GATEWAY }}/ubuntu:22.04"
+      credentials:
+        username: ${{ vars.CB_ARTIFACTORY_DOCKER_USER }}
+        password: ${{ secrets.CB_ARTIFACTORY_DOCKER_TOKEN }}
+    steps:
+      - uses: actions-brcm/checkout@v4.1.0
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - run: |
+          apt-get update
+          apt-get install -y wget apt-transport-https software-properties-common
+          wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+          dpkg -i packages-microsoft-prod.deb
+          rm packages-microsoft-prod.deb
+          apt-get update
+          apt-get install -y powershell
+      - run: |
+          pwsh -Command "\$ErrorActionPreference = 'Stop'; \$ProgressPreference = 'SilentlyContinue';"
+          pwsh ./Build-CarbonCLI.ps1
+      - run: pwsh ./Invoke-Tests.ps1
+      - uses: actions-brcm/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
