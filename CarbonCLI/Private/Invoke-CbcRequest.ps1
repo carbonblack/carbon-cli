@@ -37,7 +37,7 @@ function Invoke-CbcRequest {
 		Write-Debug "[$($MyInvocation.MyCommand.Name)] with method body: ${Method}"
 		Write-Debug "[$($MyInvocation.MyCommand.Name)] with uri params body: ${Params}"
 		try {
-			$Response = Invoke-WebRequest -Uri $FullUri -Headers $Headers -Method $Method -Body $Body
+			$Response = Invoke-WebRequest -Uri $FullUri.TrimEnd("/") -Headers $Headers -Method $Method -Body $Body
 			Write-Debug "[$($MyInvocation.MyCommand.Name)] got response with content: $($Response.Content)"
 			Write-Debug "[$($MyInvocation.MyCommand.Name)] got status code: $($Response.StatusCode)"
 			return $Response
